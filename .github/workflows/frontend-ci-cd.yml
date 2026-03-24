@@ -78,10 +78,10 @@ jobs:
 
       - name: Docker Login
         if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-        run: echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build Frontend Image
         if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
