@@ -1,0 +1,73 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    environment: secrets
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Restore Next.js Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx', 'next.config.*') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Check Docker Publish Readiness
+        id: docker_ready
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          if [ -n "$DOCKER_USERNAME" ] && [ -n "$DOCKER_TOKEN" ] && [ -f "Dockerfile" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Docker Login
+        if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build Frontend Image
+        if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: docker build -t "$DOCKER_USERNAME"/goldenhive-frontend:latest .
+
+      - name: Push Frontend Image
+        if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: docker push "$DOCKER_USERNAME"/goldenhive-frontend:latest
+
+      - name: Skip Docker Publish
+        if: ${{ steps.docker_ready.outputs.enabled != 'true' }}
+        run: echo "Docker publish skipped because DOCKER secrets are missing or Dockerfile is not present."
