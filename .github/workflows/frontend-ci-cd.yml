@@ -43,11 +43,38 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         run: |
-          if [ -n "$DOCKER_USERNAME" ] && [ -n "$DOCKER_TOKEN" ] && [ -f "Dockerfile" ]; then
+          has_username=false
+          has_token=false
+          has_dockerfile=false
+
+          if [ -n "$DOCKER_USERNAME" ]; then
+            has_username=true
+          fi
+
+          if [ -n "$DOCKER_TOKEN" ]; then
+            has_token=true
+          fi
+
+          if [ -f "Dockerfile" ]; then
+            has_dockerfile=true
+          fi
+
+          echo "has_username=$has_username" >> "$GITHUB_OUTPUT"
+          echo "has_token=$has_token" >> "$GITHUB_OUTPUT"
+          echo "has_dockerfile=$has_dockerfile" >> "$GITHUB_OUTPUT"
+
+          if [ "$has_username" = "true" ] && [ "$has_token" = "true" ] && [ "$has_dockerfile" = "true" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Show Docker Publish Decision
+        run: |
+          echo "DOCKER_USERNAME set: ${{ steps.docker_ready.outputs.has_username }}"
+          echo "DOCKER_TOKEN set: ${{ steps.docker_ready.outputs.has_token }}"
+          echo "Dockerfile present: ${{ steps.docker_ready.outputs.has_dockerfile }}"
+          echo "Docker publish enabled: ${{ steps.docker_ready.outputs.enabled }}"
 
       - name: Docker Login
         if: ${{ steps.docker_ready.outputs.enabled == 'true' }}
@@ -70,4 +97,4 @@ jobs:
 
       - name: Skip Docker Publish
         if: ${{ steps.docker_ready.outputs.enabled != 'true' }}
-        run: echo "Docker publish skipped because DOCKER secrets are missing or Dockerfile is not present."
+        run: echo "Docker publish skipped. Check previous step output for exact reason."
