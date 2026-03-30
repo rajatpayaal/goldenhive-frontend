@@ -12,8 +12,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "RishiYatra",
-  description: "From spiritual peaks to river rapids.",
+  title: "Golden Hive Holidays",
+  description: "Golden Hive Holidays – Customized travel packages, adventure activities, and complete trip planning services. Char Dham, Uttarakhand tours, rafting, trekking, and more.",
 };
 
 export default function RootLayout({ children }) {
