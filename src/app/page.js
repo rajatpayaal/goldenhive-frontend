@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 const offerings = [
@@ -82,8 +83,18 @@ export default function HomePage() {
       <header className="site-header">
         <div className="container nav-row">
           <a href="#top" className="brand-block">
-            <span className="brand-kicker">Uttarakhand Travel Experts</span>
-            <span className="brand">Golden Hive Holidays</span>
+            <Image
+              src="/golden-hive-logo.svg"
+              alt="Golden Hive Holidays logo"
+              width={68}
+              height={68}
+              className="brand-logo"
+              priority
+            />
+            <span>
+              <span className="brand-kicker">Uttarakhand Travel Experts</span>
+              <span className="brand">Golden Hive Holidays</span>
+            </span>
           </a>
 
           <nav className="main-nav">
@@ -112,6 +123,16 @@ export default function HomePage() {
           <div className="hero-overlay" />
           <div className="container hero-layout">
             <div className="hero-copy">
+              <div className="hero-logo-wrap">
+                <Image
+                  src="/golden-hive-logo.svg"
+                  alt="Golden Hive Holidays"
+                  width={122}
+                  height={122}
+                  className="hero-logo"
+                  priority
+                />
+              </div>
               <p className="eyebrow">Customized Travel Packages | Adventure | Spiritual Tours</p>
               <h1>Golden Hive Holidays plans Uttarakhand journeys around your style, not a fixed template.</h1>
               <p className="hero-subhead">
@@ -313,8 +334,19 @@ export default function HomePage() {
         <div className="container footer-grid">
           <div>
             <p className="section-label">Contact</p>
-            <h3>Golden Hive Holidays</h3>
-            <p>Customized travel packages, adventure activities, and complete trip planning support.</p>
+            <div className="footer-brand">
+              <Image
+                src="/golden-hive-logo.svg"
+                alt="Golden Hive Holidays logo"
+                width={84}
+                height={84}
+                className="footer-logo"
+              />
+              <div>
+                <h3>Golden Hive Holidays</h3>
+                <p>Customized travel packages, adventure activities, and complete trip planning support.</p>
+              </div>
+            </div>
           </div>
           <div className="footer-contact">
             <a href="mailto:admin@goldenhiveholidays.in">admin@goldenhiveholidays.in</a>

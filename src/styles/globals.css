@@ -78,8 +78,21 @@ p {
 }
 
 .brand-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-block > span {
   display: inline-grid;
   gap: 2px;
+}
+
+.brand-logo,
+.hero-logo,
+.footer-logo {
+  height: auto;
+  object-fit: contain;
 }
 
 .brand-kicker {
@@ -187,6 +200,17 @@ p {
 
 .hero-copy {
   color: #fff;
+}
+
+.hero-logo-wrap {
+  margin-bottom: 14px;
+}
+
+.hero-logo {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 8px;
+  box-shadow: 0 16px 34px rgba(10, 20, 30, 0.18);
 }
 
 .eyebrow,
@@ -551,6 +575,12 @@ p {
   align-items: end;
 }
 
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .footer-contact {
   gap: 14px;
   justify-content: flex-end;
@@ -601,6 +631,11 @@ p {
     justify-content: center;
   }
 
+  .footer-brand {
+    justify-content: center;
+    text-align: center;
+  }
+
   .hero {
     min-height: auto;
   }
@@ -621,6 +656,12 @@ p {
 
   .header-actions {
     flex-wrap: wrap;
+  }
+
+  .brand-block,
+  .footer-brand {
+    flex-direction: column;
+    text-align: center;
   }
 
   .hero-layout {

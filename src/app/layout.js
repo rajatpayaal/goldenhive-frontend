@@ -13,7 +13,16 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: "Golden Hive Holidays",
-  description: "Golden Hive Holidays – Customized travel packages, adventure activities, and complete trip planning services. Char Dham, Uttarakhand tours, rafting, trekking, and more.",
+  description:
+    "Golden Hive Holidays - Customized travel packages, adventure activities, and complete trip planning services. Char Dham, Uttarakhand tours, rafting, trekking, and more.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/golden-hive-logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
