@@ -26,12 +26,11 @@
   gap: 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
-  padding-bottom: 20px; /* Space for shadow */
-  margin: 0 calc(-50vw + 50%); /* Full bleed trick */
-  padding-left: calc(50vw - 50% + 20px);
-  padding-right: calc(50vw - 50% + 20px);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 20px;
+  /* Instead of complex full-bleed, simply let it take full width with padding on ends */
+  width: auto;
 }
 
 .carousel::-webkit-scrollbar {

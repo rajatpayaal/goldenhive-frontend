@@ -29,9 +29,8 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-bottom: 20px;
-  margin: 0 calc(-50vw + 50%);
-  padding-left: calc(50vw - 50% + 20px);
-  padding-right: calc(50vw - 50% + 20px);
+  /* Instead of complex full-bleed, simply let it take full width with padding on ends */
+  width: auto;
 }
 
 .carousel::-webkit-scrollbar {

@@ -25,7 +25,7 @@ export function BannerSlider({ banners }) {
           style={{ backgroundImage: `url(${banner.imageUrl})` }}
         >
           <div className={styles.overlay}>
-             <div className="container">
+             <div className="container" style={{ width: '100%' }}>
                <div className={styles.content}>
                  <h1 className={styles.title}>{banner.title}</h1>
                  <p className={styles.description}>{banner.description}</p>
