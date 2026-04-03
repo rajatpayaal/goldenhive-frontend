@@ -1,10 +1,7 @@
 import { BannerSlider } from "../components/BannerSlider";
-import { ActivitiesSection } from "../components/ActivitiesSection";
 import { PackagesSection } from "../components/PackagesSection";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-import styles from "./page.module.css";
-import Link from "next/link";
 
 import { apiService } from "../services/api.service";
 
@@ -24,23 +21,39 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const [banners, activities, packages] = await Promise.all([
+  const [banners, categories] = await Promise.all([
     apiService.getHomeBanners(),
-    apiService.getHomeActivities(),
-    apiService.getHomePackages()
+    apiService.getCategories()
   ]);
+
+  const activeCategories = (categories || []).filter((category) => category?.isActive !== false);
+
+  const packagesBySlug = Object.fromEntries(
+    await Promise.all(
+      activeCategories.map(async (category) => {
+        const { items } = await apiService.getPackages({ categoryName: category.name });
+        return [category.slug, items];
+      })
+    )
+  );
 
   return (
     <>
-      <Header />
+      <Header categories={activeCategories} />
 
-      <main className={styles.main}>
+      <main className="bg-slate-50">
         <BannerSlider banners={banners} />
-        <div id="activities">
-          <ActivitiesSection activities={activities} />
-        </div>
-        <div id="packages">
-          <PackagesSection packages={packages} />
+
+        <div className="mx-auto max-w-6xl space-y-10 px-5 py-10">
+          {activeCategories.map((category) => (
+            <PackagesSection
+              key={category._id || category.slug}
+              sectionId={category.slug}
+              aliasIds={category.slug === "tour-packages" ? ["packages"] : []}
+              title={category.name}
+              packages={packagesBySlug[category.slug] || []}
+            />
+          ))}
         </div>
       </main>
 

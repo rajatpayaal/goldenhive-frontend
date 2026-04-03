@@ -4,49 +4,60 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { LoginModal } from './LoginModal';
 
-export function Header() {
+const resolveAnchorId = (slug) => {
+  if (!slug) return "packages";
+  const normalized = slug.toLowerCase();
+  // Keep backwards-compat with the commonly-used #packages anchor.
+  if (normalized === "tour-packages") return "packages";
+  return normalized;
+};
+
+export function Header({ categories = [] }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const categoryLinks = categories.filter(
+    (category) => category?.isActive !== false && category?.name && category?.slug
+  );
 
   return (
     <>
-      <header className="site-header">
-        <div className="container nav-row">
-          <div className="brand" style={{ fontWeight: 800, fontSize: '1.5rem', letterSpacing: '-1px' }}>
-            <Link href="/">GoldenHive</Link>
+      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="text-xl font-black tracking-tight text-slate-900">
+              GoldenHive
+            </Link>
+            <span className="hidden rounded-full border border-black/5 bg-slate-50 px-3 py-1 text-xs font-extrabold text-slate-600 sm:inline-flex">
+              Premium Travel
+            </span>
           </div>
-          <nav className="main-nav" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            <Link href="/" style={{ padding: '8px 16px', background: 'var(--surface-color)', borderRadius: '999px', fontWeight: 600 }}>For you</Link>
-            <Link href="#activities" style={{ padding: '8px 16px', fontWeight: 500 }}>Activities</Link>
-            <Link href="#packages" style={{ padding: '8px 16px', fontWeight: 500 }}>Packages</Link>
+
+          <nav className="flex flex-1 flex-wrap items-center justify-center gap-2" aria-label="Tour categories">
+            {categoryLinks.length > 0 ? (
+              categoryLinks.map((category) => (
+                <Link
+                  key={category._id}
+                  className="inline-flex items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
+                  href={`#${resolveAnchorId(category.slug)}`}
+                >
+                  {category.name}
+                </Link>
+              ))
+            ) : (
+              <span className="text-sm font-semibold text-slate-500">Loading…</span>
+            )}
           </nav>
-          <div className="header-actions" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-             <button 
-                onClick={() => setIsLoginOpen(true)} 
-                style={{ 
-                  background: 'var(--surface-color)', 
-                  border: 'none', 
-                  padding: '8px 24px', 
-                  borderRadius: '999px', 
-                  fontWeight: 600, 
-                  cursor: 'pointer',
-                  color: 'var(--text-main)',
-                  transition: 'background 0.2s'
-                }}
-              >
-                Log In / Sign Up
-             </button>
-            <a 
-              className="whatsapp-cta" 
-              href="https://wa.me/919999999999" 
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsLoginOpen(true)}
+              className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
+            >
+              Log In / Sign Up
+            </button>
+            <a
+              href="https://wa.me/919999999999"
               aria-label="WhatsApp"
-              style={{
-                 background: 'var(--primary)',
-                 color: 'white',
-                 padding: '8px 20px',
-                 borderRadius: '999px',
-                 fontWeight: 600,
-                 textDecoration: 'none'
-              }}
+              className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-emerald-600"
             >
               WhatsApp
             </a>

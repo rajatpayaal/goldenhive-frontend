@@ -1,45 +1,70 @@
-const API_BASE = "https://goldenhive-backend-g1xv.onrender.com/api";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ||
+  process.env.GOLDENHIVE_API_BASE ||
+  "https://goldenhive-backend-g1xv.onrender.com/api";
+
+const buildUrl = (path, query = {}) => {
+  const url = new URL(`${API_BASE}${path}`);
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value === undefined || value === null || value === "") continue;
+    params.set(key, String(value));
+  }
+  url.search = params.toString();
+  return url.toString();
+};
 
 export const apiService = {
   async getHomeBanners() {
     try {
-      const res = await fetch(`${API_BASE}/banners?active=true`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/banners/active`, { next: { revalidate: 3600 } });
       if (!res.ok) return [];
       const json = await res.json();
-      return json.data || [];
+      const banners = json.data || [];
+      return banners.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     } catch (error) {
       console.error("Error fetching banners:", error);
       return [];
     }
   },
 
-  async getHomeActivities() {
+  async getCategories() {
     try {
-      const res = await fetch(`${API_BASE}/activities-v2?status=ACTIVE`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/categories`, { next: { revalidate: 3600 } });
       if (!res.ok) return [];
       const json = await res.json();
-      return json.data || [];
+      const categories = json.data || [];
+      return categories.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     } catch (error) {
-      console.error("Error fetching activities:", error);
+      console.error("Error fetching categories:", error);
       return [];
     }
   },
 
-  async getHomePackages() {
+  async getPackages({ categoryName, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
     try {
-      const res = await fetch(`${API_BASE}/packages-v2`, { next: { revalidate: 3600 } });
-      if (!res.ok) return [];
+      const url = buildUrl("/packages", { categoryName, destination, status, search, page, limit, sort });
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) return { items: [], total: 0, page, limit, totalPages: 0 };
       const json = await res.json();
-      return json.data || [];
+      const data = json?.data || {};
+      return {
+        items: data.items || [],
+        total: data.total ?? 0,
+        page: data.page ?? page,
+        limit: data.limit ?? limit,
+        totalPages: data.totalPages ?? 0,
+      };
     } catch (error) {
       console.error("Error fetching packages:", error);
-      return [];
+      return { items: [], total: 0, page, limit, totalPages: 0 };
     }
   },
+  
 
   async getPackageById(id) {
     try {
-      const res = await fetch(`${API_BASE}/packages-v2/${id}`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/packages/${id}`, { next: { revalidate: 3600 } });
       if (!res.ok) return null;
       const json = await res.json();
       return json.data || null;

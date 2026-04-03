@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import styles from './LoginModal.module.css';
 import { apiService } from '../services/api.service';
 
 export function LoginModal({ isOpen, onClose }) {
@@ -69,44 +68,68 @@ export function LoginModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>&times;</button>
-        
-        <div className={styles.header}>
-          <h2 className={styles.brand}>GoldenHive</h2>
-          <p className={styles.tagline}>Premium Travels</p>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-5 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.22)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+        <div className="bg-gradient-to-br from-slate-950 to-slate-900 px-8 py-7 text-white">
+          <div className="text-2xl font-black tracking-tight">GoldenHive</div>
+          <div className="mt-1 text-sm font-semibold text-white/80">Premium Travels</div>
         </div>
 
-        <div className={styles.body}>
+        <div className="px-8 py-7">
           {success ? (
-            <div style={{ padding: "40px 0" }}>
-              <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🎉</div>
-              <h2 className={styles.bodyTitle}>Welcome Aboard!</h2>
-              <p className={styles.bodySubtitle}>Your account has been successfully created.</p>
+            <div className="py-10 text-center">
+              <div className="text-5xl">🎉</div>
+              <h2 className="mt-5 text-2xl font-black tracking-tight text-slate-900">Welcome Aboard!</h2>
+              <p className="mt-2 text-sm font-semibold text-slate-600">
+                Your account has been successfully created.
+              </p>
             </div>
           ) : step === 1 ? (
             <>
-              <h2 className={styles.bodyTitle}>Enter your mobile number</h2>
-              <p className={styles.bodySubtitle}>If you don't have an account yet, we'll create one for you</p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-900">Enter your mobile number</h2>
+              <p className="mt-2 text-sm font-semibold text-slate-600">
+                If you don't have an account yet, we'll create one for you.
+              </p>
               
-              {error && <div className={styles.errorBox}>{error}</div>}
+              {error && (
+                <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-800">
+                  {error}
+                </div>
+              )}
 
-              <div className={styles.form}>
-                <div className={styles.inputGroup}>
-                  <div className={styles.countryCode}>🇮🇳 +91</div>
-                  <input 
-                    type="tel" 
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3">
+                  <div className="shrink-0 rounded-xl bg-slate-50 px-3 py-2 text-sm font-extrabold text-slate-700">
+                    🇮🇳 +91
+                  </div>
+                  <input
+                    type="tel"
                     name="phone"
-                    className={styles.input} 
-                    placeholder="Enter mobile number" 
+                    className="w-full border-0 bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+                    placeholder="Enter mobile number"
                     value={formData.phone}
                     onChange={handleInputChange}
                     autoFocus
                   />
                 </div>
-                <button 
-                  className={styles.submitBtn} 
+                <button
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={handleNext}
                   disabled={formData.phone.length < 5}
                 >
@@ -116,51 +139,59 @@ export function LoginModal({ isOpen, onClose }) {
             </>
           ) : (
             <>
-              <h2 className={styles.bodyTitle}>Complete Registration</h2>
-              <p className={styles.bodySubtitle}>Please provide your details below.</p>
+              <h2 className="text-2xl font-black tracking-tight text-slate-900">Complete Registration</h2>
+              <p className="mt-2 text-sm font-semibold text-slate-600">Please provide your details below.</p>
               
-              {error && <div className={styles.errorBox}>{error}</div>}
-
-              <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.inputGroup} style={{ borderRight: "1px solid var(--border)"}}>
-                  <input 
-                    type="text" 
-                    name="fullName"
-                    className={styles.input} 
-                    placeholder="Full Name" 
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    required
-                  />
+              {error && (
+                <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-800">
+                  {error}
                 </div>
-                
-                <div className={styles.inputGroup} style={{ borderRight: "1px solid var(--border)"}}>
-                  <input 
-                    type="email" 
-                    name="email"
-                    className={styles.input} 
-                    placeholder="Email Address" 
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+              )}
 
-                <div className={styles.inputGroup} style={{ borderRight: "1px solid var(--border)"}}>
-                  <input 
-                    type="password" 
-                    name="password"
-                    className={styles.input} 
-                    placeholder="Create a Password" 
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
+              <form className="mt-6 space-y-3" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="fullName"
+                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                  placeholder="Full Name"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                />
 
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button type="button" className={styles.submitBtn} style={{ background: '#f3f3f3', color: '#1c1c1c', flex: 1 }} onClick={() => setStep(1)}>Back</button>
-                  <button type="submit" className={styles.submitBtn} disabled={loading} style={{ flex: 2 }}>
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <input
+                  type="password"
+                  name="password"
+                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                  placeholder="Create a Password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <button
+                    type="button"
+                    className="col-span-1 inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-4 text-sm font-black text-slate-900 hover:bg-slate-50"
+                    onClick={() => setStep(1)}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="col-span-2 inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={loading}
+                  >
                     {loading ? "Registering..." : "Sign Up"}
                   </button>
                 </div>
@@ -169,9 +200,15 @@ export function LoginModal({ isOpen, onClose }) {
           )}
 
           {!success && (
-            <div className={styles.footer}>
-              By continuing, you agree to our <br/>
-              <a href="#!">Terms of Service</a> &nbsp; <a href="#!">Privacy Policy</a>
+            <div className="mt-7 border-t border-black/5 pt-5 text-center text-xs font-semibold text-slate-500">
+              By continuing, you agree to our{" "}
+              <a className="font-black text-slate-700 hover:text-emerald-700" href="#!">
+                Terms of Service
+              </a>{" "}
+              &{" "}
+              <a className="font-black text-slate-700 hover:text-emerald-700" href="#!">
+                Privacy Policy
+              </a>
             </div>
           )}
         </div>
