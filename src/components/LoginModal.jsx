@@ -7,8 +7,10 @@ import {
   resendOtpAction,
   verifyOtpAction,
 } from "../actions/auth.actions";
+import { useAuth } from "../hooks/useAuth";
 
 export function LoginModal({ isOpen, onClose }) {
+  const { setUser } = useAuth();
   const [mode, setMode] = useState("register"); // register | login
   const [step, setStep] = useState(1); // register steps: 1 -> phone, 2 -> details, 3 -> otp
   const [otp, setOtp] = useState("");
@@ -114,6 +116,10 @@ export function LoginModal({ isOpen, onClose }) {
     setLoading(false);
 
     if (ok) {
+      // Extract and set user data
+      if (data?.data?.user) {
+        setUser(data.data.user);
+      }
       // Token is stored in HttpOnly cookie by the Next.js route handler.
       setSuccess(true);
       setTimeout(() => {
@@ -160,7 +166,11 @@ export function LoginModal({ isOpen, onClose }) {
     const { ok, data } = await loginAction({
       email: formData.email,
       password: formData.password,
-    });
+    })// Extract and set user data
+      if (data?.data?.user) {
+        setUser(data.data.user);
+      }
+      ;
 
     setLoading(false);
     if (ok) {

@@ -18,9 +18,6 @@ export default function Header({ onLoginClick, onRegisterClick }) {
           <button className="btn btn-outline" onClick={onRegisterClick}>
             Register
           </button>
-          <a className="whatsapp-cta" href="https://wa.me/919999999999" aria-label="Chat on WhatsApp">
-            WhatsApp
-          </a>
         </div>
       </div>
     </header>

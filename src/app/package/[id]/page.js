@@ -1,5 +1,6 @@
 import { apiService } from "../../../services/api.service";
 import Link from "next/link";
+import { PackageAddToCart } from "../../../components/PackageAddToCart";
 
 async function resolvePackageId(slugOrId) {
   const decoded = decodeURIComponent(slugOrId || "");
@@ -531,25 +532,6 @@ export default async function PackageDetailsPage(context) {
 
             <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-black tracking-tight text-slate-900">Package Details</h2>
-              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {[
-                  ["Category", pkg.categoryId?.name || "-"],
-                  ["Package Code", pkg.packageCode || "-"],
-                  ["Status", pkg.meta?.status || "-"],
-                  ["Created", formatDateTime(pkg.createdAt) || "-"],
-                  ["Updated", formatDateTime(pkg.updatedAt) || "-"],
-                  ["ID", pkg._id],
-                ].map(([label, value]) => (
-                  <div key={label} className="rounded-2xl border border-black/5 bg-slate-50 p-5">
-                    <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                      {label}
-                    </div>
-                    <div className="mt-1 break-words text-sm font-black text-slate-900">
-                      {value}
-                    </div>
-                  </div>
-                ))}
-              </div>
 
               {(pkg.basic?.tags || []).length > 0 && (
                 <>
@@ -613,6 +595,11 @@ export default async function PackageDetailsPage(context) {
               )}
 
               <div className="mt-6 grid gap-3">
+                <PackageAddToCart 
+                  packageId={pkg._id} 
+                  packageName={pkg.basic?.name}
+                  packageData={pkg}
+                />
                 <a
                   href={`https://wa.me/${whatsapp}`}
                   className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] hover:bg-emerald-600"

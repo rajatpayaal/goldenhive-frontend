@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { LoginModal } from './LoginModal';
+import { UserMenu } from './UserMenu';
+import { useAuth } from '../hooks/useAuth';
 
 const resolveAnchorId = (slug) => {
   if (!slug) return "packages";
@@ -14,6 +16,7 @@ const resolveAnchorId = (slug) => {
 
 export function Header({ categories = [] }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { user, isLoading } = useAuth();
   const categoryLinks = categories.filter(
     (category) => category?.isActive !== false && category?.name && category?.slug
   );
@@ -48,19 +51,28 @@ export function Header({ categories = [] }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsLoginOpen(true)}
+            {/* Cart Button */}
+            <Link 
+              href="/cart"
               className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
+              aria-label="Shopping Cart"
             >
-              Log In / Sign Up
-            </button>
-            <a
-              href="https://wa.me/919999999999"
-              aria-label="WhatsApp"
-              className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-4 py-2 text-sm font-black text-white shadow-sm hover:bg-emerald-600"
-            >
-              WhatsApp
-            </a>
+              <span className="text-lg mr-2">🛒</span>
+              Cart
+            </Link>
+
+            {!isLoading && !user && (
+              <button
+                onClick={() => setIsLoginOpen(true)}
+                className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
+              >
+                Log In / Sign Up
+              </button>
+            )}
+
+            {!isLoading && user && (
+              <UserMenu />
+            )}
           </div>
         </div>
       </header>
