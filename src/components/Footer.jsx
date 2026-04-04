@@ -17,10 +17,10 @@ const InstagramIcon = (props) => (
   </svg>
 );
 
-const iconForSocial = (icon) => {
+const iconKeyForSocial = (icon) => {
   const normalized = String(icon || "").toLowerCase();
-  if (normalized.includes("facebook")) return FacebookIcon;
-  if (normalized.includes("instagram")) return InstagramIcon;
+  if (normalized.includes("facebook")) return "facebook";
+  if (normalized.includes("instagram")) return "instagram";
   return null;
 };
 
@@ -33,8 +33,13 @@ const FooterLink = ({ item, dark }) => {
     ? "inline-flex w-fit items-center gap-2 text-sm font-semibold text-white/75 hover:text-white"
     : "inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-700 hover:text-emerald-700";
 
-  const Icon = iconForSocial(item.icon);
-  const maybeIcon = Icon ? <Icon className="h-4 w-4" /> : null;
+  const iconKey = iconKeyForSocial(item.icon);
+  const maybeIcon =
+    iconKey === "facebook" ? (
+      <FacebookIcon className="h-4 w-4" />
+    ) : iconKey === "instagram" ? (
+      <InstagramIcon className="h-4 w-4" />
+    ) : null;
 
   if (item.isExternal || isExternalUrl(href)) {
     return (
