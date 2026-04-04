@@ -21,9 +21,10 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const [banners, categories] = await Promise.all([
+  const [banners, categories, footer] = await Promise.all([
     apiService.getHomeBanners(),
-    apiService.getCategories()
+    apiService.getCategories(),
+    apiService.getFooter({ isActive: true })
   ]);
 
   const activeCategories = (categories || []).filter((category) => category?.isActive !== false);
@@ -44,7 +45,7 @@ export default async function HomePage() {
       <main className="bg-slate-50">
         <BannerSlider banners={banners} />
 
-        <div className="mx-auto max-w-6xl space-y-10 px-5 py-10">
+        <div className="space-y-10 py-10">
           {activeCategories.map((category) => (
             <PackagesSection
               key={category._id || category.slug}
@@ -57,7 +58,7 @@ export default async function HomePage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer footer={footer} />
     </>
   );
 }

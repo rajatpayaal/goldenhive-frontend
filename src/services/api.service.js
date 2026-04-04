@@ -28,6 +28,32 @@ export const apiService = {
     }
   },
 
+  async getFooter({ isActive = true } = {}) {
+    try {
+      const url = buildUrl("/footer", { isActive });
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      const items = json.data || [];
+      return items[0] || null;
+    } catch (error) {
+      console.error("Error fetching footer:", error);
+      return null;
+    }
+  },
+
+  async getAboutUs() {
+    try {
+      const res = await fetch(`${API_BASE}/about-us`, { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error("Error fetching about-us:", error);
+      return null;
+    }
+  },
+
   async getCategories() {
     try {
       const res = await fetch(`${API_BASE}/categories`, { next: { revalidate: 3600 } });
@@ -86,18 +112,6 @@ export const apiService = {
     }
   },
 
-  async registerUser(userData) {
-    try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-      });
-      const json = await res.json();
-      return { ok: res.ok, data: json };
-    } catch (error) {
-      console.error(`Error registering user:`, error);
-      return { ok: false, error: error.message };
-    }
-  }
+  // Auth flows use Server Actions (see `src/actions/auth.actions.js`) so that
+  // HttpOnly cookies can be set from the server.
 };
