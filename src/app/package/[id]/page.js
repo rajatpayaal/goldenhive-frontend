@@ -185,7 +185,7 @@ export default async function PackageDetailsPage(context) {
   const heroImage = getHeroImage(pkg);
   const gallery = pkg.images?.gallery || [];
   const whatsapp = (pkg.cta?.whatsapp || "").replace("+", "");
-  const backAnchor = pkg.categoryId?.slug ? `/#${pkg.categoryId.slug}` : "/#packages";
+  const backHref = pkg.categoryId?.slug ? `/${pkg.categoryId.slug}` : "/tour-packages";
 
   const quickInfoEntries = Object.entries(pkg.quickInfo || {}).filter(([, value]) => value !== undefined && value !== null && value !== "");
   const travelInfoEntries = Object.entries(pkg.travelInfo || {}).filter(([, value]) => value !== undefined && value !== null && value !== "");
@@ -221,7 +221,7 @@ export default async function PackageDetailsPage(context) {
           <div className="container">
             <div className="min-h-[420px] h-[62vh] flex flex-col justify-end pb-14 pt-24 text-white">
               <Link
-                href={backAnchor}
+                href={backHref}
                 className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur hover:bg-white/15"
               >
                 <span aria-hidden="true">←</span> Back

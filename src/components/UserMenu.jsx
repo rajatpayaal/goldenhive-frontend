@@ -30,6 +30,9 @@ export function UserMenu() {
   const handleLogout = async () => {
     await logoutAction();
     setUser(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("gh_user");
+    }
     setIsOpen(false);
     // Redirect to home
     window.location.href = "/";

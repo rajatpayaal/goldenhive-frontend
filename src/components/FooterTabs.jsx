@@ -23,7 +23,7 @@ export function FooterTabs({ tabs }) {
             (names later; abhi IDs)
           </div>
         </div>
-        <Link className="text-sm font-black text-emerald-300 hover:text-emerald-200" href="#packages">
+        <Link className="text-sm font-black text-emerald-300 hover:text-emerald-200" href="/tour-packages">
           View all
         </Link>
       </div>

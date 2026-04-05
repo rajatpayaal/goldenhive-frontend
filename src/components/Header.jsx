@@ -7,11 +7,8 @@ import { UserMenu } from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
 
 const resolveAnchorId = (slug) => {
-  if (!slug) return "packages";
-  const normalized = slug.toLowerCase();
-  // Keep backwards-compat with the commonly-used #packages anchor.
-  if (normalized === "tour-packages") return "packages";
-  return normalized;
+  if (!slug) return "";
+  return slug.toLowerCase();
 };
 
 export function Header({ categories = [] }) {
@@ -25,14 +22,12 @@ export function Header({ categories = [] }) {
     <>
       <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-xl font-black tracking-tight text-slate-900">
-              GoldenHive
-            </Link>
+          <Link href="/" className="flex items-center gap-3 text-xl font-black tracking-tight text-slate-900 hover:text-emerald-700">
+            <span>GoldenHive</span>
             <span className="hidden rounded-full border border-black/5 bg-slate-50 px-3 py-1 text-xs font-extrabold text-slate-600 sm:inline-flex">
               Premium Travel
             </span>
-          </div>
+          </Link>
 
           <nav className="flex flex-1 flex-wrap items-center justify-center gap-2" aria-label="Tour categories">
             {categoryLinks.length > 0 ? (
@@ -40,7 +35,7 @@ export function Header({ categories = [] }) {
                 <Link
                   key={category._id}
                   className="inline-flex items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
-                  href={`#${resolveAnchorId(category.slug)}`}
+                  href={`/${resolveAnchorId(category.slug)}`}
                 >
                   {category.name}
                 </Link>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { BookingModal } from "@/components/BookingModal";
+import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 
 export default function CartPage() {
@@ -13,6 +14,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
@@ -93,9 +95,19 @@ export default function CartPage() {
       <div className="mx-auto max-w-6xl px-5 py-20 text-center">
         <h1 className="text-3xl font-black text-slate-900">Shopping Cart</h1>
         <p className="mt-4 text-slate-600">Please log in to view your cart.</p>
-        <Link href="/" className="mt-6 inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600">
-          Go Home
-        </Link>
+        <div className="mt-6 flex flex-col items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsLoginOpen(true)}
+            className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600"
+          >
+            Log In / Sign Up
+          </button>
+          <Link href="/" className="inline-flex rounded-2xl border border-black/10 bg-white px-6 py-3 text-slate-900 font-bold hover:bg-slate-50">
+            Go Home
+          </Link>
+        </div>
+        <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       </div>
     );
   }

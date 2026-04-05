@@ -84,7 +84,7 @@ export function BannerSlider({ banners }) {
                       {banner.heroCtaText || banner.ctaText || "Explore"}
                     </Link>
                     <Link
-                      href="#packages"
+                      href="/tour-packages"
                       className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-black text-white backdrop-blur hover:bg-white/15"
                     >
                       View Packages

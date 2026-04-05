@@ -116,9 +116,13 @@ export function LoginModal({ isOpen, onClose }) {
     setLoading(false);
 
     if (ok) {
-      // Extract and set user data
-      if (data?.data?.user) {
-        setUser(data.data.user);
+      let verifiedUser = data?.user || data?.data || data || null;
+      if (!verifiedUser) {
+        verifiedUser = await refreshCurrentUser();
+      }
+      if (verifiedUser) {
+        setUser(verifiedUser);
+        window.localStorage.setItem("gh_user", JSON.stringify(verifiedUser));
       }
       // Token is stored in HttpOnly cookie by the Next.js route handler.
       setSuccess(true);
@@ -139,6 +143,21 @@ export function LoginModal({ isOpen, onClose }) {
       }, 1200);
     } else {
       setError(data?.message || data?.error || "OTP verification failed.");
+    }
+  };
+
+  const refreshCurrentUser = async () => {
+    try {
+      const response = await fetch("/api/auth/me", {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) return null;
+      const result = await response.json();
+      return result?.data?.user || null;
+    } catch {
+      return null;
     }
   };
 
@@ -166,13 +185,20 @@ export function LoginModal({ isOpen, onClose }) {
     const { ok, data } = await loginAction({
       email: formData.email,
       password: formData.password,
-    })// Extract and set user data
-      if (data?.data?.user) {
-        setUser(data.data.user);
-      }
-      ;
+    });
+
+    let loggedInUser = data?.user || data?.data || data || null;
+    if (!loggedInUser && ok) {
+      loggedInUser = await refreshCurrentUser();
+    }
+
+    if (loggedInUser) {
+      setUser(loggedInUser);
+      window.localStorage.setItem("gh_user", JSON.stringify(loggedInUser));
+    }
 
     setLoading(false);
+
     if (ok) {
       setSuccess(true);
       setTimeout(() => {

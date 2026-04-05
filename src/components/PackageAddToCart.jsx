@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { addToCartAction } from "@/actions/cart.actions";
 import { BookingModal } from "./BookingModal";
+import { LoginModal } from "./LoginModal";
 
 export function PackageAddToCart({ packageId, packageName, packageData }) {
   const { user } = useAuth();
@@ -11,11 +12,11 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleAddToCart = async () => {
     if (!user) {
-      setMessage("Please log in to add items to cart");
-      setIsSuccess(false);
+      setIsLoginOpen(true);
       return;
     }
 
@@ -46,10 +47,10 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={handleAddToCart}
-          disabled={loading || !user}
+          disabled={loading}
           className={`inline-flex items-center justify-center rounded-2xl px-5 py-4 text-base font-black shadow-[0_14px_30px_rgba(16,185,129,0.35)] transition ${
             !user
-              ? "cursor-not-allowed bg-slate-200 text-slate-500"
+              ? "bg-slate-200 text-slate-500"
               : isSuccess
                 ? "bg-sky-500 text-white hover:bg-sky-600"
                 : "bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
@@ -61,17 +62,17 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
         <button
           onClick={() => {
             if (!user) {
-              setMessage("Please log in to book");
+              setIsLoginOpen(true);
               return;
             }
             setIsBookingOpen(true);
           }}
-          disabled={!user}
           className={`inline-flex items-center justify-center rounded-2xl px-5 py-4 text-base font-black shadow-[0_14px_30px_rgba(14,165,233,0.35)] transition ${
             !user
-              ? "cursor-not-allowed bg-slate-200 text-slate-500"
+              ? "bg-slate-200 text-slate-500"
               : "bg-sky-500 text-white hover:bg-sky-600"
           }`}
+          type="button"
         >
           ✈️ Book Now
         </button>
@@ -96,6 +97,8 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
           setIsSuccess(true);
         }}
       />
+
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 }

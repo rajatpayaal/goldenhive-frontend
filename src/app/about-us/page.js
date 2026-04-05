@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { apiService } from "../../services/api.service";
-import { Header } from "../../components/Header";
-import { Footer } from "../../components/Footer";
 
 const firstImageUrl = (images) => {
   const list = Array.isArray(images) ? images : [];
@@ -66,24 +64,20 @@ export default async function AboutUsPage() {
 
   if (!about) {
     return (
-      <>
-        <Header categories={activeCategories} />
-        <main className="bg-slate-50">
-          <div className="mx-auto flex min-h-[60vh] max-w-6xl flex-col items-center justify-center px-5 py-24 text-center">
-            <h1 className="text-3xl font-black tracking-tight text-slate-900">About Us</h1>
-            <p className="mt-3 max-w-xl text-sm font-semibold text-slate-600">
-              Content is not available right now. Please try again later.
-            </p>
-            <Link
-              href="/"
-              className="mt-7 inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 text-sm font-black text-white hover:bg-emerald-600"
-            >
-              Back to Home
-            </Link>
-          </div>
-        </main>
-        <Footer footer={footer} />
-      </>
+      <main className="bg-slate-50">
+        <div className="mx-auto flex min-h-[60vh] max-w-6xl flex-col items-center justify-center px-5 py-24 text-center">
+          <h1 className="text-3xl font-black tracking-tight text-slate-900">About Us</h1>
+          <p className="mt-3 max-w-xl text-sm font-semibold text-slate-600">
+            Content is not available right now. Please try again later.
+          </p>
+          <Link
+            href="/"
+            className="mt-7 inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 text-sm font-black text-white hover:bg-emerald-600"
+          >
+            Back to Home
+          </Link>
+        </div>
+      </main>
     );
   }
 
@@ -100,10 +94,7 @@ export default async function AboutUsPage() {
   };
 
   return (
-    <>
-      <Header categories={activeCategories} />
-
-      <main className="bg-slate-50">
+    <main className="bg-slate-50">
         {show.hero && (
           <section className="relative overflow-hidden bg-slate-950">
             <div
@@ -131,7 +122,7 @@ export default async function AboutUsPage() {
                     Our mission
                   </Link>
                   <Link
-                    href="/#packages"
+                    href="/tour-packages"
                     className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-6 py-4 text-sm font-black text-white backdrop-blur hover:bg-white/15"
                   >
                     Explore packages
@@ -376,7 +367,7 @@ export default async function AboutUsPage() {
                 </h2>
               </div>
               <Link
-                href="/#packages"
+                href="/tour-packages"
                 className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 text-sm font-black text-white hover:bg-emerald-600"
               >
                 Explore packages
@@ -385,9 +376,6 @@ export default async function AboutUsPage() {
           </section>
         </div>
       </main>
-
-      <Footer footer={footer} />
-    </>
-  );
+    );
 }
 

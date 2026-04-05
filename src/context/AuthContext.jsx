@@ -9,19 +9,38 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch user data from server on mount
+    const savedUser = typeof window !== "undefined" ? window.localStorage.getItem("gh_user") : null;
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {
+        window.localStorage.removeItem("gh_user");
+      }
+    }
+
     const fetchUser = async () => {
       try {
         const response = await fetch("/api/auth/me", {
           method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         if (response.ok) {
           const { data } = await response.json();
-          setUser(data?.user || null);
+          const fetchedUser = data?.user || data?.data || data || null;
+          setUser(fetchedUser);
+          if (fetchedUser) {
+            window.localStorage.setItem("gh_user", JSON.stringify(fetchedUser));
+          } else {
+            window.localStorage.removeItem("gh_user");
+          }
+        } else {
+          setUser(null);
+          window.localStorage.removeItem("gh_user");
         }
       } catch (error) {
-        // User not authenticated
         setUser(null);
       } finally {
         setIsLoading(false);
