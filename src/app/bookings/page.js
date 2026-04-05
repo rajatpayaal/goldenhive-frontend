@@ -102,7 +102,7 @@ export default function BookingsPage() {
       <div className="mx-auto max-w-6xl px-5 py-12">
         <h1 className="text-3xl font-black text-slate-900 mb-8">My Bookings</h1>
         <div className="rounded-3xl border border-black/10 bg-slate-50 p-8 text-center">
-          <p className="text-lg font-semibold text-slate-600">You don't have any bookings yet.</p>
+          <p className="text-lg font-semibold text-slate-600">You don&apos;t have any bookings yet.</p>
           <Link href="/" className="mt-6 inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600">
             Browse Packages
           </Link>
