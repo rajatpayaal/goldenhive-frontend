@@ -13,14 +13,11 @@ export function FooterTabs({ tabs }) {
   const currentTab = safeTabs[safeActiveTab];
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-gray/5 p-6">
+    <div className="border border-white/10 bg-gray/5 p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
-            Browse by category
-          </div>
-          <div className="mt-1 text-xs font-semibold text-white/55">
-            (names later; abhi IDs)
+             category
           </div>
         </div>
         <Link className="text-sm font-black text-emerald-300 hover:text-emerald-200" href="/tour-packages">
@@ -29,35 +26,49 @@ export function FooterTabs({ tabs }) {
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {safeTabs.map((tab, idx) => (
-          <button
-            key={tab.categoryId || idx}
-            className={[
-              "rounded-full px-4 py-2 text-sm font-extrabold transition",
-              idx === safeActiveTab
-                ? "bg-white text-slate-950"
-                : "border border-white/10 bg-white/5 text-white hover:bg-white/10",
+        {safeTabs.map((tab, idx) => {
+          const label = tab.categoryId?.name || tab.categoryId || `Category ${idx + 1}`;
+          const key = tab.categoryId?._id || label || idx;
+
+          return (
+            <button
+              key={key}
+              className={[
+                "px-4 py-2 text-sm font-extrabold transition",
+                idx === safeActiveTab
+              ?"border border-emerald-300 bg-emerald-500/10 text-white"
+              : "text-white/80 hover:bg-white/10"
             ].join(" ")}
             onClick={() => setActiveTab(idx)}
             type="button"
           >
-            {tab.categoryId}
+            {label}
           </button>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {(currentTab?.packageIds || []).map((pkgId) => (
-          <Link
-            key={pkgId}
-            href={`/package/${pkgId}`}
-            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/80 hover:border-emerald-300/30 hover:bg-emerald-500/10 hover:text-white"
-          >
-            {pkgId}
-          </Link>
-        ))}
-        {(currentTab?.packageIds || []).length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/60">
+        {((currentTab?.categoryPackages || []).length > 0
+          ? currentTab.categoryPackages
+          : currentTab?.packageIds || []).map((pkg, idx) => {
+          const packageObj = typeof pkg === "string" ? { id: pkg, name: pkg } : pkg;
+          const packageId = packageObj.packageCode || packageObj._id || packageObj.id || `pkg-${idx}`;
+          const packageName = packageObj.basic?.name || packageObj.name || packageObj.slug || packageId;
+          const href = packageObj.basic?.slug ? `/package/${packageObj.basic.slug}` : `/package/${packageId}`;
+
+          return (
+            <Link
+              key={packageId}
+              href={href}
+              className="text-sm font-semibold text-white/80 hover:text-emerald-300"
+            >
+              {packageName}
+            </Link>
+          );
+        })}
+        {((currentTab?.categoryPackages || []).length === 0 && (currentTab?.packageIds || []).length === 0) && (
+          <div className="border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/60">
             No links yet.
           </div>
         )}

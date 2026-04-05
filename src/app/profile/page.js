@@ -2,17 +2,13 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import Loader from "@/components/Loader";
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">My Profile</h1>
-        <p className="mt-4 text-slate-600">Checking your login status...</p>
-      </div>
-    );
+    return <Loader message="Loading profile..." />;
   }
 
   if (!user) {

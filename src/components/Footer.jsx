@@ -78,7 +78,7 @@ export function Footer({ footer }) {
             </div>
           )}
 
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-10 md:grid-cols-3 lg:grid-cols-4">
             {columns.map((col) => (
               <div key={col.title} className="space-y-4">
                 <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
@@ -95,6 +95,27 @@ export function Footer({ footer }) {
                 </div>
               </div>
             ))}
+
+            {footer?.qrCode?.isActive && (
+              <div className="space-y-4">
+                <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
+                  {footer.qrCode.title || "Download App"}
+                </div>
+                {footer.qrCode.subtitle && (
+                  <p className="text-sm text-white/70">{footer.qrCode.subtitle}</p>
+                )}
+                {footer.qrCode.imageUrl && (
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-5">
+                    <img
+                      src={footer.qrCode.imageUrl}
+                      alt={footer.qrCode.title || "QR code"}
+                      loading="lazy"
+                      className="h-auto w-full object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="mt-12 flex flex-col gap-6 border-t border-white/10 pt-7 md:flex-row md:items-center md:justify-between">
@@ -105,7 +126,11 @@ export function Footer({ footer }) {
               </div>
             </div>
             <div className="text-xs font-medium leading-6 text-white/55">
-              By accessing this page, you confirm that you have read, understood, and agreed to our Terms of Service, Cookie Policy, Privacy Policy, and Content Guidelines.
+              By accessing this page, you confirm that you have read, understood, and agreed to our{" "}
+              <Link href="/policies" className="text-white/75 hover:text-white underline">
+                Policies
+              </Link>
+              , Terms of Service, Cookie Policy, Privacy Policy, and Content Guidelines.
             </div>
           </div>
         </div>

@@ -31,15 +31,17 @@ export function Header({ categories = [] }) {
 
           <nav className="flex flex-1 flex-wrap items-center justify-center gap-2" aria-label="Tour categories">
             {categoryLinks.length > 0 ? (
-              categoryLinks.map((category) => (
-                <Link
-                  key={category._id}
-                  className="inline-flex items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
-                  href={`/${resolveAnchorId(category.slug)}`}
-                >
-                  {category.name}
-                </Link>
-              ))
+              <>
+                {categoryLinks.map((category) => (
+                  <Link
+                    key={category._id}
+                    className="inline-flex items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
+                    href={`/${resolveAnchorId(category.slug)}`}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </>
             ) : (
               <span className="text-sm font-semibold text-slate-500">Loading…</span>
             )}

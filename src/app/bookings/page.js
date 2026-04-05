@@ -6,6 +6,7 @@ import { getMyBookingsAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
+import Loader from "@/components/Loader";
 
 export default function BookingsPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -65,12 +66,7 @@ export default function BookingsPage() {
   }, [authLoading, user, hasToken]);
 
   if (authLoading || (loading && (user || hasToken))) {
-    return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">My Bookings</h1>
-        <p className="mt-4 text-slate-600">Loading your bookings...</p>
-      </div>
-    );
+    return <Loader message="Loading your bookings..." />;
   }
 
   if (!user && !hasToken) {
@@ -163,7 +159,7 @@ export default function BookingsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-600">Check-out</p>
+                    <p className=" text-xs font-bold text-slate-600">Check-out</p>
                     <p className="mt-1 font-semibold text-slate-900">
                       {booking.endDate ? new Date(booking.endDate).toLocaleDateString("en-IN") : "-"}
                     </p>

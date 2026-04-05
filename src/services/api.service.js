@@ -112,6 +112,56 @@ export const apiService = {
     }
   },
 
+  async getBlogs({ isPublished = true } = {}) {
+    try {
+      const url = buildUrl("/blogs", { isPublished });
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      return [];
+    }
+  },
+
+  async getBlogById(id) {
+    try {
+      const res = await fetch(`${API_BASE}/blogs/${id}`, { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error(`Error fetching blog ${id}:`, error);
+      return null;
+    }
+  },
+
+  async getPolicies({ isActive = true } = {}) {
+    try {
+      const url = buildUrl("/policies", { isActive });
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (error) {
+      console.error("Error fetching policies:", error);
+      return [];
+    }
+  },
+
+  async getPolicyById(id) {
+    try {
+      const res = await fetch(`${API_BASE}/policies/${id}`, { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error(`Error fetching policy ${id}:`, error);
+      return null;
+    }
+  },
+
   // Auth flows use Server Actions (see `src/actions/auth.actions.js`) so that
   // HttpOnly cookies can be set from the server.
 };
