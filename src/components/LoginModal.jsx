@@ -10,7 +10,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 
 export function LoginModal({ isOpen, onClose }) {
-  const { setUser } = useAuth();
+  const { setUser, refreshUser } = useAuth();
   const [mode, setMode] = useState("register"); // register | login
   const [step, setStep] = useState(1); // register steps: 1 -> phone, 2 -> details, 3 -> otp
   const [otp, setOtp] = useState("");
@@ -210,12 +210,16 @@ export function LoginModal({ isOpen, onClose }) {
 
     if (ok) {
       let verifiedUser = data?.user || data?.data || data || null;
-      if (!verifiedUser) {
-        verifiedUser = await refreshCurrentUser();
+      if (refreshUser) {
+        try {
+          const me = await refreshUser();
+          if (me) verifiedUser = me;
+        } catch {
+          // ignore and fallback to response user, if any
+        }
       }
       if (verifiedUser) {
         setUser(verifiedUser);
-        window.localStorage.setItem("gh_user", JSON.stringify(verifiedUser));
       }
       // Token is stored in HttpOnly cookie by the Next.js route handler.
       setSuccess(true);
@@ -238,21 +242,6 @@ export function LoginModal({ isOpen, onClose }) {
       }, 1200);
     } else {
       setError(data?.message || data?.error || "OTP verification failed.");
-    }
-  };
-
-  const refreshCurrentUser = async () => {
-    try {
-      const response = await fetch("/api/auth/me", {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) return null;
-      const result = await response.json();
-      return result?.data?.user || null;
-    } catch {
-      return null;
     }
   };
 
@@ -283,13 +272,17 @@ export function LoginModal({ isOpen, onClose }) {
     });
 
     let loggedInUser = data?.user || data?.data || data || null;
-    if (!loggedInUser && ok) {
-      loggedInUser = await refreshCurrentUser();
+    if (ok && refreshUser) {
+      try {
+        const me = await refreshUser();
+        if (me) loggedInUser = me;
+      } catch {
+        // ignore and fallback to response user, if any
+      }
     }
 
     if (loggedInUser) {
       setUser(loggedInUser);
-      window.localStorage.setItem("gh_user", JSON.stringify(loggedInUser));
     }
 
     setLoading(false);

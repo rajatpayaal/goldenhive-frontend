@@ -30,6 +30,9 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
       if (response.ok) {
         setMessage(`${packageName} added to cart!`);
         setIsSuccess(true);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("gh_cart_updated"));
+        }
       } else {
         setMessage(response.data?.message || response.data?.error || "Failed to add to cart");
         setIsSuccess(false);

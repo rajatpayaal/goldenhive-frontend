@@ -1,4 +1,5 @@
 import { BannerSlider } from "../components/BannerSlider";
+import { CustomRequestCallout } from "../components/CustomRequestCallout";
 import { PackagesSection } from "../components/PackagesSection";
 import { apiService } from "../services/api.service";
 import ScrollToSection from "../components/ScrollToSection";
@@ -24,6 +25,7 @@ export default async function HomeContent({ initialSection }) {
     <main className="bg-slate-50">
       {initialSection ? <ScrollToSection sectionId={initialSection} /> : null}
       <BannerSlider banners={banners} />
+      <CustomRequestCallout />
 
       <div className="space-y-10 py-10">
         {activeCategories.map((category) => (

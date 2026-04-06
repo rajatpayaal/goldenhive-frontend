@@ -210,7 +210,7 @@ export default function BookingsPage() {
                 <div className="mt-6 space-y-2">
                   {booking.status === "REQUESTED" && (
                     <a
-                      href={`https://wa.me/919999999999?text=I%20have%20a%20booking%20request%20${encodeURIComponent(booking.bookingNo || booking._id)}`}
+                      href={`https://wa.me/7505917525?text=I%20have%20a%20booking%20request%20${encodeURIComponent(booking.bookingNo || booking._id)}`}
                       className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600"
                       target="_blank"
                       rel="noopener noreferrer"

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { LoginModal } from './LoginModal';
 import { UserMenu } from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
+import { useDispatch, useSelector } from "react-redux";
+import { cartActions, refreshCartCount } from "@/store";
 
 const resolveAnchorId = (slug) => {
   if (!slug) return "";
@@ -14,9 +16,26 @@ const resolveAnchorId = (slug) => {
 export function Header({ categories = [] }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { user, isLoading } = useAuth();
+  const dispatch = useDispatch();
+  const cartCount = useSelector((state) => state.cart.count);
   const categoryLinks = categories.filter(
     (category) => category?.isActive !== false && category?.name && category?.slug
   );
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) {
+      dispatch(cartActions.clearCart());
+      return;
+    }
+    dispatch(refreshCartCount());
+  }, [dispatch, isLoading, user]);
+
+  useEffect(() => {
+    const handler = () => dispatch(refreshCartCount());
+    window.addEventListener("gh_cart_updated", handler);
+    return () => window.removeEventListener("gh_cart_updated", handler);
+  }, [dispatch]);
 
   return (
     <>
@@ -48,14 +67,24 @@ export function Header({ categories = [] }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            {/* Cart Button */}
+            <Link
+              href="/custom-requests"
+              className="inline-flex items-center justify-center rounded-2xl border border-emerald-500 bg-emerald-500/10 px-4 py-2 text-sm font-black text-emerald-700 hover:bg-emerald-500/20"
+            >
+              Custom Request
+            </Link>
             <Link 
               href="/cart"
-              className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
+              className="relative inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
               aria-label="Shopping Cart"
             >
               <span className="text-lg mr-2">🛒</span>
               Cart
+              {cartCount > 0 && (
+                <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-black text-white shadow-sm">
+                  {cartCount}
+                </span>
+              )}
             </Link>
 
             {!isLoading && !user && (

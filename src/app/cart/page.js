@@ -72,6 +72,9 @@ export default function CartPage() {
       if (response.ok) {
         setCartItems((current) => current.filter((item) => item._id !== packageId));
         setError("");
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("gh_cart_updated"));
+        }
       } else {
         setError(response.data?.message || response.data?.error || "Failed to remove item.");
       }
@@ -208,7 +211,7 @@ export default function CartPage() {
                 Proceed to Booking
               </Link>
               <a
-                href="https://wa.me/919999999999?text=I%20want%20to%20book%20these%20packages"
+                href="https://wa.me/7505917525?text=I%20want%20to%20book%20these%20packages"
                 className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(14,165,233,0.35)] hover:bg-sky-600"
                 target="_blank"
                 rel="noopener noreferrer"

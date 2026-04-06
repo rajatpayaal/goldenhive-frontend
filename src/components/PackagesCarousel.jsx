@@ -21,6 +21,28 @@ const formatDuration = (pkg) => {
   return "Duration TBA";
 };
 
+const formatInr = (value) => {
+  const numeric = typeof value === "string" && value.trim() === "" ? NaN : Number(value);
+  if (Number.isFinite(numeric)) {
+    return numeric.toLocaleString("en-IN");
+  }
+  return value ?? "TBA";
+};
+
+const calcSavings = ({ basePrice, finalPrice, discountPercent }) => {
+  const base = Number(basePrice);
+  const final = Number(finalPrice);
+  if (Number.isFinite(base) && Number.isFinite(final) && base > final) {
+    return base - final;
+  }
+  // Fallback: derive from discountPercent when possible.
+  const pct = Number(discountPercent);
+  if (Number.isFinite(base) && Number.isFinite(pct) && pct > 0) {
+    return Math.round((base * pct) / 100);
+  }
+  return null;
+};
+
 export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500 }) {
   const scrollerRef = useRef(null);
   const [paused, setPaused] = useState(false);
@@ -79,12 +101,6 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
             <div className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
               {formatDuration(pkg)}
             </div>
-
-            {pkg.pricing?.discountPercent > 0 && (
-              <div className="absolute right-4 top-4 inline-flex items-center rounded-full bg-emerald-500 px-3 py-1 text-xs font-black text-white shadow-sm">
-                {pkg.pricing.discountPercent}% OFF
-              </div>
-            )}
           </div>
 
           <div className="p-6">
@@ -101,13 +117,26 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
             <div className="mt-5 flex items-end justify-between gap-4 border-t border-black/5 pt-4">
               <div>
                 {pkg.pricing?.discountPercent > 0 && (
-                  <div className="text-xs font-bold text-slate-400 line-through">
-                    ₹{pkg.pricing.basePrice}
-                  </div>
+                  <>
+                    <div className="text-xs font-bold text-slate-400 line-through">
+                      ₹{formatInr(pkg.pricing.basePrice)}
+                    </div>
+                    <div className="mt-1 text-[11px] font-black text-emerald-700">
+                      {pkg.pricing.discountPercent}% OFF
+                      {(() => {
+                        const savings = calcSavings({
+                          basePrice: pkg.pricing.basePrice,
+                          finalPrice: pkg.pricing.finalPrice ?? pkg.pricing?.finalPrice,
+                          discountPercent: pkg.pricing.discountPercent,
+                        });
+                        return savings ? ` · Save ₹${formatInr(savings)}` : "";
+                      })()}
+                    </div>
+                  </>
                 )}
                 <div className="flex items-end gap-2">
                   <div className="text-2xl font-black tracking-tight text-slate-900">
-                    ₹{pkg.pricing?.finalPrice ?? pkg.basic?.finalPrice ?? "TBA"}
+                    ₹{formatInr(pkg.pricing?.finalPrice ?? pkg.basic?.finalPrice)}
                   </div>
                   <div className="pb-1 text-xs font-semibold text-slate-500">/ person</div>
                 </div>
@@ -122,4 +151,3 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
     </div>
   );
 }
-
