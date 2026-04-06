@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FooterTabs } from "./FooterTabs";
 
 const isExternalUrl = (url) =>
@@ -106,10 +107,11 @@ export function Footer({ footer }) {
                 )}
                 {footer.qrCode.imageUrl && (
                   <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-5">
-                    <img
+                    <Image
                       src={footer.qrCode.imageUrl}
                       alt={footer.qrCode.title || "QR code"}
-                      loading="lazy"
+                      width={320}
+                      height={320}
                       className="h-auto w-full object-contain"
                     />
                   </div>

@@ -7,6 +7,7 @@ import { createBookingAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
+import Image from "next/image";
 import Loader from "@/components/Loader";
 
 export default function BookingPage() {
@@ -302,9 +303,11 @@ export default function BookingPage() {
                 <div key={item._id} className="flex items-center gap-4 rounded-2xl border border-black/5 bg-slate-50 p-4">
                   <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
                     {item.images?.primary?.url && (
-                      <img
+                      <Image
                         src={item.images.primary.url}
                         alt={item.basic?.name}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     )}

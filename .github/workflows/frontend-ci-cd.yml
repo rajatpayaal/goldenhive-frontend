@@ -13,6 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Remove leftover Next build
+        run: rm -rf .next
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
