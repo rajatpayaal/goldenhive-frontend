@@ -151,7 +151,7 @@ export default function BookingsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                   <div>
                     <p className="text-xs font-bold text-slate-600">Check-in</p>
                     <p className="mt-1 font-semibold text-slate-900">
@@ -202,7 +202,7 @@ export default function BookingsPage() {
               <div className="md:text-right">
                 <div>
                   <p className="text-xs font-bold text-slate-600">Total Amount</p>
-                  <p className="mt-1 text-3xl font-black text-slate-900">
+                  <p className="mt-1 break-words text-2xl font-black text-slate-900 sm:text-3xl">
                     {booking.totalAmount && booking.totalAmount > 0 ? `₹${booking.totalAmount.toLocaleString("en-IN")}` : "TBA"}
                   </p>
                 </div>

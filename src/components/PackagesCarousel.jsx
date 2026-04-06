@@ -88,7 +88,7 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
         <Link
           href={`/package/${pkg.basic?.slug || pkg._id}`}
           key={pkg._id || pkg.basic?.slug || index}
-          className="group relative w-[320px] shrink-0 snap-start overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(2,6,23,0.10)]"
+          className="group relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(2,6,23,0.10)] sm:w-[320px]"
           data-card
         >
           <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
@@ -103,7 +103,7 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-5 sm:p-6">
             <div className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
               {pkg.basic?.destination || "Uttarakhand"}
             </div>

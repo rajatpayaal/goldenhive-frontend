@@ -384,7 +384,7 @@ export default function BookingPage() {
 
         {/* Booking Summary */}
         <div className="space-y-6">
-          <div className="rounded-3xl border border-black/10 bg-white p-6 sticky top-6">
+          <div className="rounded-3xl border border-black/10 bg-white p-6 lg:sticky lg:top-28">
             <h2 className="text-xl font-black text-slate-900 mb-4">Booking Details</h2>
 
             <div className="space-y-4">

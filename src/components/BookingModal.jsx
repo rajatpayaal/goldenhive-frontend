@@ -87,7 +87,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.22)]"
+        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.22)] max-h-[calc(100vh-3.5rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -98,12 +98,15 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
           ×
         </button>
 
-        <div className="bg-gradient-to-br from-slate-950 to-slate-900 px-8 py-7 text-white">
+        <div className="bg-gradient-to-br from-slate-950 to-slate-900 px-6 py-6 text-white sm:px-8 sm:py-7">
           <div className="text-2xl font-black tracking-tight">Complete Booking</div>
           <div className="mt-1 text-sm font-semibold text-white/80">Step {step} of 3</div>
         </div>
 
-        <div className="px-8 py-7">
+        <div
+          className="px-6 py-6 overflow-y-auto sm:px-8 sm:py-7"
+          style={{ maxHeight: "calc(100vh - 10.5rem)" }}
+        >
           {step === 3 ? (
             <div className="py-10 text-center">
               <div className="text-5xl">✓</div>

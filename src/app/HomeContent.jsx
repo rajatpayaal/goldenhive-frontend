@@ -27,7 +27,7 @@ export default async function HomeContent({ initialSection }) {
       <BannerSlider banners={banners} />
       <CustomRequestCallout />
 
-      <div className="space-y-10 py-10">
+      <div className="space-y-8 py-8 sm:space-y-10 sm:py-10">
         {activeCategories.map((category) => (
           <PackagesSection
             key={category._id || category.slug}

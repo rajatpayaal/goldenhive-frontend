@@ -28,7 +28,7 @@ export function BannerSlider({ banners }) {
   if (!banners || banners.length === 0) return null;
 
   return (
-    <section className="relative min-h-[420px] w-full overflow-hidden bg-slate-900 shadow-[0_18px_45px_rgba(2,6,23,0.12)] sm:min-h-[480px]">
+    <section className="relative min-h-[340px] w-full overflow-hidden bg-slate-900 shadow-[0_18px_45px_rgba(2,6,23,0.12)] sm:min-h-[420px] lg:min-h-[480px]">
       {banners.map((banner, index) => (
         <div
           key={banner._id}
@@ -63,12 +63,12 @@ export function BannerSlider({ banners }) {
 
           <div className="relative">
             <div className="mx-auto max-w-6xl px-5">
-              <div className="flex min-h-[420px] flex-col justify-end pb-12 pt-24 text-white sm:min-h-[480px]">
+              <div className="flex min-h-[340px] flex-col justify-end pb-10 pt-20 text-white sm:min-h-[420px] sm:pb-12 sm:pt-24 lg:min-h-[480px]">
                 <p className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-wider backdrop-blur">
                   {banner.seoTitle || "GoldenHive"}
                 </p>
 
-                <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+                <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl lg:text-6xl">
                   {banner.title}
                 </h1>
                 <p className="mt-4 max-w-2xl text-base font-medium text-white/90 sm:text-lg">

@@ -326,12 +326,12 @@ export function CustomRequestFlow() {
             ) : (
               requests.map((request) => (
                 <div key={request?._id || request?.id} className="rounded-2xl border border-black/5 bg-slate-50 px-4 py-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-slate-900">{request.destination || "Custom itinerary"}</p>
-                    <span
-                      className={`px-3 py-1 text-xs font-black uppercase tracking-[0.2em] ${
-                        String(request.status || "").toUpperCase() === "COMPLETED"
-                          ? "text-emerald-700"
+                <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center">
+                  <p className="font-semibold text-slate-900">{request.destination || "Custom itinerary"}</p>
+                  <span
+                    className={`px-3 py-1 text-xs font-black uppercase tracking-[0.2em] ${
+                      String(request.status || "").toUpperCase() === "COMPLETED"
+                        ? "text-emerald-700"
                           : String(request.status || "").toUpperCase() === "REJECTED"
                           ? "text-rose-700"
                           : "text-slate-700"
@@ -358,7 +358,7 @@ export function CustomRequestFlow() {
             <p className="mt-1 text-sm text-slate-500">
               Fetch a request by ID to see its status and suggest updates.
             </p>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <input
                 className="flex-1 rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
                 placeholder="Custom request ID"
@@ -368,7 +368,7 @@ export function CustomRequestFlow() {
               <button
                 onClick={handleAdminFetch}
                 disabled={adminLoading}
-                className="rounded-2xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-[0.3em] text-white hover:bg-slate-800 disabled:opacity-60"
+                className="w-full rounded-2xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-[0.3em] text-white hover:bg-slate-800 disabled:opacity-60 sm:w-auto"
               >
                 {adminLoading ? "Fetching…" : "Load"}
               </button>
