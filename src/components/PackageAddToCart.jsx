@@ -6,7 +6,14 @@ import { addToCartAction } from "@/actions/cart.actions";
 import { BookingModal } from "./BookingModal";
 import { LoginModal } from "./LoginModal";
 
-export function PackageAddToCart({ packageId, packageName, packageData }) {
+export function PackageAddToCart({
+  packageId,
+  packageName,
+  packageData,
+  showBookNow = true,
+  showMessage = true,
+  size = "md",
+}) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -45,13 +52,15 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
     }
   };
 
+  const padClasses = size === "sm" ? "px-4 py-3 text-sm" : "px-5 py-4 text-base";
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className={showBookNow ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-3"}>
         <button
           onClick={handleAddToCart}
           disabled={loading}
-          className={`inline-flex items-center justify-center rounded-2xl px-5 py-4 text-base font-black shadow-[0_14px_30px_rgba(16,185,129,0.35)] transition ${
+          className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(16,185,129,0.35)] transition ${
             !user
               ? "bg-slate-200 text-slate-500"
               : isSuccess
@@ -62,26 +71,28 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
           {loading ? "Adding..." : isSuccess ? "✓ Added" : "🛒 Add to Cart"}
         </button>
 
-        <button
-          onClick={() => {
-            if (!user) {
-              setIsLoginOpen(true);
-              return;
-            }
-            setIsBookingOpen(true);
-          }}
-          className={`inline-flex items-center justify-center rounded-2xl px-5 py-4 text-base font-black shadow-[0_14px_30px_rgba(14,165,233,0.35)] transition ${
-            !user
-              ? "bg-slate-200 text-slate-500"
-              : "bg-sky-500 text-white hover:bg-sky-600"
-          }`}
-          type="button"
-        >
-          ✈️ Book Now
-        </button>
+        {showBookNow ? (
+          <button
+            onClick={() => {
+              if (!user) {
+                setIsLoginOpen(true);
+                return;
+              }
+              setIsBookingOpen(true);
+            }}
+            className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(14,165,233,0.35)] transition ${
+              !user
+                ? "bg-slate-200 text-slate-500"
+                : "bg-sky-500 text-white hover:bg-sky-600"
+            }`}
+            type="button"
+          >
+            ✈️ Book Now
+          </button>
+        ) : null}
       </div>
 
-      {message && (
+      {showMessage && message && (
         <div className={`mt-3 rounded-2xl px-4 py-3 text-sm font-semibold text-center ${
           isSuccess
             ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
@@ -91,15 +102,17 @@ export function PackageAddToCart({ packageId, packageName, packageData }) {
         </div>
       )}
 
-      <BookingModal 
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        packages={packageData ? [packageData] : []}
-        onSuccess={() => {
-          setMessage("Booking created successfully!");
-          setIsSuccess(true);
-        }}
-      />
+      {showBookNow ? (
+        <BookingModal 
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          packages={packageData ? [packageData] : []}
+          onSuccess={() => {
+            setMessage("Booking created successfully!");
+            setIsSuccess(true);
+          }}
+        />
+      ) : null}
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>

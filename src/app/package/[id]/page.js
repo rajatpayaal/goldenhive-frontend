@@ -1,6 +1,7 @@
 import { apiService } from "../../../services/api.service";
 import Link from "next/link";
 import { PackageAddToCart } from "../../../components/PackageAddToCart";
+import { PackageSuggestionsSection } from "../../../components/PackageSuggestionsSection";
 
 async function resolvePackageId(slugOrId) {
   const decoded = decodeURIComponent(slugOrId || "");
@@ -625,6 +626,13 @@ export default async function PackageDetailsPage(context) {
             </div>
           </aside>
         </div>
+
+        <PackageSuggestionsSection
+          excludeId={pkg._id}
+          title="You may also like"
+          subtitle="More packages picked for your next journey"
+          limit={6}
+        />
       </div>
     </div>
   );

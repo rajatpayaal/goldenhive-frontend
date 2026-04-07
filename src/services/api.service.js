@@ -86,6 +86,19 @@ export const apiService = {
       return { items: [], total: 0, page, limit, totalPages: 0 };
     }
   },
+
+  async getPackageSuggestions({ excludeId, limit = 6, sort = "-createdAt" } = {}) {
+    try {
+      const url = buildUrl("/suggestions/packages", { excludeId, limit, sort });
+      const res = await fetch(url, { next: { revalidate: 300 } });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return Array.isArray(json?.data) ? json.data : [];
+    } catch (error) {
+      console.error("Error fetching package suggestions:", error);
+      return [];
+    }
+  },
   
 
   async getPackageById(id) {
