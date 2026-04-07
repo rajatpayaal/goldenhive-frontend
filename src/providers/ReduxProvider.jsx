@@ -2,12 +2,14 @@
 
 import { useEffect } from "react";
 import { Provider, useDispatch } from "react-redux";
-import { refreshCartCount, refreshUser, store } from "@/store";
+import { authActions, readStoredUser, refreshCartCount, refreshUser, store } from "@/store";
 
 function StoreInitializer({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const storedUser = readStoredUser();
+    if (storedUser) dispatch(authActions.setUser(storedUser));
     dispatch(refreshUser());
     dispatch(refreshCartCount());
   }, [dispatch]);

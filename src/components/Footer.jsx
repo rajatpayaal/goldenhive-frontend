@@ -98,7 +98,7 @@ export function Footer({ footer }) {
             ))}
 
             {footer?.qrCode?.isActive && (
-              <div className="space-y-4">
+              <div className="space-y-4 md:justify-self-end">
                 <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
                   {footer.qrCode.title || "Download App"}
                 </div>
@@ -106,13 +106,13 @@ export function Footer({ footer }) {
                   <p className="text-sm text-white/70">{footer.qrCode.subtitle}</p>
                 )}
                 {footer.qrCode.imageUrl && (
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-5">
+                  <div className="w-fit overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-4">
                     <Image
                       src={footer.qrCode.imageUrl}
                       alt={footer.qrCode.title || "QR code"}
-                      width={320}
-                      height={320}
-                      className="h-auto w-full object-contain"
+                      width={220}
+                      height={220}
+                      className="h-40 w-40 object-contain sm:h-44 sm:w-44"
                     />
                   </div>
                 )}

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const LOCAL_STORAGE_KEY = "gh_user";
 
-const readStoredUser = () => {
+export const readStoredUser = () => {
   if (typeof window === "undefined") return null;
   const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
   if (!saved) return null;
@@ -50,7 +50,9 @@ export const refreshUser = createAsyncThunk(
 );
 
 const initialState = {
-  user: readStoredUser(),
+  // Always start with a stable SSR-safe value.
+  // Hydrate from localStorage on the client (see `ReduxProvider`).
+  user: null,
   status: "idle",
   error: null,
 };
@@ -87,7 +89,8 @@ const authSlice = createSlice({
       .addCase(refreshUser.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-        if (!state.user) {
+        if (action.payload === "Not authenticated") {
+          state.user = null;
           persistUser(null);
         }
       });

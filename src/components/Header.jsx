@@ -8,6 +8,7 @@ import { UserMenu } from './UserMenu';
 import { useAuth } from '../hooks/useAuth';
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions, refreshCartCount } from "@/store";
+import { GlobalSearch } from "./GlobalSearch";
 
 const resolveAnchorId = (slug) => {
   if (!slug) return "";
@@ -53,7 +54,7 @@ export function Header({ categories = [] }) {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
+        <div className="mx-auto flex w-full items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
           <Link href="/" className="flex items-center gap-3 text-xl font-black tracking-tight text-slate-900 hover:text-emerald-700">
             <span>GoldenHive</span>
             <span className="hidden rounded-full border border-black/5 bg-slate-50 px-3 py-1 text-xs font-extrabold text-slate-600 md:inline-flex">
@@ -61,13 +62,16 @@ export function Header({ categories = [] }) {
             </span>
           </Link>
 
-          <nav className="hidden flex-1 flex-wrap items-center justify-center gap-2 lg:flex" aria-label="Tour categories">
+          <nav
+            className="hidden min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap px-1 no-scrollbar lg:flex lg:flex-nowrap"
+            aria-label="Tour categories"
+          >
             {categoryLinks.length > 0 ? (
               <>
                 {categoryLinks.map((category) => (
                   <Link
                     key={category._id}
-                    className="inline-flex items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
+                    className="inline-flex whitespace-nowrap items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
                     href={`/${resolveAnchorId(category.slug)}`}
                   >
                     {category.name}
@@ -79,7 +83,8 @@ export function Header({ categories = [] }) {
             )}
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
+            <GlobalSearch variant="inline" />
             <Link
               href="/custom-requests"
               className="hidden items-center justify-center rounded-2xl border border-emerald-500 bg-emerald-500/10 px-4 py-2 text-sm font-black text-emerald-700 hover:bg-emerald-500/20 md:inline-flex"
@@ -115,6 +120,7 @@ export function Header({ categories = [] }) {
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
+            <GlobalSearch variant="icon" />
             <Link
               href="/cart"
               className="relative inline-flex h-10 items-center justify-center rounded-2xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 hover:bg-slate-50"

@@ -1,0 +1,456 @@
+"use client";
+
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+const MIN_QUERY_LENGTH = 3;
+const DEBOUNCE_MS = 350;
+const MAX_ITEMS_PER_SECTION = 6;
+
+const normalizeResponse = (payload) => {
+  const data = payload?.data || {};
+  return {
+    packages: Array.isArray(data.packages) ? data.packages : [],
+    blogs: Array.isArray(data.blogs) ? data.blogs : [],
+    categories: Array.isArray(data.categories) ? data.categories : [],
+    policies: Array.isArray(data.policies) ? data.policies : [],
+    count: typeof data.count === "number" ? data.count : null,
+  };
+};
+
+const formatPrice = (value) => {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number <= 0) return null;
+  try {
+    return new Intl.NumberFormat("en-IN").format(number);
+  } catch {
+    return String(number);
+  }
+};
+
+function SearchResults({ query, status, results, onPick }) {
+  const trimmedQuery = query.trim();
+  const hasQuery = trimmedQuery.length >= MIN_QUERY_LENGTH;
+  const packages = results?.packages || [];
+  const blogs = results?.blogs || [];
+  const categories = results?.categories || [];
+  const policies = results?.policies || [];
+
+  if (!hasQuery) {
+    return (
+      <div className="rounded-2xl border border-black/5 bg-white p-4 text-sm font-semibold text-slate-600 shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
+        Type at least {MIN_QUERY_LENGTH} letters to search.
+      </div>
+    );
+  }
+
+  if (status === "loading") {
+    return (
+      <div className="rounded-2xl border border-black/5 bg-white p-4 text-sm font-semibold text-slate-600 shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
+        Searching…
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700 shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
+        Search failed. Please try again.
+      </div>
+    );
+  }
+
+  const section = (label, items, renderItem) => {
+    if (!items || items.length === 0) return null;
+    return (
+      <div className="py-2">
+        <div className="px-3 pb-2 pt-3 text-[11px] font-black uppercase tracking-[0.3em] text-slate-500">
+          {label}
+        </div>
+        <div className="grid gap-1 px-2 pb-2">
+          {items.slice(0, MAX_ITEMS_PER_SECTION).map(renderItem)}
+        </div>
+      </div>
+    );
+  };
+
+  const body = (
+    <div className="rounded-2xl border border-black/5 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
+      {section("Packages", packages, (pkg) => {
+        const href = `/package/${pkg?.basic?.slug || pkg?._id || ""}`;
+        const name = pkg?.basic?.name || "Package";
+        const destination = pkg?.basic?.destination;
+        const tagline = pkg?.basic?.tagline;
+        const price = formatPrice(pkg?.pricing?.finalPrice);
+        const imageUrl = pkg?.images?.primary?.url;
+        const imageAlt = pkg?.images?.primary?.alt || name;
+
+        return (
+          <Link
+            key={pkg?._id || href}
+            href={href}
+            onClick={onPick}
+            className="group flex items-center gap-3 rounded-2xl border border-black/5 bg-white px-3 py-2 hover:bg-emerald-50"
+          >
+            <div className="h-11 w-11 overflow-hidden rounded-xl border border-black/5 bg-slate-50">
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={imageAlt}
+                  width={44}
+                  height={44}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xs font-black text-slate-400">
+                  GH
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-black text-slate-900 group-hover:text-emerald-800">
+                {name}
+              </div>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-600">
+                {destination && <span className="truncate">{destination}</span>}
+                {tagline && <span className="truncate text-slate-500">{tagline}</span>}
+              </div>
+            </div>
+            {price && (
+              <div className="text-sm font-black text-slate-900">₹{price}</div>
+            )}
+          </Link>
+        );
+      })}
+
+      {section("Blogs", blogs, (blog) => {
+        const href = `/blogs/${blog?.slug || ""}`;
+        const title = blog?.title || "Blog";
+        const imageUrl = blog?.bannerImage?.url;
+        const imageAlt = blog?.bannerImage?.altText || title;
+
+        return (
+          <Link
+            key={blog?._id || href}
+            href={href}
+            onClick={onPick}
+            className="group flex items-center gap-3 rounded-2xl border border-black/5 bg-white px-3 py-2 hover:bg-emerald-50"
+          >
+            <div className="h-11 w-11 overflow-hidden rounded-xl border border-black/5 bg-slate-50">
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={imageAlt}
+                  width={44}
+                  height={44}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xs font-black text-slate-400">
+                  Blog
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-black text-slate-900 group-hover:text-emerald-800">
+                {title}
+              </div>
+              {blog?.category && (
+                <div className="mt-0.5 truncate text-xs font-semibold text-slate-600">
+                  {blog.category}
+                </div>
+              )}
+            </div>
+          </Link>
+        );
+      })}
+
+      {section("Categories", categories, (category) => {
+        const slug = category?.slug || "";
+        const href = `/${String(slug).toLowerCase()}`;
+        const name = category?.name || "Category";
+        return (
+          <Link
+            key={category?._id || href}
+            href={href}
+            onClick={onPick}
+            className="group flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-white px-3 py-2 hover:bg-emerald-50"
+          >
+            <span className="truncate text-sm font-black text-slate-900 group-hover:text-emerald-800">
+              {name}
+            </span>
+            <span className="text-slate-400" aria-hidden="true">
+              ›
+            </span>
+          </Link>
+        );
+      })}
+
+      {section("Policies", policies, (policy) => {
+        const href = `/policies/${policy?.slug || ""}`;
+        const title = policy?.title || policy?.name || "Policy";
+        return (
+          <Link
+            key={policy?._id || href}
+            href={href}
+            onClick={onPick}
+            className="group flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-white px-3 py-2 hover:bg-emerald-50"
+          >
+            <span className="truncate text-sm font-black text-slate-900 group-hover:text-emerald-800">
+              {title}
+            </span>
+            <span className="text-slate-400" aria-hidden="true">
+              ›
+            </span>
+          </Link>
+        );
+      })}
+
+      {packages.length === 0 &&
+        blogs.length === 0 &&
+        categories.length === 0 &&
+        policies.length === 0 && (
+          <div className="p-4 text-sm font-semibold text-slate-600">
+            No results found for{" "}
+            <span className="font-black text-slate-900">{trimmedQuery}</span>.
+          </div>
+        )}
+    </div>
+  );
+
+  return body;
+}
+
+export function GlobalSearch({ variant = "inline" }) {
+  const inputId = useId();
+  const pathname = usePathname();
+  const containerRef = useRef(null);
+  const inputRef = useRef(null);
+  const abortRef = useRef(null);
+  const requestIdRef = useRef(0);
+
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [results, setResults] = useState(() => normalizeResponse(null));
+
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const activeOpen = variant === "icon" ? isDialogOpen : isPanelOpen;
+
+  const trimmedQuery = query.trim();
+  const canSearch = trimmedQuery.length >= MIN_QUERY_LENGTH;
+
+  const closeAll = useCallback(() => {
+    setIsPanelOpen(false);
+    setIsDialogOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => closeAll(), 0);
+    return () => window.clearTimeout(timer);
+  }, [closeAll, pathname]);
+
+  useEffect(() => {
+    if (!activeOpen) return;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") closeAll();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeOpen, closeAll]);
+
+  useEffect(() => {
+    if (variant !== "inline") return;
+    if (!isPanelOpen) return;
+
+    const onPointerDown = (event) => {
+      const target = event.target;
+      if (!containerRef.current) return;
+      if (target instanceof Node && containerRef.current.contains(target)) return;
+      setIsPanelOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, { capture: true });
+    return () => document.removeEventListener("pointerdown", onPointerDown, { capture: true });
+  }, [isPanelOpen, variant]);
+
+  useEffect(() => {
+    if (abortRef.current) abortRef.current.abort();
+    abortRef.current = null;
+
+    const currentRequestId = ++requestIdRef.current;
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const timer = window.setTimeout(async () => {
+      try {
+        if (!canSearch) {
+          setStatus("idle");
+          setResults(normalizeResponse(null));
+          return;
+        }
+
+        setStatus("loading");
+        const res = await fetch(`/api/search?q=${encodeURIComponent(trimmedQuery)}`, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+
+        let payload = null;
+        try {
+          payload = await res.json();
+        } catch {
+          payload = null;
+        }
+
+        if (controller.signal.aborted) return;
+        if (currentRequestId !== requestIdRef.current) return;
+
+        if (!res.ok) {
+          setStatus("error");
+          setResults(normalizeResponse(null));
+          return;
+        }
+
+        setStatus("success");
+        setResults(normalizeResponse(payload));
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        if (currentRequestId !== requestIdRef.current) return;
+        setStatus("error");
+        setResults(normalizeResponse(null));
+      }
+    }, canSearch ? DEBOUNCE_MS : 0);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [canSearch, trimmedQuery]);
+
+  const onPick = useCallback(() => {
+    closeAll();
+    setQuery("");
+  }, [closeAll]);
+
+  const resultPanel = useMemo(() => {
+    if (!activeOpen) return null;
+    return (
+      <SearchResults query={query} status={status} results={results} onPick={onPick} />
+    );
+  }, [activeOpen, onPick, query, results, status]);
+
+  if (variant === "icon") {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setIsDialogOpen(true);
+            setTimeout(() => inputRef.current?.focus(), 0);
+          }}
+          className="inline-flex h-10 items-center justify-center rounded-2xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+          aria-label="Search"
+          aria-haspopup="dialog"
+        >
+          🔎
+        </button>
+
+        {isDialogOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Search">
+            <button
+              type="button"
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+              onClick={closeAll}
+              aria-label="Close search"
+            />
+
+            <div className="absolute left-1/2 top-4 w-[min(42rem,92vw)] -translate-x-1/2 overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_24px_70px_rgba(2,6,23,0.22)]">
+              <div className="flex items-center gap-2 border-b border-black/5 px-4 py-3">
+                <label htmlFor={inputId} className="sr-only">
+                  Search
+                </label>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-lg">
+                  🔎
+                </div>
+                <input
+                  ref={inputRef}
+                  id={inputId}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search packages, blogs, categories…"
+                  autoComplete="off"
+                  className="h-10 w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+                />
+                <button
+                  type="button"
+                  onClick={closeAll}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="max-h-[70vh] overflow-y-auto p-3">{resultPanel}</div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div ref={containerRef} className="relative w-[min(22rem,30vw)]">
+      <label htmlFor={inputId} className="sr-only">
+        Search
+      </label>
+      <div className="flex items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-2 shadow-sm transition focus-within:border-emerald-500/50 focus-within:ring-2 focus-within:ring-emerald-500/20">
+        <span className="text-lg" aria-hidden="true">
+          🔎
+        </span>
+        <input
+          ref={inputRef}
+          id={inputId}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setIsPanelOpen(true)}
+          placeholder="Search packages, blogs, categories…"
+          autoComplete="off"
+          className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+          role="combobox"
+          aria-expanded={isPanelOpen}
+          aria-controls={`${inputId}-panel`}
+        />
+        {query.length > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setStatus("idle");
+              setResults(normalizeResponse(null));
+              inputRef.current?.focus();
+            }}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-black/10 bg-white text-base font-black text-slate-700 hover:bg-slate-50"
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      {isPanelOpen && (
+        <div
+          id={`${inputId}-panel`}
+          className="absolute left-0 right-0 top-full mt-2 max-h-[70vh] overflow-y-auto"
+        >
+          {resultPanel}
+        </div>
+      )}
+    </div>
+  );
+}
