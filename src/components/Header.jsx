@@ -9,18 +9,22 @@ import { useAuth } from '../hooks/useAuth';
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions, refreshCartCount } from "@/store";
 import { GlobalSearch } from "./GlobalSearch";
+import { checkAuthTokenAction } from "@/actions/auth.check";
+import { getUnreadNotificationsCountAction } from "@/actions/notifications.actions";
+import { NotificationsDropdown } from "./NotificationsDropdown";
 
 const resolveAnchorId = (slug) => {
   if (!slug) return "";
   return slug.toLowerCase();
 };
 
-export function Header({ categories = [] }) {
+export function Header({ categories = [], initialUnreadCount = 0 }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(() => ({ open: false, path: null }));
   const { user, isLoading } = useAuth();
   const dispatch = useDispatch();
   const cartCount = useSelector((state) => state.cart.count);
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const pathname = usePathname();
   const isMobileMenuOpen = mobileMenu.open && mobileMenu.path === pathname;
   const categoryLinks = categories.filter(
@@ -35,6 +39,32 @@ export function Header({ categories = [] }) {
     }
     dispatch(refreshCartCount());
   }, [dispatch, isLoading, user]);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const loadUnreadCount = async () => {
+      try {
+        const auth = await checkAuthTokenAction();
+        if (!auth?.hasToken) {
+          setUnreadCount(0);
+          return;
+        }
+
+        const response = await getUnreadNotificationsCountAction();
+        if (!response?.ok) {
+          setUnreadCount(0);
+          return;
+        }
+
+        setUnreadCount(response?.data?.data?.total ?? 0);
+      } catch {
+        setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+  }, [isLoading, user]);
 
   useEffect(() => {
     const handler = () => dispatch(refreshCartCount());
@@ -85,19 +115,23 @@ export function Header({ categories = [] }) {
 
           <div className="hidden items-center gap-2 lg:flex xl:gap-3">
             <GlobalSearch variant="inline" />
-            <Link
+            {/* <Link
               href="/custom-requests"
               className="hidden items-center justify-center rounded-2xl border border-emerald-500 bg-emerald-500/10 px-4 py-2 text-sm font-black text-emerald-700 hover:bg-emerald-500/20 md:inline-flex"
             >
               Custom Request
-            </Link>
+            </Link> */}
+
+            <NotificationsDropdown
+              initialUnreadCount={unreadCount}
+              onUnreadCountChange={setUnreadCount}
+            />
             <Link 
               href="/cart"
               className="relative inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
               aria-label="Shopping Cart"
             >
               <span className="text-lg mr-2">🛒</span>
-              Cart
               {cartCount > 0 && (
                 <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-xs font-black text-white shadow-sm">
                   {cartCount}
@@ -183,6 +217,17 @@ export function Header({ categories = [] }) {
 
             <div className="no-scrollbar h-full overflow-y-auto px-5 pb-7 pt-5">
               <div className="grid gap-2">
+                <div className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3">
+                  <div className="flex items-center gap-2 text-sm font-black text-slate-900">
+                    <span className="text-lg">🔔</span>
+                    Notifications
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-emerald-600 px-2 text-xs font-black text-white shadow-sm">
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
                 <Link
                   href="/custom-requests"
                   onClick={() => setMobileMenu((prev) => ({ ...prev, open: false }))}

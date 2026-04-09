@@ -111,7 +111,7 @@ export default function CartClient() {
 
   if (cartItems.length === 0 && !loading) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+      <div className="mx-auto px-5 py-20 text-center">
         <h1 className="text-3xl font-black text-slate-900">Shopping Cart</h1>
         <div className="mt-10 rounded-3xl border border-black/10 bg-slate-50 p-8">
           <p className="text-lg font-semibold text-slate-600">Your cart is empty.</p>
@@ -126,7 +126,7 @@ export default function CartClient() {
   const totalPrice = cartItems.reduce((sum, item) => sum + (item.basic?.finalPrice || 0), 0);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12">
+    <div className="mx-auto px-5 py-12">
       <h1 className="text-3xl font-black text-slate-900 mb-8">Shopping Cart</h1>
 
       {error && (

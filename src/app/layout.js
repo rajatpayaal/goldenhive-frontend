@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import { ReduxProvider } from "../providers/ReduxProvider";
-import { Header } from "../components/Header";
+import { HeaderServer } from "../components/HeaderServer";
 import { Footer } from "../components/Footer";
 import { apiService } from "../services/api.service";
 
@@ -35,7 +35,7 @@ export default async function RootLayout({ children }) {
       <body className={inter.className}>
         <ReduxProvider>
           <div className="min-h-screen flex flex-col">
-            <Header categories={activeCategories} />
+            <HeaderServer categories={activeCategories} />
             <main className="flex-1">{children}</main>
             <Footer footer={footer} />
           </div>

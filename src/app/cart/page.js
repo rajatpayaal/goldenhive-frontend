@@ -1,4 +1,4 @@
-import CartClient from "./CartClient";
+﻿import CartClient from "./CartClient";
 import { PackageSuggestionsSection } from "@/components/PackageSuggestionsSection";
 import { getCartAction } from "@/actions/cart.actions";
 
@@ -15,7 +15,7 @@ export default async function CartPage() {
   return (
     <>
       <CartClient />
-      <div className="mx-auto max-w-6xl px-5 pb-14">
+      <div className="mx-auto  px-5 pb-14">
         <PackageSuggestionsSection
           excludeId={excludeId}
           title="Recommended for you"
