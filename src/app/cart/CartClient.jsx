@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/useToast";
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { LoginModal } from "@/components/LoginModal";
@@ -10,6 +11,7 @@ import Loader from "@/components/Loader";
 
 export default function CartClient() {
   const { user, isLoading: authLoading } = useAuth();
+  const { showToast } = useToast();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -72,14 +74,19 @@ export default function CartClient() {
       if (response.ok) {
         setCartItems((current) => current.filter((item) => item._id !== packageId));
         setError("");
+        showToast({ type: "success", message: "Item removed from cart." });
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("gh_cart_updated"));
         }
       } else {
-        setError(response.data?.message || response.data?.error || "Failed to remove item.");
+        const errorText = response.data?.message || response.data?.error || "Failed to remove item.";
+        setError(errorText);
+        showToast({ type: "error", message: errorText });
       }
     } catch {
-      setError("Error removing item.");
+      const errorText = "Error removing item.";
+      setError(errorText);
+      showToast({ type: "error", message: errorText });
     }
   };
 

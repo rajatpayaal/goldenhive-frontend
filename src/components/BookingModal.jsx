@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 import { createBookingAction } from "@/actions/booking.actions";
 
 export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
@@ -10,6 +11,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [packageTravellers, setPackageTravellers] = useState({});
+  const { showToast } = useToast();
   const [bookingData, setBookingData] = useState({
     startDate: "",
     endDate: "",
@@ -87,6 +89,8 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
       const response = await createBookingAction(payload);
 
       if (response.ok) {
+        const successText = "Booking created successfully!";
+        showToast({ type: "success", message: successText });
         setStep(3);
         setTimeout(() => {
           onSuccess?.();
@@ -102,10 +106,14 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
           });
         }, 2000);
       } else {
-        setError(response.data?.message || response.data?.error || "Failed to create booking");
+        const errorText = response.data?.message || response.data?.error || "Failed to create booking";
+        setError(errorText);
+        showToast({ type: "error", message: errorText });
       }
     } catch (err) {
-      setError("Error creating booking");
+      const errorText = "Error creating booking";
+      setError(errorText);
+      showToast({ type: "error", message: errorText });
     } finally {
       setLoading(false);
     }

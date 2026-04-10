@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import { ReduxProvider } from "../providers/ReduxProvider";
+import { ToastProvider } from "../components/ToastProvider";
 import { HeaderServer } from "../components/HeaderServer";
 import { Footer } from "../components/Footer";
 import { apiService } from "../services/api.service";
@@ -35,12 +36,14 @@ export default async function RootLayout({ children }) {
     <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
       <body className={inter.className}>
         <ReduxProvider>
-          <div className="min-h-screen flex flex-col">
-            <HeaderServer categories={activeCategories} />
-            <main className="flex-1">{children}</main>
-            <Footer footer={footer} />
-            <ChatbotWidget title="Help Center" />
-          </div>
+          <ToastProvider>
+            <div className="min-h-screen flex flex-col">
+              <HeaderServer categories={activeCategories} />
+              <main className="flex-1">{children}</main>
+              <Footer footer={footer} />
+              <ChatbotWidget title="Help Center" />
+            </div>
+          </ToastProvider>
         </ReduxProvider>
       </body>
     </html>

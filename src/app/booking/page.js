@@ -2,15 +2,20 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
-import { getCartAction } from "@/actions/cart.actions";
+import { useToast } from "@/hooks/useToast";
+import { useDispatch } from "react-redux";
+import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { createBookingAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
+import { cartActions } from "@/store";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/components/Loader";
 
 export default function BookingPage() {
+  const dispatch = useDispatch();
+  const { showToast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
   const [cartItems, setCartItems] = useState([]);
   const [packageTravellers, setPackageTravellers] = useState({});
@@ -223,14 +228,37 @@ export default function BookingPage() {
       const response = await createBookingAction(payload);
 
       if (response.ok) {
+        const successText = "Your booking has been created successfully.";
+        showToast({ type: "success", message: successText });
         setSuccess(true);
-        // Clear cart after successful booking
         setCartItems([]);
+
+        if (cartItems.length > 0) {
+          const removePromises = cartItems
+            .filter((item) => item?._id)
+            .map((item) => removeFromCartAction(item._id));
+
+          const removeResults = await Promise.all(removePromises);
+          const allRemoved = removeResults.every((result) => result?.ok);
+
+          if (!allRemoved) {
+            console.warn("Some cart items were not removed after booking:", removeResults);
+          }
+
+          dispatch(cartActions.clearCart());
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("gh_cart_updated"));
+          }
+        }
       } else {
-        setError(response.data?.message || response.data?.error || "Failed to create booking");
+        const errorText = response.data?.message || response.data?.error || "Failed to create booking";
+        setError(errorText);
+        showToast({ type: "error", message: errorText });
       }
     } catch (err) {
-      setError("Error creating booking. Please try again.");
+      const errorText = "Error creating booking. Please try again.";
+      setError(errorText);
+      showToast({ type: "error", message: errorText });
     } finally {
       setSubmitting(false);
     }

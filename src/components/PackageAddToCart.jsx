@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 import { addToCartAction } from "@/actions/cart.actions";
 import { cartActions, refreshCartCount } from "@/store";
 import { BookingModal } from "./BookingModal";
@@ -19,6 +20,7 @@ export function PackageAddToCart({
   const { user } = useAuth();
   const dispatch = useDispatch();
   const cartCount = useSelector((state) => state.cart.count);
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -39,20 +41,26 @@ export function PackageAddToCart({
       const response = await addToCartAction(packageId);
       
       if (response.ok) {
-        setMessage(`${packageName} added to cart!`);
+        const successText = `${packageName} added to cart!`;
+        setMessage(successText);
         setIsSuccess(true);
         dispatch(cartActions.setCartCount((cartCount || 0) + 1));
         dispatch(refreshCartCount());
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("gh_cart_updated"));
         }
+        showToast({ type: "success", message: successText });
       } else {
-        setMessage(response.data?.message || response.data?.error || "Failed to add to cart");
+        const errorText = response.data?.message || response.data?.error || "Failed to add to cart";
+        setMessage(errorText);
         setIsSuccess(false);
+        showToast({ type: "error", message: errorText });
       }
     } catch (error) {
-      setMessage("Error adding to cart");
+      const errorText = "Error adding to cart";
+      setMessage(errorText);
       setIsSuccess(false);
+      showToast({ type: "error", message: errorText });
     } finally {
       setLoading(false);
     }
