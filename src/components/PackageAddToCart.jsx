@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "@/hooks/useAuth";
 import { addToCartAction } from "@/actions/cart.actions";
+import { cartActions, refreshCartCount } from "@/store";
 import { BookingModal } from "./BookingModal";
 import { LoginModal } from "./LoginModal";
 
@@ -15,6 +17,8 @@ export function PackageAddToCart({
   size = "md",
 }) {
   const { user } = useAuth();
+  const dispatch = useDispatch();
+  const cartCount = useSelector((state) => state.cart.count);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -37,6 +41,8 @@ export function PackageAddToCart({
       if (response.ok) {
         setMessage(`${packageName} added to cart!`);
         setIsSuccess(true);
+        dispatch(cartActions.setCartCount((cartCount || 0) + 1));
+        dispatch(refreshCartCount());
         if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("gh_cart_updated"));
         }

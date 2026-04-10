@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { createBookingAction } from "@/actions/booking.actions";
 
@@ -9,6 +9,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
   const [step, setStep] = useState(1); // 1: details, 2: review, 3: confirmation
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [packageTravellers, setPackageTravellers] = useState({});
   const [bookingData, setBookingData] = useState({
     startDate: "",
     endDate: "",
@@ -18,9 +19,30 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
     paymentStatus: "UNPAID",
   });
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+    setPackageTravellers((prev) => {
+      const next = { ...prev };
+      for (const pkg of packages) {
+        if (!pkg?._id) continue;
+        if (next[pkg._id] == null) next[pkg._id] = 1;
+      }
+      return next;
+    });
+  }, [isOpen, packages]);
 
-  const totalAmount = packages.reduce((sum, pkg) => sum + (pkg.basic?.finalPrice || 0), 0) * bookingData.travellers;
+  const totalTravellers = useMemo(() => {
+    const values = packages.map((pkg) => Math.max(1, Number(packageTravellers[pkg?._id] || 1)));
+    return values.length > 0 ? Math.max(...values) : 1;
+  }, [packages, packageTravellers]);
+
+  const totalAmount = useMemo(() => {
+    return packages.reduce((sum, pkg) => {
+      const price = Number(pkg.basic?.finalPrice || 0);
+      const qty = Math.max(1, Number(packageTravellers[pkg?._id] || 1));
+      return sum + price * qty;
+    }, 0);
+  }, [packages, packageTravellers]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +53,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
   };
 
   const handleCreateBooking = async () => {
-    if (!bookingData.startDate || !bookingData.endDate || bookingData.travellers <= 0) {
+    if (!bookingData.startDate || !bookingData.endDate || totalTravellers <= 0) {
       setError("Please fill all required fields");
       return;
     }
@@ -45,9 +67,19 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
     setError("");
 
     try {
+      const packageItems = packages
+        .filter((pkg) => pkg?._id)
+        .map((pkg) => ({
+          packageId: pkg._id,
+          travellers: Math.max(1, Number(packageTravellers[pkg._id] || 1)),
+          travelerDetails: [],
+        }));
+
       const payload = {
         ...bookingData,
         packageId: packages.map((pkg) => pkg._id),
+        packageItems,
+        travellers: totalTravellers,
         userId: user._id,
         totalAmount,
       };
@@ -78,6 +110,8 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
       setLoading(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div
@@ -128,7 +162,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
                     >
                       <p className="font-bold text-slate-900">{pkg.basic?.name}</p>
                       <p className="text-sm text-slate-600">
-                        ₹{pkg.basic?.finalPrice?.toLocaleString("en-IN")} × {bookingData.travellers} traveller{bookingData.travellers > 1 ? "s" : ""}
+                        ₹{pkg.basic?.finalPrice?.toLocaleString("en-IN")} × {Math.max(1, Number(packageTravellers[pkg._id] || 1))} traveller{Math.max(1, Number(packageTravellers[pkg._id] || 1)) > 1 ? "s" : ""}
                       </p>
                     </div>
                   ))}
@@ -138,6 +172,10 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
                   <div className="flex justify-between items-center text-lg font-black text-slate-900">
                     <span>Total Amount:</span>
                     <span>₹{totalAmount.toLocaleString("en-IN")}</span>
+                  </div>
+                  <div className="mt-1 flex justify-between items-center text-sm font-semibold text-slate-600">
+                    <span>Total travellers (max):</span>
+                    <span className="font-black text-slate-900">{totalTravellers}</span>
                   </div>
                 </div>
 
@@ -156,7 +194,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
                   </div>
                   <div>
                     <label className="text-xs font-bold text-slate-600">Number of Travellers</label>
-                    <p className="mt-1 font-semibold text-slate-900">{bookingData.travellers}</p>
+                    <p className="mt-1 font-semibold text-slate-900">{totalTravellers}</p>
                   </div>
                 </div>
 
@@ -211,16 +249,39 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-900 mb-2">Number of Travellers *</label>
-                <input
-                  type="number"
-                  name="travellers"
-                  min="1"
-                  value={bookingData.travellers}
-                  onChange={handleInputChange}
-                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none focus:border-emerald-500"
-                  required
-                />
+                <label className="block text-sm font-bold text-slate-900 mb-3">Travellers per package *</label>
+                <div className="space-y-3">
+                  {packages.map((pkg) => (
+                    <div
+                      key={pkg._id}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3"
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-black text-slate-900 truncate">{pkg.basic?.name || "Package"}</div>
+                        <div className="text-xs font-semibold text-slate-500">
+                          ₹{Number(pkg.basic?.finalPrice || 0).toLocaleString("en-IN")} per traveller
+                        </div>
+                      </div>
+                      <input
+                        type="number"
+                        min="1"
+                        value={Math.max(1, Number(packageTravellers[pkg._id] || 1))}
+                        onChange={(e) => {
+                          const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+                          setPackageTravellers((prev) => ({ ...prev, [pkg._id]: value }));
+                        }}
+                        className="h-11 w-24 rounded-2xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500"
+                        aria-label={`Travellers for ${pkg.basic?.name || "package"}`}
+                        required
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 flex items-center justify-between rounded-2xl border border-black/5 bg-slate-50 px-4 py-3">
+                  <div className="text-sm font-bold text-slate-900">Total travellers (max)</div>
+                  <div className="text-lg font-black text-slate-900">{totalTravellers}</div>
+                </div>
               </div>
 
               <div>

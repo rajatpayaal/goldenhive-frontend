@@ -13,6 +13,7 @@ import Loader from "@/components/Loader";
 export default function BookingPage() {
   const { user, isLoading: authLoading } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [packageTravellers, setPackageTravellers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -61,6 +62,14 @@ export default function BookingPage() {
         if (response.ok) {
           const packages = response.data?.data?.packageId || [];
           setCartItems(packages);
+          setPackageTravellers(() => {
+            const next = {};
+            for (const item of packages) {
+              if (!item?._id) continue;
+              next[item._id] = 1;
+            }
+            return next;
+          });
           const travelerCount = Math.max(1, packages.length);
           setBookingData(prev => ({ ...prev, travellers: travelerCount }));
           // Initialize traveler details based on number of packages/travelers
@@ -79,6 +88,19 @@ export default function BookingPage() {
 
     fetchCart();
   }, [authLoading, user, hasToken]);
+
+  const totalTravellers = (() => {
+    const values = Object.values(packageTravellers).map((v) => Math.max(1, Number(v || 1)));
+    return values.length > 0 ? Math.max(...values) : 1;
+  })();
+
+  useEffect(() => {
+    if (cartItems.length === 0) return;
+    const next = Math.max(1, totalTravellers || 1);
+    if (bookingData.travellers !== next) {
+      setBookingData((prev) => ({ ...prev, travellers: next }));
+    }
+  }, [cartItems.length, totalTravellers, bookingData.travellers]);
 
   // Ensure travelers count is always valid
   useEffect(() => {
@@ -113,26 +135,8 @@ export default function BookingPage() {
     const { name, value } = e.target;
     setBookingData(prev => ({
       ...prev,
-      [name]: name === "travellers" ? (parseInt(value, 10) || 1) : value,
+      [name]: value,
     }));
-
-    // Update traveler details array when travelers count changes
-    if (name === "travellers") {
-      const newCount = parseInt(value, 10) || 1;
-      setTravelerDetails(prev => {
-        const current = [...prev];
-        if (newCount > current.length) {
-          // Add more travelers
-          while (current.length < newCount) {
-            current.push({ name: "", age: "", email: "", phone: "" });
-          }
-        } else if (newCount < current.length) {
-          // Remove travelers
-          current.splice(newCount);
-        }
-        return current;
-      });
-    }
   };
 
   const handleTravelerChange = (index, field, value) => {
@@ -192,11 +196,25 @@ export default function BookingPage() {
     setError("");
 
     try {
-      const totalAmount = cartItems.reduce((sum, item) => sum + (item.basic?.finalPrice || 0), 0) * bookingData.travellers;
+      const totalAmount = cartItems.reduce((sum, item) => {
+        const price = Number(item.basic?.finalPrice || 0);
+        const qty = Math.max(1, Number(packageTravellers[item._id] || 1));
+        return sum + price * qty;
+      }, 0);
+
+      const packageItems = cartItems
+        .filter((item) => item?._id)
+        .map((item) => ({
+          packageId: item._id,
+          travellers: Math.max(1, Number(packageTravellers[item._id] || 1)),
+          travelerDetails: [],
+        }));
 
       const payload = {
         ...bookingData,
         packageId: cartItems.map(item => item._id),
+        packageItems,
+        travellers: Math.max(1, totalTravellers || 1),
         userId: user._id,
         totalAmount,
         travelerDetails,
@@ -287,7 +305,11 @@ export default function BookingPage() {
     );
   }
 
-  const totalAmount = cartItems.reduce((sum, item) => sum + (item.basic?.finalPrice || 0), 0) * bookingData.travellers;
+  const totalAmount = cartItems.reduce((sum, item) => {
+    const price = Number(item.basic?.finalPrice || 0);
+    const qty = Math.max(1, Number(packageTravellers[item._id] || 1));
+    return sum + price * qty;
+  }, 0);
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
@@ -314,7 +336,25 @@ export default function BookingPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-slate-900">{item.basic?.name}</h3>
-                    <p className="text-sm text-slate-600">₹{item.basic?.finalPrice?.toLocaleString("en-IN")}</p>
+                    <p className="text-sm text-slate-600">₹{item.basic?.finalPrice?.toLocaleString("en-IN")} per traveller</p>
+                    <p className="mt-1 text-xs font-bold text-slate-500">
+                      Subtotal: ₹{(Number(item.basic?.finalPrice || 0) * Math.max(1, Number(packageTravellers[item._id] || 1))).toLocaleString("en-IN")}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Travellers</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={Math.max(1, Number(packageTravellers[item._id] || 1))}
+                      onChange={(e) => {
+                        const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+                        setPackageTravellers((prev) => ({ ...prev, [item._id]: value }));
+                      }}
+                      className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500"
+                      aria-label={`Travellers for ${item.basic?.name || "package"}`}
+                      required
+                    />
                   </div>
                 </div>
               ))}
@@ -414,15 +454,13 @@ export default function BookingPage() {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Number of Travelers *</label>
-                <input
-                  type="number"
-                  name="travellers"
-                  min="1"
-                  value={bookingData.travellers || 1}
-                  onChange={handleBookingDataChange}
-                  className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
-                  required
-                />
+                <div className="flex items-center justify-between rounded-xl border border-black/10 bg-white px-3 py-2">
+                  <span className="text-sm font-semibold text-slate-600">Total (max)</span>
+                  <span className="text-sm font-black text-slate-900">{Math.max(1, totalTravellers || 1)}</span>
+                </div>
+                <div className="mt-1 text-xs font-semibold text-slate-500">
+                  Update travellers per package in the list on the left.
+                </div>
               </div>
 
               <div>

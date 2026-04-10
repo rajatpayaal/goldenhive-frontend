@@ -57,7 +57,6 @@ const cartSlice = createSlice({
       .addCase(refreshCartCount.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-        state.count = 0;
       });
   },
 });
@@ -66,4 +65,3 @@ export const { setCartCount, clearCart } = cartSlice.actions;
 export const cartActions = cartSlice.actions;
 
 export default cartSlice.reducer;
-

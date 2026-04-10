@@ -15,6 +15,26 @@ const buildUrl = (path, query = {}) => {
 };
 
 export const apiService = {
+  async createSupportTicket(payload) {
+    try {
+      const res = await fetch(`${API_BASE}/support`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload ?? {}),
+        cache: "no-store",
+      });
+
+      const json = await res.json().catch(() => null);
+      return { ok: res.ok, status: res.status, data: json };
+    } catch (error) {
+      console.error("Error creating support ticket:", error);
+      return { ok: false, status: 0, data: null, error: "Network error" };
+    }
+  },
+
   async getHomeBanners() {
     try {
       const res = await fetch(`${API_BASE}/banners/active`, { next: { revalidate: 3600 } });

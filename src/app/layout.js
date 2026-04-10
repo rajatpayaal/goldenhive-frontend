@@ -4,6 +4,7 @@ import { ReduxProvider } from "../providers/ReduxProvider";
 import { HeaderServer } from "../components/HeaderServer";
 import { Footer } from "../components/Footer";
 import { apiService } from "../services/api.service";
+import { ChatbotWidget } from "../components/ChatbotWidget";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }) {
             <HeaderServer categories={activeCategories} />
             <main className="flex-1">{children}</main>
             <Footer footer={footer} />
+            <ChatbotWidget title="Help Center" />
           </div>
         </ReduxProvider>
       </body>
