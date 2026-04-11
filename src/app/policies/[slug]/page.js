@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { apiService } from "../../../services/api.service";
+import { Breadcrumbs } from "../../../components/Breadcrumbs";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -52,6 +53,13 @@ export default async function PolicyDetailPage({ params }) {
   return (
     <main className="bg-slate-50 pb-20">
       <div className="mx-auto max-w-4xl px-5 py-12">
+        <Breadcrumbs
+          items={[
+            { href: "/policies", label: "Policies" },
+            { href: `/policies/${policy.slug}`, label: policy.title || "Policy" },
+          ]}
+        />
+
         {/* Header */}
         <div className="mb-8">
           <Link

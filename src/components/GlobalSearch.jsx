@@ -77,7 +77,7 @@ function SearchResults({ query, status, results, onPick }) {
   };
 
   const body = (
-    <div className="rounded-2xl border border-black/5 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
+    <div className="w-full max-w-full rounded-2xl border border-black/5 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
       {section("Packages", packages, (pkg) => {
         const href = `/package/${pkg?.basic?.slug || pkg?._id || ""}`;
         const name = pkg?.basic?.name || "Package";
@@ -369,7 +369,7 @@ export function GlobalSearch({ variant = "inline" }) {
               aria-label="Close search"
             />
 
-            <div className="absolute left-1/2 top-4 w-[min(42rem,92vw)] -translate-x-1/2 overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_24px_70px_rgba(2,6,23,0.22)]">
+            <div className="absolute left-1/2 top-4 w-[22rem] max-w-[92vw] -translate-x-1/2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]">
               <div className="flex items-center gap-2 border-b border-black/5 px-4 py-3">
                 <label htmlFor={inputId} className="sr-only">
                   Search
@@ -396,7 +396,7 @@ export function GlobalSearch({ variant = "inline" }) {
                 </button>
               </div>
 
-              <div className="max-h-[70vh] overflow-y-auto p-3">{resultPanel}</div>
+              <div className="max-h-[26rem] overflow-y-auto p-3">{resultPanel}</div>
             </div>
           </div>
         )}
@@ -405,7 +405,7 @@ export function GlobalSearch({ variant = "inline" }) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-[min(22rem,30vw)]">
+    <div ref={containerRef} className="relative w-full max-w-[30rem] lg:w-[min(22rem,30vw)]">
       <label htmlFor={inputId} className="sr-only">
         Search
       </label>
@@ -446,9 +446,11 @@ export function GlobalSearch({ variant = "inline" }) {
       {isPanelOpen && (
         <div
           id={`${inputId}-panel`}
-          className="absolute left-0 right-0 top-full mt-2 max-h-[70vh] overflow-y-auto"
+          className="absolute left-0 right-0 top-full mt-2 w-[22rem] max-w-[92vw] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]"
         >
-          {resultPanel}
+          <div className="max-h-[26rem] overflow-y-auto">
+            {resultPanel}
+          </div>
         </div>
       )}
     </div>

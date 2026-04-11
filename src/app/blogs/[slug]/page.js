@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { apiService } from "../../../services/api.service";
+import { Breadcrumbs } from "../../../components/Breadcrumbs";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -52,6 +53,13 @@ export default async function BlogDetailPage({ params }) {
   return (
     <main className="bg-slate-50 pb-20">
       <article className="mx-auto my-auto max-w-7xl px-5 py-12">
+        <Breadcrumbs
+          items={[
+            { href: "/blogs", label: "Blogs" },
+            { href: `/blogs/${blog.slug}`, label: blog.title || "Blog" },
+          ]}
+        />
+
         {/* Back Button */}
         <div className="mb-8">
           <Link

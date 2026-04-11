@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import Loader from "@/components/Loader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 const DEFAULT_FORM = {
   subject: "",
@@ -18,6 +19,7 @@ export default function SupportTicketPage() {
   const { user, isLoading } = useAuth();
   const { showToast } = useToast();
   const { slug } = useParams();
+  const [hasMounted, setHasMounted] = useState(false);
   const [form, setForm] = useState({
     ...DEFAULT_FORM,
     phone: user?.mobile || "",
@@ -26,7 +28,11 @@ export default function SupportTicketPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  if (isLoading) {
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted || isLoading) {
     return <Loader message="Loading support..." />;
   }
 
@@ -100,6 +106,13 @@ export default function SupportTicketPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-12">
+      <Breadcrumbs
+        items={[
+          { href: "/support", label: "Support" },
+          { href: `/support/${slug}`, label: title },
+        ]}
+      />
+
       <div className="mb-8">
         <h1 className="text-3xl font-black text-slate-900">Raise a Support Ticket</h1>
         <p className="mt-3 text-slate-600">Submit your issue for {title} and our team will respond soon.</p>

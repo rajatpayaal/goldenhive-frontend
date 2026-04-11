@@ -133,7 +133,7 @@ export default async function AboutUsPage() {
           </section>
         )}
 
-        <div className="mx-auto max-w-6xl space-y-10 px-5 py-12">
+        <div className="mx-auto space-y-10 px-5 py-12">
           {show.banners && (
             <section className="rounded-3xl border border-black/5 bg-white p-7 shadow-sm sm:p-8">
               <div className="flex items-end justify-between gap-4">

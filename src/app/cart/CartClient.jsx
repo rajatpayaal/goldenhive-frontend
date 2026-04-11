@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "@/hooks/useToast";
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
@@ -17,6 +17,30 @@ export default function CartClient() {
   const [error, setError] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [hasToken, setHasToken] = useState(false);
+
+  const fetchCart = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getCartAction();
+      if (response.ok) {
+        const packages = response.data?.data?.packageId || [];
+        setCartItems(packages);
+        setError("");
+      } else {
+        if (response.status === 401) {
+          setError("Session expired. Please log in again.");
+        } else {
+          setError(response.data?.message || response.data?.error || "Failed to load cart.");
+        }
+        setCartItems([]);
+      }
+    } catch {
+      setError("Failed to load cart. Please try again.");
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -41,32 +65,19 @@ export default function CartClient() {
       return;
     }
 
-    const fetchCart = async () => {
-      setLoading(true);
-      try {
-        const response = await getCartAction();
-        if (response.ok) {
-          const packages = response.data?.data?.packageId || [];
-          setCartItems(packages);
-          setError("");
-        } else {
-          if (response.status === 401) {
-            setError("Session expired. Please log in again.");
-          } else {
-            setError(response.data?.message || response.data?.error || "Failed to load cart.");
-          }
-          setCartItems([]);
-        }
-      } catch {
-        setError("Failed to load cart. Please try again.");
-        setCartItems([]);
-      } finally {
-        setLoading(false);
+    fetchCart();
+  }, [authLoading, user, hasToken, fetchCart]);
+
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      if (user || hasToken) {
+        fetchCart();
       }
     };
 
-    fetchCart();
-  }, [authLoading, user, hasToken]);
+    window.addEventListener("gh_cart_updated", handleCartUpdate);
+    return () => window.removeEventListener("gh_cart_updated", handleCartUpdate);
+  }, [user, hasToken, fetchCart]);
 
   const handleRemoveItem = async (packageId) => {
     try {

@@ -2,6 +2,7 @@ import { apiService } from "../../../services/api.service";
 import Link from "next/link";
 import { PackageAddToCart } from "../../../components/PackageAddToCart";
 import { PackageSuggestionsSection } from "../../../components/PackageSuggestionsSection";
+import { Breadcrumbs } from "../../../components/Breadcrumbs";
 
 async function resolvePackageId(slugOrId) {
   const decoded = decodeURIComponent(slugOrId || "");
@@ -209,6 +210,15 @@ export default async function PackageDetailsPage(context) {
 
   return (
     <div className="bg-slate-50 pb-20">
+      <div className="mx-auto max-w-6xl px-5 pt-8">
+        <Breadcrumbs
+          items={[
+            { href: backHref, label: pkg.categoryId?.name || "Tour Packages" },
+            { href: `/package/${pkg.basic?.slug || pkg._id}`, label: pkg.basic?.name || "Package Details" },
+          ]}
+        />
+      </div>
+
       <div
         className="relative overflow-hidden rounded-b-[28px] shadow-[0_18px_45px_rgba(2,6,23,0.12)]"
         style={{
