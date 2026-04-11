@@ -405,7 +405,7 @@ export function GlobalSearch({ variant = "inline" }) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[30rem] lg:w-[min(22rem,30vw)]">
+    <div ref={containerRef} className="relative w-full max-w-[24rem] lg:max-w-[22rem]">
       <label htmlFor={inputId} className="sr-only">
         Search
       </label>

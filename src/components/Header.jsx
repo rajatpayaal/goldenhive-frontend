@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from "next/navigation";
 import { LoginModal } from './LoginModal';
@@ -21,6 +21,8 @@ const resolveAnchorId = (slug) => {
 export function Header({ categories = [], initialUnreadCount = 0 }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(() => ({ open: false, path: null }));
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef(null);
   const { user, isLoading } = useAuth();
   const dispatch = useDispatch();
   const cartCount = useSelector((state) => state.cart.count);
@@ -30,6 +32,9 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
   const categoryLinks = categories.filter(
     (category) => category?.isActive !== false && category?.name && category?.slug
   );
+  const visibleCategoryCount = 4;
+  const visibleCategories = categoryLinks.slice(0, visibleCategoryCount);
+  const overflowCategories = categoryLinks.slice(visibleCategoryCount);
 
   useEffect(() => {
     if (isLoading) return;
@@ -73,6 +78,20 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
   }, [dispatch]);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreRef.current && !moreRef.current.contains(event.target)) {
+        setMoreOpen(false);
+      }
+    };
+
+    if (moreOpen) {
+      window.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => window.removeEventListener("mousedown", handleClickOutside);
+  }, [moreOpen]);
+
+  useEffect(() => {
     if (!isMobileMenuOpen) return;
     const onKeyDown = (event) => {
       if (event.key === "Escape") setMobileMenu((prev) => ({ ...prev, open: false }));
@@ -98,7 +117,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
           >
             {categoryLinks.length > 0 ? (
               <>
-                {categoryLinks.map((category) => (
+                {visibleCategories.map((category) => (
                   <Link
                     key={category._id}
                     className="inline-flex whitespace-nowrap items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
@@ -107,13 +126,42 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     {category.name}
                   </Link>
                 ))}
+
+                {overflowCategories.length > 0 && (
+                  <div ref={moreRef} className="relative inline-block">
+                    <button
+                      type="button"
+                      onClick={() => setMoreOpen((prev) => !prev)}
+                      className="inline-flex whitespace-nowrap items-center justify-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900 hover:bg-emerald-50 hover:text-emerald-700"
+                      aria-expanded={moreOpen}
+                      aria-haspopup="menu"
+                    >
+                      More
+                      <span className="ml-2 text-xs">▾</span>
+                    </button>
+                    {moreOpen && (
+                      <div className="absolute right-0 mt-2 w-52 rounded-3xl border border-black/10 bg-white p-2 shadow-xl shadow-slate-900/10">
+                        {overflowCategories.map((category) => (
+                          <Link
+                            key={category._id}
+                            href={`/${resolveAnchorId(category.slug)}`}
+                            className="block rounded-2xl px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+                            onClick={() => setMoreOpen(false)}
+                          >
+                            {category.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </>
             ) : (
               <span className="text-sm font-semibold text-slate-500">Loading…</span>
             )}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex xl:gap-3">
+          <div className="hidden flex-shrink-0 items-center gap-2 lg:flex xl:gap-3">
             <GlobalSearch variant="inline" />
             {/* <Link
               href="/custom-requests"
@@ -144,7 +192,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                 onClick={() => setIsLoginOpen(true)}
                 className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
               >
-                Log In / Sign Up
+                LogIn
               </button>
             )}
 

@@ -14,19 +14,23 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [hasToken, setHasToken] = useState(false);
+  const [hasToken, setHasToken] = useState(null);
 
   useEffect(() => {
+    let active = true;
     const checkToken = async () => {
       try {
         const auth = await checkAuthTokenAction();
-        setHasToken(auth.hasToken);
+        if (active) setHasToken(auth.hasToken);
       } catch {
-        setHasToken(false);
+        if (active) setHasToken(false);
       }
     };
 
     checkToken();
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -34,7 +38,11 @@ export default function BookingsPage() {
       return;
     }
 
-    if (!user && !hasToken) {
+    if (!user && hasToken === null) {
+      return;
+    }
+
+    if (!user && hasToken === false) {
       setLoading(false);
       return;
     }
@@ -65,11 +73,11 @@ export default function BookingsPage() {
     fetchBookings();
   }, [authLoading, user, hasToken]);
 
-  if (authLoading || (loading && (user || hasToken))) {
+  if (authLoading || hasToken === null || (loading && (user || hasToken))) {
     return <Loader message="Loading your bookings..." />;
   }
 
-  if (!user && !hasToken) {
+  if (!user && hasToken === false) {
     return (
       <div className="mx-auto max-w-6xl px-5 py-20 text-center">
         <h1 className="text-3xl font-black text-slate-900">My Bookings</h1>

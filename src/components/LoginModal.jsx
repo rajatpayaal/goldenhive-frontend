@@ -14,6 +14,8 @@ export function LoginModal({ isOpen, onClose }) {
   const [mode, setMode] = useState("register"); // register | login
   const [step, setStep] = useState(1); // register steps: 1 -> phone, 2 -> details, 3 -> otp
   const [otp, setOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -228,6 +230,8 @@ export function LoginModal({ isOpen, onClose }) {
         setMode("register");
         setStep(1);
         setOtp("");
+        setShowPassword(false);
+        setShowConfirmPassword(false);
         setFormData({
           firstName: "",
           lastName: "",
@@ -294,6 +298,8 @@ export function LoginModal({ isOpen, onClose }) {
         setMode("register");
         setStep(1);
         setOtp("");
+        setShowPassword(false);
+        setShowConfirmPassword(false);
         setFormData({
           firstName: "",
           lastName: "",
@@ -368,6 +374,8 @@ export function LoginModal({ isOpen, onClose }) {
                       setStep(1);
                       setOtp("");
                       setError(null);
+                      setShowPassword(false);
+                      setShowConfirmPassword(false);
                     }}
                     className={[
                       "rounded-xl px-4 py-2 text-sm font-black transition",
@@ -383,6 +391,8 @@ export function LoginModal({ isOpen, onClose }) {
                       setStep(1);
                       setOtp("");
                       setError(null);
+                      setShowPassword(false);
+                      setShowConfirmPassword(false);
                     }}
                     className={[
                       "rounded-xl px-4 py-2 text-sm font-black transition",
@@ -413,15 +423,25 @@ export function LoginModal({ isOpen, onClose }) {
                     required
                   />
 
-                  <input
-                    type="password"
-                    name="password"
-                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button>
+                  </div>
 
                   <button
                     type="submit"
@@ -549,16 +569,26 @@ export function LoginModal({ isOpen, onClose }) {
                       <label htmlFor="password" className="block text-sm font-bold text-slate-900 mb-2">
                         Password <span className="text-rose-500">*</span>
                       </label>
-                      <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
-                        placeholder="Create a password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                          placeholder="Create a password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? "🙈" : "👁️"}
+                        </button>
+                      </div>
                       {fieldErrors.password && (
                         <p className="mt-2 text-xs font-medium text-rose-600">{fieldErrors.password}</p>
                       )}
@@ -568,16 +598,26 @@ export function LoginModal({ isOpen, onClose }) {
                       <label htmlFor="confirmPassword" className="block text-sm font-bold text-slate-900 mb-2">
                         Confirm Password <span className="text-rose-500">*</span>
                       </label>
-                      <input
-                        id="confirmPassword"
-                        type="password"
-                        name="confirmPassword"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
-                        placeholder="Re-enter your password"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? "text" : "password"}
+                          name="confirmPassword"
+                          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                          placeholder="Re-enter your password"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                          aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                        >
+                          {showConfirmPassword ? "🙈" : "👁️"}
+                        </button>
+                      </div>
                       {fieldErrors.confirmPassword && (
                         <p className="mt-2 text-xs font-medium text-rose-600">{fieldErrors.confirmPassword}</p>
                       )}

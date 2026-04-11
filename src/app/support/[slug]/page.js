@@ -27,10 +27,68 @@ export default function SupportTicketPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [tickets, setTickets] = useState([]);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
+  const [ticketsError, setTicketsError] = useState("");
+  const [ticketRefreshKey, setTicketRefreshKey] = useState(0);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!hasMounted || !user) {
+      return;
+    }
+
+    let active = true;
+    setTicketsLoading(true);
+    setTicketsError("");
+
+    const fetchTickets = async () => {
+      try {
+        const response = await fetch("/api/support/my", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+          },
+          cache: "no-store",
+        });
+
+        const data = await response.json().catch(() => null);
+        if (!active) return;
+
+        if (response.ok) {
+          setTickets(
+            Array.isArray(data)
+              ? data
+              : Array.isArray(data?.data)
+              ? data.data
+              : []
+          );
+        } else {
+          setTicketsError(data?.message || data?.error || "Unable to load your tickets.");
+        }
+      } catch {
+        if (active) {
+          setTicketsError("Unable to load your tickets. Please try again.");
+        }
+      } finally {
+        if (active) {
+          setTicketsLoading(false);
+        }
+      }
+    };
+
+    fetchTickets();
+
+    return () => {
+      active = false;
+    };
+  }, [hasMounted, user, ticketRefreshKey]);
+
+  const refreshTickets = () => setTicketRefreshKey((prev) => prev + 1);
 
   if (!hasMounted || isLoading) {
     return <Loader message="Loading support..." />;
@@ -94,7 +152,8 @@ export default function SupportTicketPage() {
       const successText = "Your ticket has been raised successfully. Our support team will get back to you soon.";
       setSuccessMessage(successText);
       showToast({ type: "success", message: successText });
-      setForm((prev) => ({ ...DEFAULT_FORM, type: prev.type, email: user.email || "", phone: user.mobile || "" }));
+      setForm({ ...DEFAULT_FORM, phone: user.mobile || "" });
+      refreshTickets();
     } else {
       const errorText = data?.message || data?.error || "Unable to raise support ticket. Please try again later.";
       setErrorMessage(errorText);
@@ -105,7 +164,7 @@ export default function SupportTicketPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-12">
+    <div className="mx-auto max-w-6xl px-5 py-12">
       <Breadcrumbs
         items={[
           { href: "/support", label: "Support" },
@@ -118,7 +177,8 @@ export default function SupportTicketPage() {
         <p className="mt-3 text-slate-600">Submit your issue for {title} and our team will respond soon.</p>
       </div>
 
-      <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
+      <div className="grid gap-8 xl:grid-cols-[1.6fr_0.9fr]">
+        <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
         {successMessage ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
             {successMessage}
@@ -210,6 +270,54 @@ export default function SupportTicketPage() {
           </div>
         </form>
       </div>
+
+      <aside className="rounded-3xl border border-black/10 bg-slate-50 p-6 shadow-sm">
+        <div className="mb-5">
+          <div className="text-xs font-extrabold uppercase tracking-[0.32em] text-slate-500">My Tickets</div>
+          <p className="mt-2 text-sm text-slate-600">Your raised support tickets appear here.</p>
+        </div>
+
+        {ticketsLoading ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+            Loading your tickets...
+          </div>
+        ) : ticketsError ? (
+          <div className="rounded-3xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+            {ticketsError}
+          </div>
+        ) : tickets.length === 0 ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+            No tickets found yet. Raise one using the form on the left.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {tickets.map((ticket) => (
+              <div key={ticket._id || ticket.id || ticket.subject} className="rounded-3xl border border-slate-200 bg-white p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-black text-slate-900">{ticket.subject || "Support Ticket"}</p>
+                    <p className="mt-1 text-xs text-slate-500">{ticket.priority || ticket.status || "Open"}</p>
+                  </div>
+                  {ticket.status && (
+                    <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                      ticket.status === "CLOSED" ? "bg-slate-100 text-slate-700" : ticket.status === "OPEN" ? "bg-emerald-100 text-emerald-700" : ticket.status === "IN_PROGRESS" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-700"
+                    }`}>
+                      {ticket.status.replace(/_/g, " ")}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-3 text-sm text-slate-600 line-clamp-3">{ticket.message || ticket.description || "No description available."}</p>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-500">
+                  {ticket.createdAt && <span>Created {new Date(ticket.createdAt).toLocaleDateString("en-IN")}</span>}
+                  {ticket.priority && <span>Priority: {ticket.priority}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </aside>
+      </div>
     </div>
   );
 }
+

@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 import { logoutAction } from "../actions/auth.actions";
 
 export function UserMenu() {
+  const router = useRouter();
   const { user, clearUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
@@ -31,8 +33,7 @@ export function UserMenu() {
     await logoutAction();
     clearUser();
     setIsOpen(false);
-    // Redirect to home
-    window.location.href = "/";
+    router.push("/");
   };
 
   return (
@@ -58,8 +59,7 @@ export function UserMenu() {
             <button
               onClick={() => {
                 setIsOpen(false);
-                // Navigate to profile page
-                window.location.href = "/profile";
+                router.push("/profile");
               }}
               className="w-full px-4 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
@@ -68,8 +68,7 @@ export function UserMenu() {
             <button
               onClick={() => {
                 setIsOpen(false);
-                // Navigate to bookings page
-                window.location.href = "/bookings";
+                router.push("/bookings");
               }}
               className="w-full px-4 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
             >
