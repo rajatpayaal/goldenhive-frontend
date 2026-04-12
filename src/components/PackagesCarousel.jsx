@@ -91,16 +91,34 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
           className="group relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(2,6,23,0.10)] sm:w-[320px]"
           data-card
         >
-          <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+          <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-slate-200 to-slate-100">
+            {/* Premium Image with Enhanced Zoom */}
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08]"
               style={{ backgroundImage: `url(${getPackageImage(pkg)})` }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
+            {/* Premium Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent" />
 
-            <div className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
-              {formatDuration(pkg)}
+            {/* Duration Badge */}
+            <div className="absolute left-4 top-4 inline-flex items-center rounded-full border-2 border-white/30 bg-white/15 backdrop-blur-md px-4 py-2 text-xs font-extrabold text-white shadow-lg">
+              ⏱️ {formatDuration(pkg)}
             </div>
+
+            {/* Best Deal Badge - Premium Style */}
+            {pkg?.bestDeal && (
+              <div className="absolute right-4 top-4 flex flex-col items-end gap-1.5 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 px-4 py-3 text-white shadow-2xl border border-orange-400/30">
+                <div className="text-sm font-black leading-tight">⭐ Best Deal</div>
+                <div className="text-[10px] font-bold leading-tight text-orange-100">
+                  {pkg?.bestDeal.pax} Pax · ₹{formatInr(pkg?.bestDeal.finalPricePerPerson)}/person
+                </div>
+                {pkg?.bestDeal.discountPercent > 0 && (
+                  <div className="text-[10px] font-black text-yellow-200 mt-0.5">
+                    {pkg?.bestDeal.discountPercent}% OFF
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="p-5 sm:p-6">

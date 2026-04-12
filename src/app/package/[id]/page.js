@@ -2,6 +2,8 @@ import { apiService } from "../../../services/api.service";
 import Link from "next/link";
 import { PackageAddToCart } from "../../../components/PackageAddToCart";
 import { PackageSuggestionsSection } from "../../../components/PackageSuggestionsSection";
+import { PricingOptionsSelector } from "../../../components/PricingOptionsSelector";
+import { PricingSidebarSync } from "../../../components/PricingSidebarSync";
 import { Breadcrumbs } from "../../../components/Breadcrumbs";
 
 async function resolvePackageId(slugOrId) {
@@ -219,56 +221,55 @@ export default async function PackageDetailsPage(context) {
         />
       </div>
 
-      <div
-        className="relative overflow-hidden rounded-b-[28px] shadow-[0_18px_45px_rgba(2,6,23,0.12)]"
-        style={{
-          backgroundImage: `url(${heroImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/55 to-slate-950/15" />
+      <div className="relative overflow-hidden rounded-b-3xl shadow-2xl">
+        {/* Premium Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+
         <div className="relative">
           <div className="container">
-            <div className="min-h-[420px] h-[62vh] flex flex-col justify-end pb-14 pt-24 text-white">
+            <div className="min-h-[520px] flex flex-col justify-end pb-16 pt-24 text-white">
               <Link
                 href={backHref}
-                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur hover:bg-white/15"
+                className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold hover:bg-white/20 transition"
               >
                 <span aria-hidden="true">←</span> Back
               </Link>
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-extrabold backdrop-blur">
-                  {pkg.basic?.durationDays}D / {pkg.basic?.nights}N
+              {/* Premium Badge Section */}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center rounded-full border border-emerald-400/50 bg-emerald-500/15 px-4 py-2.5 text-sm font-extrabold backdrop-blur text-emerald-200">
+                  🗓️ {pkg.basic?.durationDays}D / {pkg.basic?.nights}N
                 </span>
                 {pkg.categoryId?.name && (
-                  <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
-                    {pkg.categoryId.name}
+                  <span className="inline-flex items-center rounded-full border border-blue-400/50 bg-blue-500/15 px-4 py-2.5 text-sm font-bold backdrop-blur text-blue-200">
+                    📍 {pkg.categoryId.name}
                   </span>
                 )}
                 {pkg.basic?.destination && (
-                  <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold backdrop-blur">
-                    {pkg.basic.destination}
+                  <span className="inline-flex items-center rounded-full border border-purple-400/50 bg-purple-500/15 px-4 py-2.5 text-sm font-bold backdrop-blur text-purple-200">
+                    🏔️ {pkg.basic.destination}
                   </span>
                 )}
               </div>
 
-              <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+              {/* Premium Heading */}
+              <h1 className="mt-8 text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-tight drop-shadow-2xl">
                 {pkg.hero?.title || pkg.basic?.name}
               </h1>
-              <p className="mt-3 max-w-3xl text-base text-white/90 sm:text-lg">
+              <p className="mt-6 max-w-2xl text-xl text-white/90 font-semibold leading-relaxed drop-shadow-lg">
                 {pkg.hero?.subtitle || pkg.basic?.tagline}
               </p>
 
+              {/* Premium CTA Badges */}
               {(pkg.hero?.badges || []).length > 0 && (
-                <div className="mt-6 flex flex-wrap gap-2" aria-label="Highlights badges">
+                <div className="mt-8 flex flex-wrap gap-3" aria-label="Highlights badges">
                   {pkg.hero.badges.map((badge) => (
                     <span
                       key={badge}
-                      className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-extrabold backdrop-blur"
+                      className="inline-flex items-center rounded-full border border-white/30 bg-white/10 backdrop-blur px-4 py-2.5 text-sm font-bold text-white/95"
                     >
-                      {badge}
+                      ✨ {badge}
                     </span>
                   ))}
                 </div>
@@ -282,18 +283,20 @@ export default async function PackageDetailsPage(context) {
         <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_380px]">
           <div className="space-y-8">
             {show.quickInfo && (
-              <section className="rounded-3xl border border-black/5 bg-white p-7 shadow-sm">
-                <div className="flex items-end justify-between gap-4">
-                  <h2 className="text-xl font-black tracking-tight text-slate-900">Quick Info</h2>
-                  <span className="text-sm font-semibold text-slate-500">At a glance</span>
+              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm overflow-hidden">
+                <div className="flex items-end justify-between gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight text-slate-900">Quick Info</h2>
+                    <p className="mt-2 text-sm font-semibold text-slate-500">Everything at a glance</p>
+                  </div>
                 </div>
-                <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                   {quickInfoEntries.map(([key, value]) => (
-                    <div key={key} className="rounded-2xl border border-black/5 bg-slate-50 p-4">
-                      <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+                    <div key={key} className="group rounded-2xl border border-black/5 bg-gradient-to-br from-slate-50 to-slate-100/50 p-4 hover:border-slate-200 hover:shadow-md transition-all">
+                      <div className="text-[11px] font-black uppercase tracking-wider text-slate-600 mb-2">
                         {toLabel(key)}
                       </div>
-                      <div className="mt-1 text-sm font-extrabold text-slate-900">
+                      <div className="text-base font-black text-slate-900 group-hover:text-slate-950">
                         {cleanText(value)}
                       </div>
                     </div>
@@ -311,16 +314,27 @@ export default async function PackageDetailsPage(context) {
               </section>
             )}
 
+            {(pkg.pricingOptions || []).length > 0 && (
+              <PricingOptionsSelector
+                packageId={pkg._id}
+                packageName={pkg.basic?.name}
+                pricingOptions={pkg.pricingOptions}
+              />
+            )}
+
             {show.highlights && (
-              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-                <h2 className="text-2xl font-black tracking-tight text-slate-900">Highlights</h2>
-                <div className="mt-5 flex flex-wrap gap-2">
+              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm overflow-hidden">
+                <div className="mb-8">
+                  <h2 className="text-2xl font-black tracking-tight text-slate-900">Highlights</h2>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">What makes this special</p>
+                </div>
+                <div className="flex flex-wrap gap-3">
                   {pkg.highlights.map((item) => (
                     <span
                       key={item}
-                      className="inline-flex items-center rounded-full border border-black/5 bg-slate-50 px-4 py-2 text-sm font-extrabold text-slate-900"
+                      className="inline-flex items-center gap-2 rounded-full border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-5 py-3 text-sm font-black text-emerald-900 hover:border-emerald-300 hover:shadow-md transition-all"
                     >
-                      {item}
+                      <span>✨</span> {item}
                     </span>
                   ))}
                 </div>
@@ -328,18 +342,23 @@ export default async function PackageDetailsPage(context) {
             )}
 
             {show.whyChooseUs && (
-              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-                <h2 className="text-2xl font-black tracking-tight text-slate-900">Why Choose This</h2>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {pkg.whyChooseUs.map((item) => (
+              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm overflow-hidden">
+                <div className="mb-8">
+                  <h2 className="text-2xl font-black tracking-tight text-slate-900">Why Choose This</h2>
+                  <p className="mt-2 text-sm font-semibold text-slate-500">Reasons to pick us</p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {pkg.whyChooseUs.map((item, idx) => (
                     <div
                       key={item}
-                      className="flex items-start gap-3 rounded-2xl border border-black/5 bg-slate-50 p-4"
+                      className="group flex items-start gap-4 rounded-2xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100/50 p-5 hover:border-emerald-200 hover:from-emerald-50 hover:to-emerald-100/30 transition-all"
                     >
-                      <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-700">
-                        ✓
+                      <span className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-black">
+                        {idx + 1}
                       </span>
-                      <div className="text-sm font-bold text-slate-800">{item}</div>
+                      <div>
+                        <div className="text-sm font-black text-slate-900 group-hover:text-slate-950">{item}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -431,19 +450,30 @@ export default async function PackageDetailsPage(context) {
             )}
 
             {show.gallery && (
-              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-                <h2 className="text-2xl font-black tracking-tight text-slate-900">Gallery</h2>
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm overflow-hidden">
+                <div className="flex items-end justify-between gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight text-slate-900">Gallery</h2>
+                    <p className="mt-2 text-sm font-semibold text-slate-500">Explore stunning visuals</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {gallery.map((img, i) => (
                     <div
                       key={img.url || i}
-                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-black/5 bg-slate-100"
+                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-black/5 bg-gradient-to-br from-slate-100 to-slate-50 shadow-sm hover:shadow-lg transition-all duration-300"
                     >
-                      <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.03]"
-                        style={{ backgroundImage: `url(${img.url})` }}
+                      <img 
+                        src={img.url}
+                        alt={img.alt || `Package image ${i + 1}`}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.08]"
+                        loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                      {/* Image Counter Badge */}
+                      <div className="absolute bottom-3 right-3 inline-flex items-center rounded-full bg-black/40 backdrop-blur px-3 py-1 text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
+                        {i + 1}/{gallery.length}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -565,75 +595,19 @@ export default async function PackageDetailsPage(context) {
           </div>
 
           <aside className="lg:sticky lg:top-28 h-fit">
-            <div className="rounded-3xl border border-black/5 bg-white p-7 shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-sm font-extrabold uppercase tracking-wider text-slate-500">
-                    Book this Package
-                  </div>
-                  <div className="mt-2 text-lg font-black text-slate-900">
-                    {pkg.basic?.name}
-                  </div>
-                </div>
-                {pkg.pricing?.discountPercent > 0 && (
-                  <div className="rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-extrabold text-emerald-700">
-                    Save {pkg.pricing.discountPercent}%
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-black/5 bg-slate-50 p-5">
-                <div className="flex flex-wrap items-end gap-3">
-                  {pkg.pricing?.basePrice > 0 && pkg.pricing.discountPercent > 0 && (
-                    <div className="text-sm font-bold text-slate-400 line-through">
-                      ₹{pkg.pricing.basePrice}
-                    </div>
-                  )}
-                  <div className="text-4xl font-black tracking-tight text-slate-900">
-                    ₹{pkg.pricing?.finalPrice || pkg.basic?.finalPrice || "TBA"}
-                  </div>
-                  <div className="pb-1 text-sm font-bold text-slate-500">/ person</div>
-                </div>
-                <div className="mt-3 text-xs font-semibold text-slate-500">
-                  {pkg.pricing?.taxesIncluded ? "Includes all taxes and fees." : "Taxes not included."}
-                </div>
-              </div>
-
-              {pkg.availability?.seatsLeft > 0 && (
-                <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-bold text-amber-800">
-                  Only {pkg.availability.seatsLeft} seats remaining.
-                </div>
-              )}
-
-              <div className="mt-6 grid gap-3">
-                <PackageAddToCart 
-                  packageId={pkg._id} 
-                  packageName={pkg.basic?.name}
-                  packageData={pkg}
-                />
-                <a
-                  href={`https://wa.me/${whatsapp}`}
-                  className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] hover:bg-emerald-600"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Chat on WhatsApp
-                </a>
-                <a
-                  href={`tel:${pkg.cta?.call}`}
-                  className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-5 py-4 text-base font-black text-slate-900 hover:bg-slate-50"
-                >
-                  Call Now
-                </a>
-              </div>
-
-              {(pkg.policies?.cancellation || pkg.policies?.refund) && (
-                <div className="mt-6 space-y-2 border-t border-black/5 pt-5 text-sm font-semibold text-slate-700">
-                  {pkg.policies?.cancellation && <p>✅ {pkg.policies.cancellation}</p>}
-                  {pkg.policies?.refund && <p>💳 {pkg.policies.refund}</p>}
-                </div>
-              )}
-            </div>
+            <PricingSidebarSync
+              packageId={pkg._id}
+              packageName={pkg.basic?.name}
+              packageData={pkg}
+              bestDeal={pkg.bestDeal}
+              pricing={pkg.pricing}
+              whatsapp={whatsapp}
+              callNumber={pkg.cta?.call}
+              cancellationPolicy={pkg.policies?.cancellation}
+              refundPolicy={pkg.policies?.refund}
+              availability={pkg.availability}
+              pricingOptions={pkg.pricingOptions}
+            />
           </aside>
         </div>
 
