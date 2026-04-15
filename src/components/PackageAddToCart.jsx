@@ -1,12 +1,11 @@
 "use client";
-
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { addToCartAction } from "@/actions/cart.actions";
 import { cartActions, refreshCartCount } from "@/store";
-import { BookingModal } from "./BookingModal";
 import { LoginModal } from "./LoginModal";
 
 export function PackageAddToCart({
@@ -19,12 +18,12 @@ export function PackageAddToCart({
 }) {
   const { user } = useAuth();
   const dispatch = useDispatch();
+  const router = useRouter();
   const cartCount = useSelector((state) => state.cart.count);
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleAddToCart = async () => {
@@ -87,12 +86,23 @@ export function PackageAddToCart({
 
         {showBookNow ? (
           <button
-            onClick={() => {
+            onClick={async () => {
               if (!user) {
                 setIsLoginOpen(true);
                 return;
               }
-              setIsBookingOpen(true);
+
+              setLoading(true);
+              try {
+                await addToCartAction(packageId);
+                dispatch(refreshCartCount());
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new Event("gh_cart_updated"));
+                }
+              } finally {
+                setLoading(false);
+                router.push(`/booking?packageId=${encodeURIComponent(packageId)}`);
+              }
             }}
             className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(14,165,233,0.35)] transition ${
               !user
@@ -115,18 +125,6 @@ export function PackageAddToCart({
           {message}
         </div>
       )}
-
-      {showBookNow ? (
-        <BookingModal 
-          isOpen={isBookingOpen}
-          onClose={() => setIsBookingOpen(false)}
-          packages={packageData ? [packageData] : []}
-          onSuccess={() => {
-            setMessage("Booking created successfully!");
-            setIsSuccess(true);
-          }}
-        />
-      ) : null}
 
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>

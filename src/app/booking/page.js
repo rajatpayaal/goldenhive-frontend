@@ -12,9 +12,12 @@ import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/components/Loader";
+import { useSearchParams } from "next/navigation";
 
 export default function BookingPage() {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const highlightedPackageId = searchParams?.get("packageId") || "";
   const { showToast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
   const [cartItems, setCartItems] = useState([]);
@@ -66,16 +69,24 @@ export default function BookingPage() {
         const response = await getCartAction();
         if (response.ok) {
           const packages = response.data?.data?.packageId || [];
-          setCartItems(packages);
+          const orderedPackages =
+            highlightedPackageId && Array.isArray(packages) && packages.length > 1
+              ? [
+                  ...packages.filter((item) => item?._id === highlightedPackageId),
+                  ...packages.filter((item) => item?._id !== highlightedPackageId),
+                ]
+              : packages;
+
+          setCartItems(orderedPackages);
           setPackageTravellers(() => {
             const next = {};
-            for (const item of packages) {
+            for (const item of orderedPackages) {
               if (!item?._id) continue;
               next[item._id] = 1;
             }
             return next;
           });
-          const travelerCount = Math.max(1, packages.length);
+          const travelerCount = Math.max(1, orderedPackages.length);
           setBookingData(prev => ({ ...prev, travellers: travelerCount }));
           // Initialize traveler details based on number of packages/travelers
           setTravelerDetails(Array(travelerCount).fill().map(() => ({
@@ -92,7 +103,7 @@ export default function BookingPage() {
     };
 
     fetchCart();
-  }, [authLoading, user, hasToken]);
+  }, [authLoading, user, hasToken, highlightedPackageId]);
 
   const totalTravellers = (() => {
     const values = Object.values(packageTravellers).map((v) => Math.max(1, Number(v || 1)));

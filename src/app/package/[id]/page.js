@@ -80,7 +80,7 @@ const getHeroImage = (pkg) => {
   return (
     pkg.images?.primary?.url ||
     pkg.images?.gallery?.[0]?.url ||
-    "/placeholder.jpg"
+    "/placeholder.svg"
   );
 };
 
@@ -222,6 +222,15 @@ export default async function PackageDetailsPage(context) {
       </div>
 
       <div className="relative overflow-hidden rounded-b-3xl shadow-2xl">
+        {/* Hero Image */}
+        <img
+          src={heroImage}
+          alt={pkg.images?.primary?.alt || pkg.basic?.name || "Package image"}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
         {/* Premium Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/45" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
