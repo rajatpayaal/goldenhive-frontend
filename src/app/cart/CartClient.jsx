@@ -18,12 +18,36 @@ export default function CartClient() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [hasToken, setHasToken] = useState(false);
 
+  const normalizeEntry = (item) => (item?.packageId ? item : { packageId: item });
+  const getEntryPackageId = (entry) => entry.packageId?._id || entry._id;
+  const getSelectedPricingOption = (entry) => {
+    const pkg = entry.packageId;
+    if (!pkg) return null;
+
+    // Prefer the pricing selection stored on the cart item.
+    if (entry.selectedPricing) return entry.selectedPricing;
+
+    // Legacy support: cart can store the selected pricing option id as `pricingId`.
+    if (entry.pricingId && Array.isArray(pkg.pricingOptions)) {
+      return pkg.pricingOptions.find((opt) => opt._id === entry.pricingId) || null;
+    }
+
+    // If nothing was selected, fall back to package base/final price (no pricing option).
+    return null;
+  };
+  const getItemQuantity = (entry, selectedOption) =>
+    Number(entry.selectedPax || selectedOption?.pax || 1) || 1;
+  const getItemPrice = (entry, selectedOption) =>
+    selectedOption?.finalPricePerPerson ?? entry.packageId?.basic?.finalPrice ?? 0;
+  const getItemTotal = (entry, selectedOption, quantity) =>
+    selectedOption?.totalPrice ?? getItemPrice(entry, selectedOption) * quantity;
+
   const fetchCart = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getCartAction();
       if (response.ok) {
-        const packages = response.data?.data?.packageId || [];
+        const packages = response.data?.data?.cartItems || response.data?.data?.packageId || [];
         setCartItems(packages);
         setError("");
       } else {
@@ -83,7 +107,9 @@ export default function CartClient() {
     try {
       const response = await removeFromCartAction(packageId);
       if (response.ok) {
-        setCartItems((current) => current.filter((item) => item._id !== packageId));
+        setCartItems((current) =>
+          current.filter((item) => getEntryPackageId(normalizeEntry(item)) !== packageId)
+        );
         setError("");
         showToast({ type: "success", message: "Item removed from cart." });
         if (typeof window !== "undefined") {
@@ -141,7 +167,12 @@ export default function CartClient() {
     );
   }
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.basic?.finalPrice || 0), 0);
+  const totalPrice = cartItems.reduce((sum, item) => {
+    const entry = normalizeEntry(item);
+    const selectedOption = getSelectedPricingOption(entry);
+    const quantity = getItemQuantity(entry, selectedOption);
+    return sum + getItemTotal(entry, selectedOption, quantity);
+  }, 0);
 
   return (
     <div className="mx-auto px-5 py-12">
@@ -155,51 +186,92 @@ export default function CartClient() {
 
       <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
         <div className="space-y-4">
-          {cartItems.map((item) => (
-            <div key={item._id} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="w-full md:w-32 h-32 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0">
-                  {item.images?.primary?.url && (
-                    <div
-                      className="w-full h-full bg-cover bg-center"
-                      style={{ backgroundImage: `url(${item.images.primary.url})` }}
-                    />
-                  )}
-                </div>
+          {cartItems.map((item) => {
+            const entry = normalizeEntry(item);
+            const pkg = entry.packageId;
+            const selectedOption = getSelectedPricingOption(entry);
+            const quantity = getItemQuantity(entry, selectedOption);
+            const pricePerPerson = getItemPrice(entry, selectedOption);
+            const total = getItemTotal(entry, selectedOption, quantity);
+            const productId = pkg?._id || entry._id;
+            const removeId = pkg?._id || item._id;
+            const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
 
-                <div className="flex-1">
-                  <h3 className="text-lg font-black text-slate-900">{item.basic?.name}</h3>
-                  <p className="mt-2 text-sm font-semibold text-slate-700">Slug: {item.basic?.slug}</p>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 md:flex-col md:items-end">
-                  <div>
-                    <div className="text-sm text-slate-500">Price per person</div>
-                    {item.basic?.discount > 0 && (
-                      <div className="text-sm font-bold text-slate-400 line-through">
-                        {item.basic?.basePrice?.toLocaleString("en-IN")}
-                      </div>
-                    )}
-                    <div className="text-2xl font-black text-slate-900">
-                      {item.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
-                    </div>
-                    {item.basic?.discount > 0 && (
-                      <div className="text-xs font-bold text-emerald-600 mt-1">
-                        Save {item.basic.discount}%
-                      </div>
+            return (
+              <div key={productId} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="w-full md:w-32 h-32 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0">
+                    {pkg?.images?.primary?.url && (
+                      <div
+                        className="w-full h-full bg-cover bg-center"
+                        style={{ backgroundImage: `url(${pkg.images.primary.url})` }}
+                      />
                     )}
                   </div>
 
-                  <button
-                    onClick={() => handleRemoveItem(item._id)}
-                    className="rounded-lg bg-rose-50 px-4 py-2 text-sm font-bold text-rose-600 hover:bg-rose-100 transition"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-black text-slate-900">{pkg?.basic?.name}</h3>
+                    <p className="mt-2 text-sm font-semibold text-slate-700">Slug: {pkg?.basic?.slug}</p>
+                    {selectedOption ? (
+                      <p className="mt-2 text-sm text-slate-600">
+                        Vehicle: {vehicleLabel} • {quantity} Person{quantity !== 1 ? "s" : ""}
+                      </p>
+                    ) : pkg?.pricingOptions?.length > 0 ? (
+                      <p className="mt-2 text-sm text-rose-600">Please select a pricing option in package details.</p>
+                    ) : null}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 md:flex-col md:items-end">
+                    <div>
+                      <div className="text-sm text-slate-500">Price per person</div>
+                      {selectedOption ? (
+                        <>
+                          {selectedOption.discountPercent > 0 && (
+                            <div className="text-sm font-bold text-slate-400 line-through">
+                              ₹{selectedOption.pricePerPerson?.toLocaleString("en-IN")}
+                            </div>
+                          )}
+                          <div className="text-2xl font-black text-slate-900">
+                            ₹{pricePerPerson?.toLocaleString("en-IN") || "TBA"}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {pkg?.basic?.discount > 0 && (
+                            <div className="text-sm font-bold text-slate-400 line-through">
+                              {pkg.basic.basePrice?.toLocaleString("en-IN")}
+                            </div>
+                          )}
+                          <div className="text-2xl font-black text-slate-900">
+                            ₹{pkg?.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
+                          </div>
+                        </>
+                      )}
+                      {selectedOption?.discountPercent > 0 && (
+                        <div className="text-xs font-bold text-emerald-600 mt-1">
+                          Save {selectedOption.discountPercent}%
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-right text-sm text-slate-600">
+                      <div>Qty: {quantity}</div>
+                      <div className="mt-2 text-base font-black text-slate-900">
+                        ₹{total?.toLocaleString("en-IN")}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleRemoveItem(removeId)}
+                      className="rounded-lg bg-rose-50 px-4 py-2 text-sm font-bold text-rose-600 hover:bg-rose-100 transition"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="lg:sticky lg:top-28 h-fit">
@@ -212,13 +284,13 @@ export default function CartClient() {
                 <span>{cartItems.length}</span>
               </div>
               <div className="flex justify-between text-lg font-black text-slate-900">
-                <span>Total (per person):</span>
-                <span>{totalPrice.toLocaleString("en-IN")}</span>
+                <span>Total:</span>
+                <span>₹{totalPrice.toLocaleString("en-IN")}</span>
               </div>
             </div>
 
             <p className="mt-4 text-xs text-slate-500 mb-6">
-              💡 Prices shown are per person. Final booking amount may vary based on number of travelers and selected dates.
+              💡 Pricing options use group totals; otherwise prices are per person.
             </p>
 
             <div className="space-y-3">
@@ -249,4 +321,3 @@ export default function CartClient() {
     </div>
   );
 }
-

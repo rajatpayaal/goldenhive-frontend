@@ -19,19 +19,32 @@ export function PricingOptionsSelector({
   selectedOption: initialSelected 
 }) {
   const [selectedOption, setSelectedOption] = useState(
-    initialSelected || pricingOptions?.[0] || null
+    initialSelected || null
   );
 
   const handleSelectOption = (option) => {
-    setSelectedOption(option);
-    if (onOptionSelect) {
-      onOptionSelect(option);
-    }
-    // Dispatch event for sidebar to listen
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(
-        new CustomEvent("pricing-option-selected", { detail: option })
-      );
+    if (selectedOption && selectedOption._id === option._id) {
+      // Deselect if already selected
+      setSelectedOption(null);
+      if (onOptionSelect) {
+        onOptionSelect(null);
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("pricing-option-selected", { detail: null })
+        );
+      }
+    } else {
+      // Select new option
+      setSelectedOption(option);
+      if (onOptionSelect) {
+        onOptionSelect(option);
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("pricing-option-selected", { detail: option })
+        );
+      }
     }
   };
 
@@ -163,11 +176,11 @@ export function PricingOptionsSelector({
                   onClick={() => handleSelectOption(option)}
                   className={`w-full flex items-center justify-center h-12 rounded-xl font-extrabold transition-all duration-200 border-2 ${
                     isSelected
-                      ? 'bg-gradient-to-r from-sky-500 to-sky-600 border-sky-600 text-white shadow-lg hover:shadow-xl'
+                      ? 'bg-gradient-to-r from-rose-500 to-rose-600 border-rose-600 text-white shadow-lg hover:shadow-xl'
                       : 'border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-sky-50'
                   }`}
                 >
-                  {isSelected ? '✓ Selected' : 'Select This Option'}
+                  {isSelected ? '✕ Deselect' : 'Select This Option'}
                 </button>
               </div>
             </div>

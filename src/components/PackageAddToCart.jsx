@@ -12,6 +12,7 @@ export function PackageAddToCart({
   packageId,
   packageName,
   packageData,
+  selectedPricingOption = null,
   showBookNow = true,
   showMessage = true,
   size = "md",
@@ -26,6 +27,23 @@ export function PackageAddToCart({
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
+  const pricingOptions = packageData?.pricingOptions || [];
+  const requiresPricingSelection = pricingOptions.length > 0;
+
+  const getPayload = () => {
+    const payload = { packageId };
+    if (!selectedPricingOption) return payload;
+
+    const vehicleId = selectedPricingOption.vehicleId?._id || selectedPricingOption.vehicleId;
+    const pricingOptions = selectedPricingOption._id || selectedPricingOption.pricingId;
+    const selectedPax = Number(selectedPricingOption.pax || selectedPricingOption.selectedPax || 0) || 0;
+
+    if (pricingOptions) payload.pricingOptions = pricingOptions;
+    if (vehicleId) payload.vehicleId = vehicleId;
+    if (selectedPax > 0) payload.selectedPax = selectedPax;
+    return payload;
+  };
+
   const handleAddToCart = async () => {
     if (!user) {
       setIsLoginOpen(true);
@@ -37,7 +55,7 @@ export function PackageAddToCart({
     setIsSuccess(false);
 
     try {
-      const response = await addToCartAction(packageId);
+      const response = await addToCartAction(getPayload());
       
       if (response.ok) {
         const successText = `${packageName} added to cart!`;
@@ -92,9 +110,17 @@ export function PackageAddToCart({
                 return;
               }
 
+              // if (requiresPricingSelection && !selectedPricingOption) {
+              //   const messageText = "Please select a pricing option before booking.";
+              //   setMessage(messageText);
+              //   setIsSuccess(false);
+              //   showToast({ type: "error", message: messageText });
+              //   return;
+              // }
+
               setLoading(true);
               try {
-                await addToCartAction(packageId);
+                await addToCartAction(getPayload());
                 dispatch(refreshCartCount());
                 if (typeof window !== "undefined") {
                   window.dispatchEvent(new Event("gh_cart_updated"));

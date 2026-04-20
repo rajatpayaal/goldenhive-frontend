@@ -16,15 +16,13 @@ export function PricingSidebarSync({
   availability,
   pricingOptions,
 }) {
-  const [selectedOption, setSelectedOption] = useState(bestDeal || pricingOptions?.[0] || null);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
     // Listen for pricing option selection events
     const handlePricingSelect = (event) => {
       const option = event.detail;
-      if (option) {
-        setSelectedOption(option);
-      }
+      setSelectedOption(option);
     };
 
     window.addEventListener("pricing-option-selected", handlePricingSelect);

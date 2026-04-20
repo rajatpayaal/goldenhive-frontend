@@ -42,6 +42,30 @@ export default function BookingPage() {
     { name: "", age: "", email: "", phone: "" }
   ]);
 
+  const normalizeEntry = (item) => (item?.packageId ? item : { packageId: item });
+  const getEntryPackageId = (entry) => entry.packageId?._id || entry._id;
+  const getSelectedPricingOption = (entry) => {
+    const pkg = entry.packageId;
+    if (!pkg) return null;
+
+    // Cart API can send a fully populated selection as `selectedPricing`.
+    if (entry.selectedPricing) return entry.selectedPricing;
+
+    // Legacy support: cart can store the selected pricing option id as `pricingId`.
+    if (entry.pricingId && Array.isArray(pkg.pricingOptions)) {
+      return pkg.pricingOptions.find((opt) => opt._id === entry.pricingId) || null;
+    }
+
+    // If nothing was selected, booking should use package final price (no pricing option).
+    return null;
+  };
+  const getItemQuantity = (entry, selectedOption) =>
+    Number(entry.selectedPax || selectedOption?.pax || 1) || 1;
+  const getItemPrice = (entry, selectedOption) =>
+    selectedOption?.finalPricePerPerson ?? entry.packageId?.basic?.finalPrice ?? 0;
+  const getItemTotal = (entry, selectedOption, quantity) =>
+    selectedOption?.totalPrice ?? getItemPrice(entry, selectedOption) * quantity;
+
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -68,12 +92,12 @@ export default function BookingPage() {
       try {
         const response = await getCartAction();
         if (response.ok) {
-          const packages = response.data?.data?.packageId || [];
+          const packages = response.data?.data?.cartItems || response.data?.data?.packageId || [];
           const orderedPackages =
             highlightedPackageId && Array.isArray(packages) && packages.length > 1
               ? [
-                  ...packages.filter((item) => item?._id === highlightedPackageId),
-                  ...packages.filter((item) => item?._id !== highlightedPackageId),
+                  ...packages.filter((item) => getEntryPackageId(normalizeEntry(item)) === highlightedPackageId),
+                  ...packages.filter((item) => getEntryPackageId(normalizeEntry(item)) !== highlightedPackageId),
                 ]
               : packages;
 
@@ -81,12 +105,21 @@ export default function BookingPage() {
           setPackageTravellers(() => {
             const next = {};
             for (const item of orderedPackages) {
-              if (!item?._id) continue;
-              next[item._id] = 1;
+              const entry = normalizeEntry(item);
+              const itemId = getEntryPackageId(entry);
+              if (!itemId) continue;
+              const selectedOption = getSelectedPricingOption(entry);
+              next[itemId] = Number(item.selectedPax || selectedOption?.pax || 1) || 1;
             }
             return next;
           });
-          const travelerCount = Math.max(1, orderedPackages.length);
+          const travelerCount = Math.max(
+            1,
+            ...orderedPackages.map((item) => {
+              const entry = normalizeEntry(item);
+              return Number(item.selectedPax || getSelectedPricingOption(entry)?.pax || 1) || 1;
+            })
+          );
           setBookingData(prev => ({ ...prev, travellers: travelerCount }));
           // Initialize traveler details based on number of packages/travelers
           setTravelerDetails(Array(travelerCount).fill().map(() => ({
@@ -213,18 +246,37 @@ export default function BookingPage() {
 
     try {
       const totalAmount = cartItems.reduce((sum, item) => {
-        const price = Number(item.basic?.finalPrice || 0);
-        const qty = Math.max(1, Number(packageTravellers[item._id] || 1));
-        return sum + price * qty;
+        const entry = normalizeEntry(item);
+        const selectedOption = getSelectedPricingOption(entry);
+        const quantity = Math.max(1, Number(packageTravellers[getEntryPackageId(entry)] || 1));
+        return sum + getItemTotal(entry, selectedOption, quantity);
       }, 0);
 
       const packageItems = cartItems
-        .filter((item) => item?._id)
-        .map((item) => ({
-          packageId: item._id,
-          travellers: Math.max(1, Number(packageTravellers[item._id] || 1)),
-          travelerDetails: [],
-        }));
+        .filter((item) => {
+          const entry = normalizeEntry(item);
+          return Boolean(getEntryPackageId(entry));
+        })
+        .map((item) => {
+          const entry = normalizeEntry(item);
+          const itemId = getEntryPackageId(entry);
+          const selectedOption = getSelectedPricingOption(entry);
+          const quantity = Math.max(1, Number(packageTravellers[itemId] || 1));
+          const selectedPricing = entry.selectedPricing || null;
+          return {
+            packageId: itemId,
+            travellers: quantity,
+            travelerDetails: [],
+            pricingId: selectedPricing?._id || entry.pricingId || selectedOption?._id,
+            vehicleId:
+              selectedPricing?.vehicleId?._id ||
+              selectedPricing?.vehicleId ||
+              entry.vehicleId ||
+              selectedOption?.vehicleId?._id ||
+              selectedOption?.vehicleId,
+            selectedPax: quantity,
+          };
+        });
 
       const payload = {
         ...bookingData,
@@ -360,43 +412,63 @@ export default function BookingPage() {
           <div className="rounded-3xl border border-black/10 bg-white p-6">
             <h2 className="text-xl font-black text-slate-900 mb-4">Selected Packages</h2>
             <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div key={item._id} className="flex items-center gap-4 rounded-2xl border border-black/5 bg-slate-50 p-4">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
-                    {item.images?.primary?.url && (
-                      <Image
-                        src={item.images.primary.url}
-                        alt={item.basic?.name}
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-cover"
+              {cartItems.map((item) => {
+                const entry = normalizeEntry(item);
+                const pkg = entry.packageId;
+                const itemId = getEntryPackageId(entry);
+                const selectedOption = getSelectedPricingOption(entry);
+                const quantity = Math.max(1, Number(packageTravellers[itemId] || 1));
+                const pricePerPerson = getItemPrice(entry, selectedOption);
+                const subtotal = getItemTotal(entry, selectedOption, quantity);
+                const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
+
+                return (
+                  <div key={itemId} className="flex items-center gap-4 rounded-2xl border border-black/5 bg-slate-50 p-4">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
+                      {pkg?.images?.primary?.url && (
+                        <Image
+                          src={pkg.images.primary.url}
+                          alt={pkg?.basic?.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-slate-900">{pkg?.basic?.name}</h3>
+                      <p className="text-sm text-slate-600">
+                        ₹{pricePerPerson?.toLocaleString("en-IN")} per traveller
+                      </p>
+                      {selectedOption ? (
+                        <p className="mt-1 text-sm text-slate-600">
+                          Option: {vehicleLabel} • {selectedOption.pax} Person{selectedOption.pax !== 1 ? "s" : ""}
+                        </p>
+                      ) : pkg?.pricingOptions?.length > 0 ? (
+                        <p className="mt-1 text-sm text-rose-600">Please select a pricing option in package details.</p>
+                      ) : null}
+                      <p className="mt-1 text-xs font-bold text-slate-500">
+                        Subtotal: ₹{subtotal.toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Travellers</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={quantity}
+                        onChange={(e) => {
+                          const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+                          setPackageTravellers((prev) => ({ ...prev, [itemId]: value }));
+                        }}
+                        className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500"
+                        aria-label={`Travellers for ${pkg?.basic?.name || "package"}`}
+                        required
                       />
-                    )}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-900">{item.basic?.name}</h3>
-                    <p className="text-sm text-slate-600">₹{item.basic?.finalPrice?.toLocaleString("en-IN")} per traveller</p>
-                    <p className="mt-1 text-xs font-bold text-slate-500">
-                      Subtotal: ₹{(Number(item.basic?.finalPrice || 0) * Math.max(1, Number(packageTravellers[item._id] || 1))).toLocaleString("en-IN")}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Travellers</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={Math.max(1, Number(packageTravellers[item._id] || 1))}
-                      onChange={(e) => {
-                        const value = Math.max(1, parseInt(e.target.value, 10) || 1);
-                        setPackageTravellers((prev) => ({ ...prev, [item._id]: value }));
-                      }}
-                      className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500"
-                      aria-label={`Travellers for ${item.basic?.name || "package"}`}
-                      required
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

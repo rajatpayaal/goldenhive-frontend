@@ -45,11 +45,20 @@ export function PackageBookingSidebar({
           {/* Selected Option / Best Deal Section */}
           {selectedOption && (
             <div className="mt-6 rounded-2xl border-2 border-gradient-to-br from-orange-200 to-orange-100 bg-gradient-to-br from-orange-50/80 to-orange-50/30 p-5 backdrop-blur-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl animate-pulse">⭐</span>
-                <span className="text-sm font-black uppercase tracking-widest text-orange-800">
-                  {selectedOption.isBestDeal ? "⭐ Best Deal Selected" : "✓ Selected Option"}
-                </span>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl animate-pulse">⭐</span>
+                  <span className="text-sm font-black uppercase tracking-widest text-orange-800">
+                    {selectedOption.isBestDeal ? "⭐ Best Deal Selected" : "✓ Selected Option"}
+                  </span>
+                </div>
+                <button
+                  onClick={() => onOptionSelect(null)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-600 hover:text-rose-700 transition-colors"
+                  title="Clear selection"
+                >
+                  ✕
+                </button>
               </div>
               
               <div className="bg-white rounded-xl p-4 space-y-3 border border-orange-100">
@@ -115,10 +124,8 @@ export function PackageBookingSidebar({
             <PackageAddToCart 
               packageId={packageId} 
               packageName={packageName}
-              packageData={{
-                ...packageData,
-                selectedPricingOption: selectedOption,
-              }}
+              packageData={packageData}
+              selectedPricingOption={selectedOption}
             />
             <a
               href={`https://wa.me/${whatsapp}`}

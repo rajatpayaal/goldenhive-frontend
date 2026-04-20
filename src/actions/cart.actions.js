@@ -31,10 +31,11 @@ async function fetchWithToken(path, options = {}) {
   return { ok: response.ok, status: response.status, data };
 }
 
-export async function addToCartAction(packageId) {
+export async function addToCartAction(payload) {
+  const body = typeof payload === "string" ? { packageId: payload } : payload;
   return fetchWithToken("/cart", {
     method: "POST",
-    body: JSON.stringify({ packageId }),
+    body: JSON.stringify(body),
   });
 }
 

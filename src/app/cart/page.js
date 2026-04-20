@@ -6,8 +6,9 @@ export default async function CartPage() {
   let excludeId = "";
   try {
     const response = await getCartAction();
-    const items = response?.ok ? response?.data?.data?.packageId || [] : [];
-    excludeId = items?.[0]?._id || "";
+    const items = response?.ok ? response?.data?.data?.cartItems || response?.data?.data?.packageId || [] : [];
+    const firstItem = items?.[0] || {};
+    excludeId = firstItem.packageId?._id || firstItem._id || "";
   } catch {
     excludeId = "";
   }
