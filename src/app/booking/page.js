@@ -66,6 +66,16 @@ export default function BookingPage() {
   const getItemTotal = (entry, selectedOption, quantity) =>
     selectedOption?.totalPrice ?? getItemPrice(entry, selectedOption) * quantity;
 
+  const getEffectiveQuantity = (entry) => {
+    const itemId = getEntryPackageId(entry);
+    const selectedOption = getSelectedPricingOption(entry);
+
+    // If a pricing option is selected, group size (pax) is fixed and should drive totals.
+    if (selectedOption?.pax) return Math.max(1, Number(selectedOption.pax || 1));
+
+    return Math.max(1, Number(packageTravellers[itemId] || 1));
+  };
+
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -139,8 +149,10 @@ export default function BookingPage() {
   }, [authLoading, user, hasToken, highlightedPackageId]);
 
   const totalTravellers = (() => {
-    const values = Object.values(packageTravellers).map((v) => Math.max(1, Number(v || 1)));
-    return values.length > 0 ? Math.max(...values) : 1;
+    const quantities = (cartItems || [])
+      .map((item) => getEffectiveQuantity(normalizeEntry(item)))
+      .filter((v) => Number.isFinite(v));
+    return quantities.length > 0 ? Math.max(...quantities) : 1;
   })();
 
   useEffect(() => {
@@ -248,7 +260,7 @@ export default function BookingPage() {
       const totalAmount = cartItems.reduce((sum, item) => {
         const entry = normalizeEntry(item);
         const selectedOption = getSelectedPricingOption(entry);
-        const quantity = Math.max(1, Number(packageTravellers[getEntryPackageId(entry)] || 1));
+        const quantity = getEffectiveQuantity(entry);
         return sum + getItemTotal(entry, selectedOption, quantity);
       }, 0);
 
@@ -261,7 +273,7 @@ export default function BookingPage() {
           const entry = normalizeEntry(item);
           const itemId = getEntryPackageId(entry);
           const selectedOption = getSelectedPricingOption(entry);
-          const quantity = Math.max(1, Number(packageTravellers[itemId] || 1));
+          const quantity = getEffectiveQuantity(entry);
           const selectedPricing = entry.selectedPricing || null;
           return {
             packageId: itemId,
@@ -396,10 +408,11 @@ export default function BookingPage() {
     );
   }
 
-  const totalAmount = cartItems.reduce((sum, item) => {
-    const price = Number(item.basic?.finalPrice || 0);
-    const qty = Math.max(1, Number(packageTravellers[item._id] || 1));
-    return sum + price * qty;
+  const cartSubtotal = cartItems.reduce((sum, item) => {
+    const entry = normalizeEntry(item);
+    const selectedOption = getSelectedPricingOption(entry);
+    const quantity = getEffectiveQuantity(entry);
+    return sum + getItemTotal(entry, selectedOption, quantity);
   }, 0);
 
   return (
@@ -417,7 +430,7 @@ export default function BookingPage() {
                 const pkg = entry.packageId;
                 const itemId = getEntryPackageId(entry);
                 const selectedOption = getSelectedPricingOption(entry);
-                const quantity = Math.max(1, Number(packageTravellers[itemId] || 1));
+                const quantity = getEffectiveQuantity(entry);
                 const pricePerPerson = getItemPrice(entry, selectedOption);
                 const subtotal = getItemTotal(entry, selectedOption, quantity);
                 const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
@@ -457,14 +470,20 @@ export default function BookingPage() {
                         type="number"
                         min="1"
                         value={quantity}
+                        disabled={Boolean(selectedOption?.pax)}
                         onChange={(e) => {
                           const value = Math.max(1, parseInt(e.target.value, 10) || 1);
                           setPackageTravellers((prev) => ({ ...prev, [itemId]: value }));
                         }}
-                        className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500"
+                        className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500 disabled:opacity-60 disabled:bg-slate-100"
                         aria-label={`Travellers for ${pkg?.basic?.name || "package"}`}
                         required
                       />
+                      {selectedOption?.pax ? (
+                        <p className="text-[11px] font-semibold text-slate-500">
+                          Group size fixed by selected pricing.
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                 );
@@ -594,9 +613,15 @@ export default function BookingPage() {
             )}
 
             <div className="mt-6 border-t border-black/5 pt-4">
-              <div className="flex justify-between items-center text-lg font-black text-slate-900 mb-4">
-                <span>Total Amount:</span>
-                <span>₹{totalAmount.toLocaleString("en-IN")}</span>
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between items-center text-sm font-semibold text-slate-700">
+                  <span>Subtotal:</span>
+                  <span>₹{cartSubtotal.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex justify-between items-center text-lg font-black text-slate-900">
+                  <span>Total Amount:</span>
+                  <span>₹{cartSubtotal.toLocaleString("en-IN")}</span>
+                </div>
               </div>
 
               <button
