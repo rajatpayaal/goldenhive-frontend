@@ -326,7 +326,7 @@ export default async function PackagesSlugPage({ params }) {
           />
         </div>
 
-        <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="relative overflow-hidden rounded-[2.2rem] border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)]">
             <div className="relative">
               <Image
@@ -336,18 +336,6 @@ export default async function PackagesSlugPage({ params }) {
                 priority
                 className="object-cover"
               />
-                {show.overview && (
-              <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
-                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-5">
-                  <div className="flex gap-4">
-                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white sm:inline-flex">
-                      <Mountain className="h-5 w-5" />
-                    </div>
-                    <p className="text-[15px] font-medium leading-8 text-[color:var(--gh-text)]">{overviewText}</p>
-                  </div>
-                </div>
-              </SectionShell>
-            )}
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,19,40,0.96)_0%,rgba(42,21,69,0.82)_38%,rgba(52,31,78,0.42)_62%,rgba(17,24,39,0.18)_100%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,79,138,0.26),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(255,185,94,0.22),transparent_22%)]" />
 
@@ -416,6 +404,19 @@ export default async function PackagesSlugPage({ params }) {
 
         <div className="mt-7 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-6">
+            {show.overview && (
+              <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
+                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-5">
+                  <div className="flex gap-4">
+                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white sm:inline-flex">
+                      <Mountain className="h-5 w-5" />
+                    </div>
+                    <p className="text-[15px] font-medium leading-8 text-[color:var(--gh-text)]">{overviewText}</p>
+                  </div>
+                </div>
+              </SectionShell>
+            )}
+
             {show.quickInfo && (
               <SectionShell title="Quick Info" subtitle="Everything at a glance">
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

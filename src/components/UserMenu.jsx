@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { CalendarRange, ChevronRight, LogOut, User2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { logoutAction } from "../actions/auth.actions";
 
@@ -47,40 +48,53 @@ export function UserMenu() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-black/10 bg-white shadow-gh-soft">
-          <div className="px-4 py-3 border-b border-black/5">
-            <div className="text-sm font-bold text-slate-900">
+        <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-3xl border border-[color:var(--gh-border)] bg-[color:var(--gh-surface-strong)] shadow-gh-soft">
+          <div className="border-b border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,79,138,0.08),rgba(255,185,94,0.14))] px-4 py-4">
+            <div className="text-sm font-bold text-[color:var(--gh-heading)]">
               {user.firstName} {user.lastName}
             </div>
-            <div className="text-xs text-slate-500">{user.email}</div>
+            <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">{user.email}</div>
           </div>
 
-          <div className="py-2">
+          <div className="px-3 py-3">
             <button
               onClick={() => {
                 setIsOpen(false);
                 router.push("/profile");
               }}
-              className="w-full px-4 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+              className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left text-sm font-semibold text-[color:var(--gh-heading)] transition hover:bg-[color:var(--gh-bg-soft)]"
             >
-              Profile
+              <span className="inline-flex items-center gap-3">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)] text-[color:var(--gh-accent)]">
+                  <User2 className="h-4 w-4" />
+                </span>
+                Profile
+              </span>
+              <ChevronRight className="h-4 w-4 text-[color:var(--gh-text-soft)]" />
             </button>
             <button
               onClick={() => {
                 setIsOpen(false);
                 router.push("/bookings");
               }}
-              className="w-full px-4 py-2 text-left text-sm font-semibold text-slate-900 hover:bg-slate-50 transition"
+              className="mt-2 flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left text-sm font-semibold text-[color:var(--gh-heading)] transition hover:bg-[color:var(--gh-bg-soft)]"
             >
-              My Bookings
+              <span className="inline-flex items-center gap-3">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(255,79,138,0.12),rgba(255,185,94,0.2))] text-[color:var(--gh-accent)]">
+                  <CalendarRange className="h-4 w-4" />
+                </span>
+                My Bookings
+              </span>
+              <ChevronRight className="h-4 w-4 text-[color:var(--gh-text-soft)]" />
             </button>
           </div>
 
-          <div className="border-t border-black/5 px-4 py-2">
+          <div className="border-t border-[color:var(--gh-border)] px-4 py-3">
             <button
               onClick={handleLogout}
-              className="w-full rounded-lg bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100 transition"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-50 px-3 py-3 text-sm font-bold text-rose-600 transition hover:bg-rose-100"
             >
+              <LogOut className="h-4 w-4" />
               Logout
             </button>
           </div>

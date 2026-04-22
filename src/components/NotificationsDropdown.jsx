@@ -2,13 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { Bell, CheckCheck, RefreshCw } from "lucide-react";
+
 import {
   getMyNotificationsAction,
   markAllNotificationsReadAction,
   markNotificationReadAction,
 } from "@/actions/notifications.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
+import { Button } from "@/components/ui/button";
 
 function formatWhen(isoString) {
   if (!isoString) return "";
@@ -35,11 +37,7 @@ export function NotificationsDropdown({
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const rootRef = useRef(null);
 
-  const positionClass = useMemo(() => {
-    if (align === "left") return "left-0";
-    return "right-0";
-  }, [align]);
-
+  const positionClass = useMemo(() => (align === "left" ? "left-0" : "right-0"), [align]);
   const isDark = variant === "header-dark";
 
   useEffect(() => {
@@ -80,36 +78,32 @@ export function NotificationsDropdown({
       if (!auth?.hasToken) {
         setItems([]);
         setUnreadCount(0);
-        setError("Please log in to view notifications.");
+        setError("Please log in to view alerts.");
         return;
       }
 
       const response = await getMyNotificationsAction({ page: 1, limit: 20 });
       if (!response?.ok) {
         setItems([]);
-        setError(response?.data?.error || response?.data?.message || "Failed to load notifications.");
+        setError(response?.data?.error || response?.data?.message || "Failed to load alerts.");
         return;
       }
 
       const nextItems = response?.data?.data?.items || [];
       setItems(nextItems);
 
-      const computedUnread = nextItems.reduce((count, n) => {
-        if (n?.isRead === false) return count + 1;
+      const computedUnread = nextItems.reduce((count, notification) => {
+        if (notification?.isRead === false) return count + 1;
         return count;
       }, 0);
       setUnreadCount(computedUnread);
     } catch {
       setItems([]);
-      setError("Failed to load notifications.");
+      setError("Failed to load alerts.");
     } finally {
       setLoading(false);
     }
   }, []);
-
-  const onToggle = async () => {
-    setOpen((prev) => !prev);
-  };
 
   useEffect(() => {
     if (!open) return;
@@ -125,7 +119,7 @@ export function NotificationsDropdown({
         setError(response?.data?.error || response?.data?.message || "Failed to mark all as read.");
         return;
       }
-      setItems((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      setItems((prev) => prev.map((notification) => ({ ...notification, isRead: true })));
       setUnreadCount(0);
     } catch {
       setError("Failed to mark all as read.");
@@ -141,12 +135,18 @@ export function NotificationsDropdown({
       if (!response?.ok) return;
 
       setItems((prev) =>
-        prev.map((n) => (n?._id === notificationId ? { ...n, isRead: true } : n))
+        prev.map((notification) =>
+          notification?._id === notificationId ? { ...notification, isRead: true } : notification
+        )
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch {
       // best-effort
     }
+  };
+
+  const onToggle = () => {
+    setOpen((prev) => !prev);
   };
 
   return (
@@ -174,40 +174,44 @@ export function NotificationsDropdown({
 
       {open && (
         <div
-          className={`absolute ${positionClass} mt-3 w-[22rem] max-w-[92vw] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]`}
+          className={`absolute ${positionClass} mt-3 w-[23rem] max-w-[92vw] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-gh-soft`}
           role="dialog"
           aria-label="Notifications panel"
         >
           <div className="flex items-center justify-between gap-3 border-b border-black/5 px-5 py-4">
             <div className="min-w-0">
-              <div className="text-sm font-black text-slate-900">Notifications</div>
+              <div className="text-sm font-black text-slate-900">
+                Alerts{" "}
+                <span className="text-xs font-semibold text-slate-500">
+                  ({items.length} item{items.length !== 1 ? "s" : ""})
+                </span>
+              </div>
               <div className="text-xs font-semibold text-slate-500">
-                {unreadCount > 0 ? `${unreadCount} unread` : "All caught up"}
+                {unreadCount > 0 ? (
+                  <>
+                    Unread: <span className="font-black text-slate-900">{unreadCount}</span>
+                  </>
+                ) : (
+                  "All caught up"
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={refresh}
-                disabled={loading}
-                className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-3 py-2 text-xs font-black text-slate-900 hover:bg-slate-50 disabled:opacity-60"
-              >
-                Refresh
-              </button>
-              <button
-                type="button"
-                onClick={markAllRead}
-                disabled={loading || items.length === 0 || unreadCount === 0}
-                className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-3 py-2 text-xs font-black text-white hover:bg-emerald-600 disabled:opacity-60"
-              >
-                Mark all read
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={refresh}
+              disabled={loading}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-black/10 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+              aria-label="Refresh alerts"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
+            </button>
           </div>
 
-          <div className="max-h-[26rem] overflow-y-auto">
+          <div className="max-h-[22rem] overflow-y-auto">
             {loading && (
-              <div className="px-5 py-6 text-sm font-semibold text-slate-600">Loading...</div>
+              <div className="px-5 py-6 text-sm font-semibold text-slate-600">
+                Loading your alerts...
+              </div>
             )}
 
             {!loading && error && (
@@ -216,59 +220,73 @@ export function NotificationsDropdown({
 
             {!loading && !error && items.length === 0 && (
               <div className="px-5 py-10 text-sm font-semibold text-slate-600">
-                No notifications yet.
+                No alerts yet.
               </div>
             )}
 
             {!loading &&
               !error &&
-              items.map((n) => {
-                const isUnread = n?.isRead === false;
+              items.map((notification) => {
+                const isUnread = notification?.isRead === false;
                 return (
                   <button
-                    key={n?._id || `${n?.title}-${n?.createdAt}`}
+                    key={notification?._id || `${notification?.title}-${notification?.createdAt}`}
                     type="button"
-                    onClick={() => markOneRead(n?._id)}
-                    className={`w-full text-left px-5 py-4 hover:bg-slate-50 ${
-                      isUnread ? "bg-emerald-50/40" : "bg-white"
-                    }`}
+                    onClick={() => markOneRead(notification?._id)}
+                    className={`w-full border-b border-black/5 px-5 py-4 text-left last:border-b-0 ${
+                      isUnread ? "bg-[color:var(--gh-bg-soft)]" : "bg-white"
+                    } hover:bg-slate-50`}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-black text-slate-900">
-                          {n?.title || "Notification"}
+                          {notification?.title || "Notification"}
                         </div>
-                        {n?.message && (
+                        {notification?.message ? (
                           <div className="mt-1 line-clamp-2 text-sm font-semibold text-slate-600">
-                            {n.message}
+                            {notification.message}
                           </div>
-                        )}
-                        {n?.createdAt && (
+                        ) : null}
+                        {notification?.createdAt ? (
                           <div className="mt-2 text-xs font-semibold text-slate-500">
-                            {formatWhen(n.createdAt)}
+                            {formatWhen(notification.createdAt)}
                           </div>
-                        )}
+                        ) : null}
                       </div>
-                      {isUnread && (
+                      {isUnread ? (
                         <span
-                          className="mt-1 inline-flex h-2 w-2 flex-none rounded-full bg-emerald-600"
+                          className="mt-1 inline-flex h-2.5 w-2.5 flex-none rounded-full bg-[color:var(--gh-accent)]"
                           aria-label="Unread"
                         />
-                      )}
+                      ) : null}
                     </div>
                   </button>
                 );
               })}
           </div>
 
-          <div className="border-t border-black/5 px-5 py-3">
-            <Link
-              href="/"
-              onClick={() => setOpen(false)}
-              className="inline-flex text-xs font-black text-emerald-700 hover:text-emerald-800"
-            >
-              Close
-            </Link>
+          <div className="border-t border-black/5 px-5 py-4">
+            <div className="grid gap-2">
+              <Button
+                type="button"
+                onClick={markAllRead}
+                disabled={loading || items.length === 0 || unreadCount === 0}
+                variant="gradient"
+                className="w-full rounded-2xl py-3 text-sm font-black"
+              >
+                <CheckCheck className="h-4 w-4" />
+                Mark All Read
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="w-full rounded-2xl py-3 text-sm font-black"
+              >
+                <Link href="/" onClick={() => setOpen(false)}>
+                  Close
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       )}

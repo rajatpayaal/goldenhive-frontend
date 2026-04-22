@@ -178,25 +178,25 @@ export function CustomRequestFlow() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-      <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
+      <section className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
         <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-black text-slate-900">Tell us what you need</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-2xl font-black text-[color:var(--gh-heading)]">Tell us what you need</h2>
+          <p className="text-sm text-[color:var(--gh-text-soft)]">
             Share your dream destination, budget, and dates. Our travel experts will craft a plan for you.
           </p>
         </div>
 
         {!user && (
-          <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 text-sm font-semibold text-emerald-800">
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-700">
             Log in first so we can link the request to your profile.
           </div>
         )}
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Destination</label>
+            <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Destination</label>
             <input
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               placeholder="Ex: Ladakh in September"
               name="destination"
               value={formData.destination}
@@ -205,18 +205,18 @@ export function CustomRequestFlow() {
             />
           </div>
           <div>
-            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Travel Dates</label>
+            <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Travel Dates</label>
             <div className="mt-2 flex flex-col gap-2 md:flex-row">
               <input
                 type="date"
-                className="flex-1 rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+                className="flex-1 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
                 value={formData.startDate}
                 onChange={handleInputChange("startDate")}
                 required
               />
               <input
                 type="date"
-                className="flex-1 rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+                className="flex-1 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
                 value={formData.endDate}
                 onChange={handleInputChange("endDate")}
               />
@@ -226,7 +226,7 @@ export function CustomRequestFlow() {
             <input
               type="number"
               min="1"
-              className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               placeholder="Travelers"
               value={formData.travellers}
               onChange={handleInputChange("travellers")}
@@ -235,7 +235,7 @@ export function CustomRequestFlow() {
             <input
               type="number"
               min="1"
-              className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               placeholder="Duration (days)"
               value={formData.durationDays}
               onChange={handleInputChange("durationDays")}
@@ -243,16 +243,16 @@ export function CustomRequestFlow() {
             <input
               type="number"
               min="0"
-              className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               placeholder="Budget (₹)"
               value={formData.budget}
               onChange={handleInputChange("budget")}
             />
           </div>
           <div>
-            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Preferences</label>
+            <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Preferences</label>
             <textarea
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               rows="4"
               placeholder="Share interests, hotel choices, pace, or any flexibility notes."
               value={formData.preferences}
@@ -260,9 +260,9 @@ export function CustomRequestFlow() {
             />
           </div>
           <div>
-            <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Query / Message</label>
+            <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Query / Message</label>
             <textarea
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
               rows="3"
               placeholder="Tell us anything else you want us to include."
               value={formData.query}
@@ -283,7 +283,7 @@ export function CustomRequestFlow() {
           <button
             type="submit"
             disabled={submitting || !user}
-            className="w-full rounded-2xl bg-emerald-500 px-6 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(16,185,129,0.4)] transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+            className="w-full rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(255,79,138,0.22)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Send Request"}
           </button>
@@ -291,11 +291,11 @@ export function CustomRequestFlow() {
       </section>
 
       <section className="space-y-6">
-        <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
+        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-lg font-black text-slate-900">My requests</h3>
-              <p className="text-sm text-slate-500">Track what you have shared with us.</p>
+              <h3 className="text-lg font-black text-[color:var(--gh-heading)]">My requests</h3>
+              <p className="text-sm text-[color:var(--gh-text-soft)]">Track what you have shared with us.</p>
             </div>
             <button
               onClick={async () => {
@@ -311,39 +311,39 @@ export function CustomRequestFlow() {
                 }
               }}
               disabled={!user}
-              className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-2 text-xs font-black text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-2 text-xs font-black text-[color:var(--gh-text-soft)] hover:bg-[color:var(--gh-bg)] disabled:opacity-60"
             >
               Refresh
             </button>
           </div>
           <div className="mt-4 space-y-3">
             {requestsLoading ? (
-              <div className="text-sm font-semibold text-slate-500">Loading your requests…</div>
+              <div className="text-sm font-semibold text-[color:var(--gh-text-soft)]">Loading your requests…</div>
             ) : requestsError ? (
               <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{requestsError}</div>
             ) : requests.length === 0 ? (
-              <p className="text-sm text-slate-500">You have not submitted any custom requests yet.</p>
+              <p className="text-sm text-[color:var(--gh-text-soft)]">You have not submitted any custom requests yet.</p>
             ) : (
               requests.map((request) => (
-                <div key={request?._id || request?.id} className="rounded-2xl border border-black/5 bg-slate-50 px-4 py-3 text-sm">
+                <div key={request?._id || request?.id} className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm">
                 <div className="flex flex-col items-start justify-between gap-1 sm:flex-row sm:items-center">
-                  <p className="font-semibold text-slate-900">{request.destination || "Custom itinerary"}</p>
+                  <p className="font-semibold text-[color:var(--gh-heading)]">{request.destination || "Custom itinerary"}</p>
                   <span
                     className={`px-3 py-1 text-xs font-black uppercase tracking-[0.2em] ${
                       String(request.status || "").toUpperCase() === "COMPLETED"
                         ? "text-emerald-700"
                           : String(request.status || "").toUpperCase() === "REJECTED"
                           ? "text-rose-700"
-                          : "text-slate-700"
+                          : "text-[color:var(--gh-text-soft)]"
                       }`}
                     >
                       {request.status || "PENDING"}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-[color:var(--gh-text-soft)]">
                     #{request._id || "—"} · {request.query || "No query provided"}
                   </p>
-                  <p className="mt-2 text-xs font-semibold text-slate-600">
+                  <p className="mt-2 text-xs font-semibold text-[color:var(--gh-text-soft)]">
                     {formatRequestTime(request)}
                   </p>
                 </div>
@@ -353,14 +353,14 @@ export function CustomRequestFlow() {
         </div>
 
         {isAdmin && (
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-black text-slate-900">Admin / Agent view</h3>
-            <p className="mt-1 text-sm text-slate-500">
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+            <h3 className="text-lg font-black text-[color:var(--gh-heading)]">Admin / Agent view</h3>
+            <p className="mt-1 text-sm text-[color:var(--gh-text-soft)]">
               Fetch a request by ID to see its status and suggest updates.
             </p>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <input
-                className="flex-1 rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+                className="flex-1 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
                 placeholder="Custom request ID"
                 value={adminId}
                 onChange={(event) => setAdminId(event.target.value)}
@@ -368,7 +368,7 @@ export function CustomRequestFlow() {
               <button
                 onClick={handleAdminFetch}
                 disabled={adminLoading}
-                className="w-full rounded-2xl bg-slate-900 px-4 py-3 text-xs font-black uppercase tracking-[0.3em] text-white hover:bg-slate-800 disabled:opacity-60 sm:w-auto"
+                className="w-full rounded-2xl bg-[color:var(--gh-heading)] px-4 py-3 text-xs font-black uppercase tracking-[0.3em] text-white hover:opacity-90 disabled:opacity-60 sm:w-auto"
               >
                 {adminLoading ? "Fetching…" : "Load"}
               </button>
@@ -376,17 +376,17 @@ export function CustomRequestFlow() {
             {adminError && <p className="mt-2 text-xs font-semibold text-rose-600">{adminError}</p>}
             {adminRequest && (
               <div className="mt-4 space-y-3">
-                <div className="rounded-2xl border border-black/5 bg-slate-50 px-4 py-3 text-sm">
-                  <p className="text-xs font-semibold text-slate-500">Query</p>
-                  <p className="mt-1 text-sm text-slate-900">{adminRequest.query || "—"}</p>
-                  <p className="mt-2 text-xs text-slate-500">
+                <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm">
+                  <p className="text-xs font-semibold text-[color:var(--gh-text-soft)]">Query</p>
+                  <p className="mt-1 text-sm text-[color:var(--gh-heading)]">{adminRequest.query || "—"}</p>
+                  <p className="mt-2 text-xs text-[color:var(--gh-text-soft)]">
                     Travelers: {adminRequest.travellers ?? "—"} · Duration: {adminRequest.durationDays ?? "—"} days
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Status</label>
+                  <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Status</label>
                   <select
-                    className="w-full rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+                    className="w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
                     value={adminStatus}
                     onChange={(event) => setAdminStatus(event.target.value)}
                   >
@@ -398,10 +398,10 @@ export function CustomRequestFlow() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Remarks</label>
+                  <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Remarks</label>
                   <textarea
                     rows="2"
-                    className="mt-2 w-full rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none"
+                    className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
                     value={adminRemarks}
                     onChange={(event) => setAdminRemarks(event.target.value)}
                   />
@@ -409,7 +409,7 @@ export function CustomRequestFlow() {
                 <button
                   onClick={handleAdminSave}
                   disabled={adminLoading}
-                  className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-black text-white hover:bg-emerald-600 disabled:opacity-60"
+                  className="w-full rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-4 py-3 text-sm font-black text-white hover:opacity-90 disabled:opacity-60"
                 >
                   Save changes
                 </button>
