@@ -346,17 +346,17 @@ export default function BookingPage() {
   if (!user && !hasToken) {
     return (
       <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">Create Booking</h1>
-        <p className="mt-4 text-slate-600">Please log in to create a booking.</p>
+        <h1 className="text-3xl font-black text-[color:var(--gh-heading)]">Create Booking</h1>
+        <p className="mt-4 text-[color:var(--gh-text-soft)]">Please log in to create a booking.</p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => setIsLoginOpen(true)}
-            className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600"
+            className="inline-flex rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)] hover:opacity-90"
           >
             Log In / Sign Up
           </button>
-          <Link href="/" className="inline-flex rounded-2xl border border-black/10 bg-white px-6 py-3 text-slate-900 font-bold hover:bg-slate-50">
+          <Link href="/" className="inline-flex rounded-2xl border border-[color:var(--gh-border)] bg-white px-6 py-3 text-[color:var(--gh-heading)] font-bold hover:bg-[color:var(--gh-bg-soft)]">
             Go Home
           </Link>
         </div>
@@ -368,11 +368,11 @@ export default function BookingPage() {
   if (cartItems.length === 0 && !loading) {
     return (
       <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">Create Booking</h1>
-        <div className="mt-10 rounded-3xl border border-black/10 bg-slate-50 p-8">
-          <p className="text-lg font-semibold text-slate-600">Your cart is empty.</p>
-          <p className="mt-2 text-sm text-slate-500">Add packages to your cart before booking.</p>
-          <Link href="/" className="mt-6 inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600">
+        <h1 className="text-3xl font-black text-[color:var(--gh-heading)]">Create Booking</h1>
+        <div className="mt-10 rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-8 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+          <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
+          <p className="mt-2 text-sm text-[color:var(--gh-text-soft)]">Add packages to your cart before booking.</p>
+          <Link href="/" className="mt-6 inline-flex rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)] hover:opacity-90">
             Browse Packages
           </Link>
         </div>
@@ -383,22 +383,22 @@ export default function BookingPage() {
   if (success) {
     return (
       <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-8">
+        <div className="rounded-[2rem] border border-emerald-200 bg-emerald-50 p-8 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
           <div className="text-6xl text-emerald-600">✓</div>
-          <h1 className="mt-4 text-3xl font-black text-slate-900">Booking Confirmed!</h1>
-          <p className="mt-2 text-slate-600">
+          <h1 className="mt-4 text-3xl font-black text-[color:var(--gh-heading)]">Booking Confirmed!</h1>
+          <p className="mt-2 text-[color:var(--gh-text-soft)]">
             Your booking has been created successfully. You will receive a confirmation email shortly.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/bookings"
-              className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600"
+              className="inline-flex rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)] hover:opacity-90"
             >
               View My Bookings
             </Link>
             <Link
               href="/"
-              className="inline-flex rounded-2xl border border-black/10 bg-white px-6 py-3 text-slate-900 font-bold hover:bg-slate-50"
+              className="inline-flex rounded-2xl border border-[color:var(--gh-border)] bg-white px-6 py-3 text-[color:var(--gh-heading)] font-bold hover:bg-[color:var(--gh-bg-soft)]"
             >
               Continue Shopping
             </Link>
@@ -417,13 +417,13 @@ export default function BookingPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
-      <h1 className="text-3xl font-black text-slate-900 mb-8">Create Booking</h1>
+      <h1 className="text-3xl font-black text-[color:var(--gh-heading)] mb-8">Create Booking</h1>
 
       <form onSubmit={handleSubmitBooking} className="grid gap-8 lg:grid-cols-3">
         {/* Package Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-3xl border border-black/10 bg-white p-6">
-            <h2 className="text-xl font-black text-slate-900 mb-4">Selected Packages</h2>
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+            <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Selected Packages</h2>
             <div className="space-y-4">
               {cartItems.map((item) => {
                 const entry = normalizeEntry(item);
@@ -436,8 +436,8 @@ export default function BookingPage() {
                 const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
 
                 return (
-                  <div key={itemId} className="flex items-center gap-4 rounded-2xl border border-black/5 bg-slate-50 p-4">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
+                  <div key={itemId} className="flex items-center gap-4 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-[color:var(--gh-bg-soft)] flex-shrink-0">
                       {pkg?.images?.primary?.url && (
                         <Image
                           src={pkg.images.primary.url}
@@ -449,23 +449,23 @@ export default function BookingPage() {
                       )}
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-slate-900">{pkg?.basic?.name}</h3>
-                      <p className="text-sm text-slate-600">
+                      <h3 className="font-bold text-[color:var(--gh-heading)]">{pkg?.basic?.name}</h3>
+                      <p className="text-sm text-[color:var(--gh-text-soft)]">
                         ₹{pricePerPerson?.toLocaleString("en-IN")} per traveller
                       </p>
                       {selectedOption ? (
-                        <p className="mt-1 text-sm text-slate-600">
+                        <p className="mt-1 text-sm text-[color:var(--gh-text-soft)]">
                           Option: {vehicleLabel} • {selectedOption.pax} Person{selectedOption.pax !== 1 ? "s" : ""}
                         </p>
                       ) : pkg?.pricingOptions?.length > 0 ? (
                         <p className="mt-1 text-sm text-rose-600">Please select a pricing option in package details.</p>
                       ) : null}
-                      <p className="mt-1 text-xs font-bold text-slate-500">
+                      <p className="mt-1 text-xs font-bold text-[color:var(--gh-text-soft)]">
                         Subtotal: ₹{subtotal.toLocaleString("en-IN")}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-600">Travellers</label>
+                      <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Travellers</label>
                       <input
                         type="number"
                         min="1"
@@ -475,12 +475,12 @@ export default function BookingPage() {
                           const value = Math.max(1, parseInt(e.target.value, 10) || 1);
                           setPackageTravellers((prev) => ({ ...prev, [itemId]: value }));
                         }}
-                        className="h-10 w-24 rounded-xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 outline-none focus:border-emerald-500 disabled:opacity-60 disabled:bg-slate-100"
+                        className="h-10 w-24 rounded-xl border border-[color:var(--gh-border)] bg-white px-3 text-sm font-black text-[color:var(--gh-heading)] outline-none focus:border-[color:var(--gh-accent)] disabled:opacity-60 disabled:bg-[color:var(--gh-bg-soft)]"
                         aria-label={`Travellers for ${pkg?.basic?.name || "package"}`}
                         required
                       />
                       {selectedOption?.pax ? (
-                        <p className="text-[11px] font-semibold text-slate-500">
+                        <p className="text-[11px] font-semibold text-[color:var(--gh-text-soft)]">
                           Group size fixed by selected pricing.
                         </p>
                       ) : null}
@@ -492,55 +492,55 @@ export default function BookingPage() {
           </div>
 
           {/* Traveler Details */}
-          <div className="rounded-3xl border border-black/10 bg-white p-6">
-            <h2 className="text-xl font-black text-slate-900 mb-4">Traveler Details</h2>
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+            <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Traveler Details</h2>
             <div className="space-y-6">
               {travelerDetails.map((traveler, index) => (
-                <div key={index} className="rounded-2xl border border-black/5 bg-slate-50 p-4">
-                  <h3 className="font-bold text-slate-900 mb-3">Traveler {index + 1}</h3>
+                <div key={index} className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4">
+                  <h3 className="font-bold text-[color:var(--gh-heading)] mb-3">Traveler {index + 1}</h3>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Full Name *</label>
+                      <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Full Name *</label>
                       <input
                         type="text"
                         value={traveler.name}
                         onChange={(e) => handleTravelerChange(index, 'name', e.target.value)}
-                        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                         placeholder="Enter full name"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Age *</label>
+                      <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Age *</label>
                       <input
                         type="number"
                         min="1"
                         max="120"
                         value={traveler.age}
                         onChange={(e) => handleTravelerChange(index, 'age', e.target.value)}
-                        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                         placeholder="Enter age"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Email *</label>
+                      <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Email *</label>
                       <input
                         type="email"
                         value={traveler.email}
                         onChange={(e) => handleTravelerChange(index, 'email', e.target.value)}
-                        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                         placeholder="Enter email address"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1">Phone Number *</label>
+                      <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Phone Number *</label>
                       <input
                         type="tel"
                         value={traveler.phone}
                         onChange={(e) => handleTravelerChange(index, 'phone', e.target.value)}
-                        className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                         placeholder="Enter 10-digit phone number"
                         required
                       />
@@ -554,18 +554,18 @@ export default function BookingPage() {
 
         {/* Booking Summary */}
         <div className="space-y-6">
-          <div className="rounded-3xl border border-black/10 bg-white p-6 lg:sticky lg:top-28">
-            <h2 className="text-xl font-black text-slate-900 mb-4">Booking Details</h2>
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)] lg:sticky lg:top-28">
+            <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Booking Details</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Check-in Date *</label>
+                <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Check-in Date *</label>
                 <input
                   type="date"
                   name="startDate"
                   value={bookingData.startDate}
                   onChange={handleBookingDataChange}
-                  className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                  className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                   required
                 />
               </div>
@@ -583,25 +583,25 @@ export default function BookingPage() {
               </div> */}
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Number of Travelers *</label>
-                <div className="flex items-center justify-between rounded-xl border border-black/10 bg-white px-3 py-2">
-                  <span className="text-sm font-semibold text-slate-600">Total (max)</span>
-                  <span className="text-sm font-black text-slate-900">{Math.max(1, totalTravellers || 1)}</span>
+                <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Number of Travelers *</label>
+                <div className="flex items-center justify-between rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2">
+                  <span className="text-sm font-semibold text-[color:var(--gh-text-soft)]">Total (max)</span>
+                  <span className="text-sm font-black text-[color:var(--gh-heading)]">{Math.max(1, totalTravellers || 1)}</span>
                 </div>
-                <div className="mt-1 text-xs font-semibold text-slate-500">
+                <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">
                   Update travellers per package in the list on the left.
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1">Special Requests</label>
+                <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Special Requests</label>
                 <textarea
                   name="note"
                   value={bookingData.note}
                   onChange={handleBookingDataChange}
                   placeholder="Any special requests..."
                   rows="3"
-                  className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500 resize-none"
+                  className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)] resize-none"
                 />
               </div>
             </div>
@@ -612,13 +612,13 @@ export default function BookingPage() {
               </div>
             )}
 
-            <div className="mt-6 border-t border-black/5 pt-4">
+            <div className="mt-6 border-t border-[color:var(--gh-border)] pt-4">
               <div className="space-y-2 mb-4">
-                <div className="flex justify-between items-center text-sm font-semibold text-slate-700">
+                <div className="flex justify-between items-center text-sm font-semibold text-[color:var(--gh-text-soft)]">
                   <span>Subtotal:</span>
                   <span>₹{cartSubtotal.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between items-center text-lg font-black text-slate-900">
+                <div className="flex justify-between items-center text-lg font-black text-[color:var(--gh-heading)]">
                   <span>Total Amount:</span>
                   <span>₹{cartSubtotal.toLocaleString("en-IN")}</span>
                 </div>
@@ -627,7 +627,7 @@ export default function BookingPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-black text-white hover:bg-emerald-600 disabled:opacity-60"
+                className="w-full rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-4 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(255,79,138,0.22)] hover:opacity-90 disabled:opacity-60"
               >
                 {submitting ? "Creating Booking..." : "Confirm Booking"}
               </button>
