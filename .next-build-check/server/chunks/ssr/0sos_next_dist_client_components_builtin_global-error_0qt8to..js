@@ -1,3 +1,0 @@
-module.exports=[51962,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(91598);a.n(d("[project]/goldenhive-frontend/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},86090,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(91598);a.n(d("[project]/goldenhive-frontend/node_modules/next/dist/client/components/builtin/global-error.js"))},56927,a=>{"use strict";a.i(51962);var b=a.i(86090);a.n(b)},1336,a=>{a.n(a.i(56927))}];
-
-//# sourceMappingURL=0sos_next_dist_client_components_builtin_global-error_0qt8to..js.map

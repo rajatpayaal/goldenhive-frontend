@@ -1,3 +1,0 @@
-module.exports=[48107,a=>{"use strict";var b=a.i(34173),c=a.i(41032);a.s(["Select",0,function({className:a,...d}){return(0,b.jsx)("select",{className:(0,c.cn)("h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gh-gold/35",a),...d})}])}];
-
-//# sourceMappingURL=goldenhive-frontend_src_components_ui_select_tsx_0a-kdx~._.js.map
