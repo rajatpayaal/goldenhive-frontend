@@ -50,6 +50,14 @@ export function PackageAddToCart({
       return;
     }
 
+    if (requiresPricingSelection && !selectedPricingOption) {
+      const messageText = "Please select a pricing option before adding to cart.";
+      setMessage(messageText);
+      setIsSuccess(false);
+      showToast({ type: "error", message: messageText });
+      return;
+    }
+
     setLoading(true);
     setMessage("");
     setIsSuccess(false);
@@ -84,22 +92,31 @@ export function PackageAddToCart({
   };
 
   const padClasses = size === "sm" ? "px-4 py-3 text-sm" : "px-5 py-4 text-base";
+  const selectionRequired = requiresPricingSelection && !selectedPricingOption;
 
   return (
     <>
       <div className={showBookNow ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-3"}>
         <button
           onClick={handleAddToCart}
-          disabled={loading}
+          disabled={loading || selectionRequired}
           className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(16,185,129,0.35)] transition ${
             !user
               ? "bg-slate-200 text-slate-500"
-              : isSuccess
-                ? "bg-sky-500 text-white hover:bg-sky-600"
-                : "bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
+              : selectionRequired
+                ? "bg-amber-100 text-amber-700"
+                : isSuccess
+                  ? "bg-sky-500 text-white hover:bg-sky-600"
+                  : "bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
           }`}
         >
-          {loading ? "Adding..." : isSuccess ? "✓ Added" : "🛒 Add to Cart"}
+          {loading
+            ? "Adding..."
+            : selectionRequired
+              ? "Select Pricing"
+              : isSuccess
+                ? "✓ Added"
+                : "🛒 Add to Cart"}
         </button>
 
         {showBookNow ? (
@@ -110,13 +127,13 @@ export function PackageAddToCart({
                 return;
               }
 
-              // if (requiresPricingSelection && !selectedPricingOption) {
-              //   const messageText = "Please select a pricing option before booking.";
-              //   setMessage(messageText);
-              //   setIsSuccess(false);
-              //   showToast({ type: "error", message: messageText });
-              //   return;
-              // }
+              if (requiresPricingSelection && !selectedPricingOption) {
+                const messageText = "Please select a pricing option before booking.";
+                setMessage(messageText);
+                setIsSuccess(false);
+                showToast({ type: "error", message: messageText });
+                return;
+              }
 
               setLoading(true);
               try {

@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { HomeHeroSearch } from "@/components/HomeHeroSearch";
+import { ArrowRight } from "lucide-react";
 
 const isVideoUrl = (url) => {
   if (!url) return false;
@@ -28,7 +30,13 @@ export function BannerSlider({ banners }) {
   if (!banners || banners.length === 0) return null;
 
   return (
-    <section className="relative min-h-[340px] w-full overflow-hidden bg-slate-900 shadow-[0_18px_45px_rgba(2,6,23,0.12)] sm:min-h-[420px] lg:min-h-[480px]">
+    <section className="relative min-h-[340px] w-full overflow-hidden bg-gh-plum shadow-[0_18px_45px_rgba(2,6,23,0.12)] sm:min-h-[420px] lg:min-h-[480px]">
+      <div className="pointer-events-none absolute left-1/2 top-[5.25rem] z-20 w-full max-w-6xl -translate-x-1/2 px-5 md:top-[6.25rem] lg:top-[6.75rem]">
+        <div className="pointer-events-auto">
+          <HomeHeroSearch />
+        </div>
+      </div>
+
       {banners.map((banner, index) => (
         <div
           key={banner._id}
@@ -63,7 +71,7 @@ export function BannerSlider({ banners }) {
 
           <div className="relative">
             <div className="mx-auto max-w-6xl px-5">
-              <div className="flex min-h-[340px] flex-col justify-end pb-10 pt-20 text-white sm:min-h-[420px] sm:pb-12 sm:pt-24 lg:min-h-[480px]">
+              <div className="flex min-h-[340px] flex-col justify-end pb-10 pt-32 text-white sm:min-h-[420px] sm:pb-12 sm:pt-36 lg:min-h-[480px] lg:pt-40">
                 <p className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-wider backdrop-blur">
                   {banner.seoTitle || "GoldenHive"}
                 </p>
@@ -79,9 +87,10 @@ export function BannerSlider({ banners }) {
                   <div className="mt-7 flex flex-wrap gap-3">
                     <Link
                       href={resolveHref(banner)}
-                      className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-6 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] hover:bg-emerald-600"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gh-gold px-6 py-4 text-base font-black text-gh-plum shadow-[0_14px_30px_rgba(244,178,41,0.35)] hover:bg-gh-gold2"
                     >
                       {banner.heroCtaText || banner.ctaText || "Explore"}
+                      <ArrowRight className="h-5 w-5" aria-hidden="true" />
                     </Link>
                     <Link
                       href="/tour-packages"

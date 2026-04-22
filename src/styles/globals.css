@@ -16,6 +16,13 @@ body {
   color: #0f172a;
 }
 
+/* Brand helpers (used with Tailwind arbitrary values). */
+.gh-glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+}
+
 /* Utility: hide scrollbars for horizontal carousels (still scrollable). */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE/Edge */

@@ -176,7 +176,7 @@ export default function CartClient() {
 
   return (
     <div className="mx-auto px-5 py-12">
-      <h1 className="text-3xl font-black text-slate-900 mb-8">Shopping Cart</h1>
+      <h1 className="mb-8 text-3xl font-black text-slate-900">Shopping Cart</h1>
 
       {error && (
         <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
@@ -184,8 +184,8 @@ export default function CartClient() {
         </div>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
-        <div className="space-y-4">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="space-y-5">
           {cartItems.map((item) => {
             const entry = normalizeEntry(item);
             const pkg = entry.packageId;
@@ -195,78 +195,108 @@ export default function CartClient() {
             const total = getItemTotal(entry, selectedOption, quantity);
             const productId = pkg?._id || entry._id;
             const removeId = pkg?._id || item._id;
-            const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
+            const vehicleLabel =
+              selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
+            const durationDays = pkg?.basic?.durationDays;
+            const durationNights = pkg?.basic?.durationNights;
+            const destination = pkg?.basic?.destination;
 
             return (
-              <div key={productId} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div className="w-full md:w-32 h-32 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0">
-                    {pkg?.images?.primary?.url && (
+              <div key={productId} className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <div className="relative h-32 w-full overflow-hidden rounded-2xl bg-slate-100 sm:h-28 sm:w-40">
+                    {pkg?.images?.primary?.url ? (
                       <div
-                        className="w-full h-full bg-cover bg-center"
+                        className="h-full w-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${pkg.images.primary.url})` }}
                       />
+                    ) : null}
+                    {(durationDays || durationNights) && (
+                      <div className="absolute left-3 top-3 rounded-full bg-white/85 px-3 py-1 text-xs font-black text-slate-900">
+                        {durationDays ? `${durationDays}D` : ""}
+                        {durationDays && durationNights ? " / " : ""}
+                        {durationNights ? `${durationNights}N` : ""}
+                      </div>
                     )}
                   </div>
 
-                  <div className="flex-1">
-                    <h3 className="text-lg font-black text-slate-900">{pkg?.basic?.name}</h3>
-                    <p className="mt-2 text-sm font-semibold text-slate-700">Slug: {pkg?.basic?.slug}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="line-clamp-2 text-lg font-black text-slate-900">
+                          {pkg?.basic?.name || "Package"}
+                        </h3>
+                        <p className="mt-2 text-sm font-semibold text-slate-600">
+                          {destination ? `${destination} • ` : ""}
+                          {quantity} Traveller{quantity !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => handleRemoveItem(removeId)}
+                        className="rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-600 hover:bg-rose-100"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
                     {selectedOption ? (
-                      <p className="mt-2 text-sm text-slate-600">
-                        Vehicle: {vehicleLabel} • {quantity} Person{quantity !== 1 ? "s" : ""}
+                      <p className="mt-3 text-sm text-slate-600">
+                        Vehicle: {vehicleLabel}
                       </p>
                     ) : pkg?.pricingOptions?.length > 0 ? (
-                      <p className="mt-2 text-sm text-rose-600">Please select a pricing option in package details.</p>
+                      <p className="mt-3 text-sm text-rose-600">
+                        Please select a pricing option in package details.
+                      </p>
                     ) : null}
-                  </div>
 
-                  <div className="flex items-center justify-between gap-4 md:flex-col md:items-end">
-                    <div>
-                      <div className="text-sm text-slate-500">Price per person</div>
-                      {selectedOption ? (
-                        <>
-                          {selectedOption.discountPercent > 0 && (
-                            <div className="text-sm font-bold text-slate-400 line-through">
-                              ₹{selectedOption.pricePerPerson?.toLocaleString("en-IN")}
-                            </div>
-                          )}
-                          <div className="text-2xl font-black text-slate-900">
-                            ₹{pricePerPerson?.toLocaleString("en-IN") || "TBA"}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {pkg?.basic?.discount > 0 && (
-                            <div className="text-sm font-bold text-slate-400 line-through">
-                              {pkg.basic.basePrice?.toLocaleString("en-IN")}
-                            </div>
-                          )}
-                          <div className="text-2xl font-black text-slate-900">
-                            ₹{pkg?.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
-                          </div>
-                        </>
-                      )}
-                      {selectedOption?.discountPercent > 0 && (
-                        <div className="text-xs font-bold text-emerald-600 mt-1">
-                          Save {selectedOption.discountPercent}%
+                    <div className="mt-4 flex flex-wrap items-end justify-between gap-4 border-t border-black/5 pt-4">
+                      <div>
+                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          Price per person
                         </div>
-                      )}
-                    </div>
+                        {selectedOption ? (
+                          <>
+                            {selectedOption.discountPercent > 0 && (
+                              <div className="text-sm font-bold text-slate-400 line-through">
+                                ₹{selectedOption.pricePerPerson?.toLocaleString("en-IN")}
+                              </div>
+                            )}
+                            <div className="text-2xl font-black text-slate-900">
+                              ₹{pricePerPerson?.toLocaleString("en-IN") || "TBA"}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            {pkg?.basic?.discount > 0 && (
+                              <div className="text-sm font-bold text-slate-400 line-through">
+                                {pkg.basic.basePrice?.toLocaleString("en-IN")}
+                              </div>
+                            )}
+                            <div className="text-2xl font-black text-slate-900">
+                              ₹{pkg?.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
+                            </div>
+                          </>
+                        )}
+                        {selectedOption?.discountPercent > 0 && (
+                          <div className="mt-1 text-xs font-bold text-emerald-600">
+                            Save {selectedOption.discountPercent}%
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="text-right text-sm text-slate-600">
-                      <div>Qty: {quantity}</div>
-                      <div className="mt-2 text-base font-black text-slate-900">
-                        ₹{total?.toLocaleString("en-IN")}
+                      <div className="text-right">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          Total
+                        </div>
+                        <div className="mt-1 text-lg font-black text-slate-900">
+                          ₹{total?.toLocaleString("en-IN")}
+                        </div>
+                        <div className="mt-1 text-xs font-semibold text-slate-500">
+                          Qty: {quantity}
+                        </div>
                       </div>
                     </div>
-
-                    <button
-                      onClick={() => handleRemoveItem(removeId)}
-                      className="rounded-lg bg-rose-50 px-4 py-2 text-sm font-bold text-rose-600 hover:bg-rose-100 transition"
-                    >
-                      Remove
-                    </button>
                   </div>
                 </div>
               </div>
@@ -274,7 +304,7 @@ export default function CartClient() {
           })}
         </div>
 
-        <div className="lg:sticky lg:top-28 h-fit">
+        <div className="lg:sticky lg:top-24 h-fit">
           <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-black text-slate-900">Cart Summary</h2>
 
@@ -289,8 +319,8 @@ export default function CartClient() {
               </div>
             </div>
 
-            <p className="mt-4 text-xs text-slate-500 mb-6">
-              💡 Pricing options use group totals; otherwise prices are per person.
+            <p className="mb-6 mt-4 text-xs text-slate-500">
+              Pricing options use group totals; otherwise prices are per person.
             </p>
 
             <div className="space-y-3">

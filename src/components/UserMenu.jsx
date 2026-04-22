@@ -40,14 +40,14 @@ export function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center rounded-full bg-emerald-500 w-10 h-10 text-white font-bold text-sm hover:bg-emerald-600 transition"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gh-gold text-gh-plum font-black text-sm transition hover:bg-gh-gold2"
         title={`${user.firstName} ${user.lastName}`}
       >
         {initials}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-black/10 bg-white shadow-lg">
+        <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-black/10 bg-white shadow-gh-soft">
           <div className="px-4 py-3 border-b border-black/5">
             <div className="text-sm font-bold text-slate-900">
               {user.firstName} {user.lastName}

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Search, X } from "lucide-react";
 
 const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 350;
@@ -223,7 +224,7 @@ function SearchResults({ query, status, results, onPick }) {
   return body;
 }
 
-export function GlobalSearch({ variant = "inline" }) {
+export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
   const inputId = useId();
   const pathname = usePathname();
   const containerRef = useRef(null);
@@ -239,6 +240,7 @@ export function GlobalSearch({ variant = "inline" }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const activeOpen = variant === "icon" ? isDialogOpen : isPanelOpen;
+  const isDark = tone === "header-dark";
 
   const trimmedQuery = query.trim();
   const canSearch = trimmedQuery.length >= MIN_QUERY_LENGTH;
@@ -247,6 +249,25 @@ export function GlobalSearch({ variant = "inline" }) {
     setIsPanelOpen(false);
     setIsDialogOpen(false);
   }, []);
+
+  useEffect(() => {
+    const handler = (event) => {
+      const detail = event?.detail || {};
+      const nextQuery = typeof detail.query === "string" ? detail.query : "";
+
+      setQuery(nextQuery);
+      if (variant === "icon") {
+        setIsDialogOpen(true);
+      } else {
+        setIsPanelOpen(true);
+      }
+
+      setTimeout(() => inputRef.current?.focus(), 0);
+    };
+
+    window.addEventListener("gh_open_search", handler);
+    return () => window.removeEventListener("gh_open_search", handler);
+  }, [variant]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => closeAll(), 0);
@@ -353,11 +374,16 @@ export function GlobalSearch({ variant = "inline" }) {
             setIsDialogOpen(true);
             setTimeout(() => inputRef.current?.focus(), 0);
           }}
-          className="inline-flex h-10 items-center justify-center rounded-2xl border border-black/10 bg-white px-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+          className={[
+            "inline-flex h-10 items-center justify-center rounded-2xl border px-3 text-sm font-black transition",
+            isDark
+              ? "border-white/15 bg-white/10 text-white hover:bg-white/15"
+              : "border-black/10 bg-white text-slate-900 hover:bg-slate-50",
+          ].join(" ")}
           aria-label="Search"
           aria-haspopup="dialog"
         >
-          🔎
+          <Search className="h-5 w-5" aria-hidden="true" />
         </button>
 
         {isDialogOpen && (
@@ -375,14 +401,14 @@ export function GlobalSearch({ variant = "inline" }) {
                   Search
                 </label>
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 text-lg">
-                  🔎
+                  <Search className="h-5 w-5 text-slate-700" aria-hidden="true" />
                 </div>
                 <input
                   ref={inputRef}
                   id={inputId}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search packages, blogs, categories…"
+                  placeholder="Search packages, blogs, categories..."
                   autoComplete="off"
                   className="h-10 w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
                 />
@@ -392,7 +418,7 @@ export function GlobalSearch({ variant = "inline" }) {
                   className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
                   aria-label="Close"
                 >
-                  ×
+                  <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -409,17 +435,15 @@ export function GlobalSearch({ variant = "inline" }) {
       <label htmlFor={inputId} className="sr-only">
         Search
       </label>
-      <div className="flex items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-2 shadow-sm transition focus-within:border-emerald-500/50 focus-within:ring-2 focus-within:ring-emerald-500/20">
-        <span className="text-lg" aria-hidden="true">
-          🔎
-        </span>
+      <div className="flex items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-2 shadow-sm transition focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/25">
+        <Search className="h-5 w-5 text-slate-600" aria-hidden="true" />
         <input
           ref={inputRef}
           id={inputId}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsPanelOpen(true)}
-          placeholder="Search packages, blogs, categories…"
+          placeholder="Search packages, blogs, categories..."
           autoComplete="off"
           className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
           role="combobox"
@@ -438,7 +462,7 @@ export function GlobalSearch({ variant = "inline" }) {
             className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-black/10 bg-white text-base font-black text-slate-700 hover:bg-slate-50"
             aria-label="Clear search"
           >
-            ×
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         )}
       </div>

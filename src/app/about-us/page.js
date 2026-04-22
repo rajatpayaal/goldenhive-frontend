@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { apiService } from "../../services/api.service";
+import { Button } from "@/components/ui/button";
 
 const firstImageUrl = (images) => {
   const list = Array.isArray(images) ? images : [];
@@ -70,12 +71,9 @@ export default async function AboutUsPage() {
           <p className="mt-3 max-w-xl text-sm font-semibold text-slate-600">
             Content is not available right now. Please try again later.
           </p>
-          <Link
-            href="/"
-            className="mt-7 inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-4 text-sm font-black text-white hover:bg-emerald-600"
-          >
-            Back to Home
-          </Link>
+          <Button asChild variant="brand" className="mt-7 rounded-2xl px-6 py-4 text-sm font-black">
+            <Link href="/">Back to Home</Link>
+          </Button>
         </div>
       </main>
     );
@@ -115,18 +113,12 @@ export default async function AboutUsPage() {
                   {about.heroSubtitle}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Link
-                    href="#mission"
-                    className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-6 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] hover:bg-emerald-600"
-                  >
-                    Our mission
-                  </Link>
-                  <Link
-                    href="/tour-packages"
-                    className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-6 py-4 text-sm font-black text-white backdrop-blur hover:bg-white/15"
-                  >
-                    Explore packages
-                  </Link>
+                  <Button asChild variant="brand" className="rounded-2xl px-6 py-4 text-sm font-black">
+                    <Link href="#mission">Our mission</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="rounded-2xl border-white/20 bg-white/10 px-6 py-4 text-sm font-black text-white hover:bg-white/15">
+                    <Link href="/tour-packages">Explore packages</Link>
+                  </Button>
                 </div>
               </div>
             </div>

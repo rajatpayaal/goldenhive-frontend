@@ -56,7 +56,7 @@ export async function PackageSuggestionsSection({
               return (
                 <div
                   key={pkg._id || pkg.basic?.slug || index}
-                  className="relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm sm:w-[320px]"
+                  className="relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl border border-black/5 bg-white shadow-sm sm:w-[330px]"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                     <div
@@ -82,8 +82,11 @@ export async function PackageSuggestionsSection({
                     </Link>
 
                     <div className="mt-5 flex items-end justify-between gap-4 border-t border-black/5 pt-4">
-                      <div className="text-2xl font-black tracking-tight text-slate-900">
-                        ₹{formatInr(finalPrice)}
+                      <div>
+                        <div className="text-2xl font-black tracking-tight text-slate-900">
+                          ₹{formatInr(finalPrice)}
+                        </div>
+                        <div className="text-xs font-semibold text-slate-500">/ person</div>
                       </div>
                       <Link
                         href={href}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import {
   getMyNotificationsAction,
   markAllNotificationsReadAction,
@@ -25,6 +26,7 @@ export function NotificationsDropdown({
   initialUnreadCount = 0,
   onUnreadCountChange,
   align = "right",
+  variant = "header-light",
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,8 @@ export function NotificationsDropdown({
     if (align === "left") return "left-0";
     return "right-0";
   }, [align]);
+
+  const isDark = variant === "header-dark";
 
   useEffect(() => {
     setUnreadCount(initialUnreadCount);
@@ -150,13 +154,19 @@ export function NotificationsDropdown({
       <button
         type="button"
         onClick={onToggle}
-        className="relative inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-black text-slate-900 hover:bg-slate-50"
+        className={[
+          "relative inline-flex items-center justify-center gap-2 rounded-2xl border px-4 py-2 text-sm font-black transition",
+          isDark
+            ? "border-white/15 bg-white/10 text-white hover:bg-white/15"
+            : "border-black/10 bg-white text-slate-900 hover:bg-slate-50",
+        ].join(" ")}
         aria-label="Notifications"
         aria-expanded={open}
       >
-        <span className="text-lg mr-2">🔔</span>
+        <Bell className="h-5 w-5" aria-hidden="true" />
+        <span className="hidden sm:inline">Alerts</span>
         {unreadCount > 0 && (
-          <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-xs font-black text-white shadow-sm">
+          <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gh-gold px-1.5 text-xs font-black text-gh-plum shadow-sm">
             {unreadCount}
           </span>
         )}
