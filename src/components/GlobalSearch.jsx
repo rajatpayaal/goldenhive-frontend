@@ -50,7 +50,7 @@ function SearchResults({ query, status, results, onPick }) {
   if (status === "loading") {
     return (
       <div className="rounded-2xl border border-black/5 bg-white p-4 text-sm font-semibold text-slate-600 shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
-        Searching…
+        Searching...
       </div>
     );
   }
@@ -77,10 +77,10 @@ function SearchResults({ query, status, results, onPick }) {
     );
   };
 
-  const body = (
+  return (
     <div className="w-full max-w-full rounded-2xl border border-black/5 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.08)]">
       {section("Packages", packages, (pkg) => {
-        const href = `/package/${pkg?.basic?.slug || pkg?._id || ""}`;
+        const href = `/packages/${pkg?.basic?.slug || pkg?._id || ""}`;
         const name = pkg?.basic?.name || "Package";
         const destination = pkg?.basic?.destination;
         const tagline = pkg?.basic?.tagline;
@@ -119,9 +119,7 @@ function SearchResults({ query, status, results, onPick }) {
                 {tagline && <span className="truncate text-slate-500">{tagline}</span>}
               </div>
             </div>
-            {price && (
-              <div className="text-sm font-black text-slate-900">₹{price}</div>
-            )}
+            {price && <div className="text-sm font-black text-slate-900">Rs {price}</div>}
           </Link>
         );
       })}
@@ -183,7 +181,7 @@ function SearchResults({ query, status, results, onPick }) {
               {name}
             </span>
             <span className="text-slate-400" aria-hidden="true">
-              ›
+              &gt;
             </span>
           </Link>
         );
@@ -203,7 +201,7 @@ function SearchResults({ query, status, results, onPick }) {
               {title}
             </span>
             <span className="text-slate-400" aria-hidden="true">
-              ›
+              &gt;
             </span>
           </Link>
         );
@@ -214,14 +212,11 @@ function SearchResults({ query, status, results, onPick }) {
         categories.length === 0 &&
         policies.length === 0 && (
           <div className="p-4 text-sm font-semibold text-slate-600">
-            No results found for{" "}
-            <span className="font-black text-slate-900">{trimmedQuery}</span>.
+            No results found for <span className="font-black text-slate-900">{trimmedQuery}</span>.
           </div>
         )}
     </div>
   );
-
-  return body;
 }
 
 export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
@@ -233,13 +228,14 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
   const requestIdRef = useRef(0);
 
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [status, setStatus] = useState("idle");
   const [results, setResults] = useState(() => normalizeResponse(null));
-
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const activeOpen = variant === "icon" ? isDialogOpen : isPanelOpen;
+  const isIconVariant = variant === "icon";
+  const isHeroVariant = variant === "hero";
+  const activeOpen = isIconVariant ? isDialogOpen : isPanelOpen;
   const isDark = tone === "header-dark";
 
   const trimmedQuery = query.trim();
@@ -256,7 +252,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
       const nextQuery = typeof detail.query === "string" ? detail.query : "";
 
       setQuery(nextQuery);
-      if (variant === "icon") {
+      if (isIconVariant) {
         setIsDialogOpen(true);
       } else {
         setIsPanelOpen(true);
@@ -267,7 +263,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
 
     window.addEventListener("gh_open_search", handler);
     return () => window.removeEventListener("gh_open_search", handler);
-  }, [variant]);
+  }, [isIconVariant]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => closeAll(), 0);
@@ -284,8 +280,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
   }, [activeOpen, closeAll]);
 
   useEffect(() => {
-    if (variant !== "inline") return;
-    if (!isPanelOpen) return;
+    if (isIconVariant || !isPanelOpen) return;
 
     const onPointerDown = (event) => {
       const target = event.target;
@@ -296,7 +291,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
 
     document.addEventListener("pointerdown", onPointerDown, { capture: true });
     return () => document.removeEventListener("pointerdown", onPointerDown, { capture: true });
-  }, [isPanelOpen, variant]);
+  }, [isIconVariant, isPanelOpen]);
 
   useEffect(() => {
     if (abortRef.current) abortRef.current.abort();
@@ -328,8 +323,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
           payload = null;
         }
 
-        if (controller.signal.aborted) return;
-        if (currentRequestId !== requestIdRef.current) return;
+        if (controller.signal.aborted || currentRequestId !== requestIdRef.current) return;
 
         if (!res.ok) {
           setStatus("error");
@@ -339,9 +333,8 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
 
         setStatus("success");
         setResults(normalizeResponse(payload));
-      } catch (error) {
-        if (controller.signal.aborted) return;
-        if (currentRequestId !== requestIdRef.current) return;
+      } catch {
+        if (controller.signal.aborted || currentRequestId !== requestIdRef.current) return;
         setStatus("error");
         setResults(normalizeResponse(null));
       }
@@ -360,12 +353,10 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
 
   const resultPanel = useMemo(() => {
     if (!activeOpen) return null;
-    return (
-      <SearchResults query={query} status={status} results={results} onPick={onPick} />
-    );
+    return <SearchResults query={query} status={status} results={results} onPick={onPick} />;
   }, [activeOpen, onPick, query, results, status]);
 
-  if (variant === "icon") {
+  if (isIconVariant) {
     return (
       <>
         <button
@@ -431,12 +422,31 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[24rem] lg:max-w-[22rem]">
+    <div
+      ref={containerRef}
+      className={[
+        "relative w-full",
+        isHeroVariant ? "max-w-none" : "max-w-[24rem] lg:max-w-[22rem]",
+      ].join(" ")}
+    >
       <label htmlFor={inputId} className="sr-only">
         Search
       </label>
-      <div className="flex items-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-2 shadow-sm transition focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/25">
-        <Search className="h-5 w-5 text-slate-600" aria-hidden="true" />
+      <div
+        className={[
+          "flex items-center gap-2 rounded-2xl px-3 py-2 transition",
+          isHeroVariant
+            ? "bg-transparent text-white"
+            : "border border-black/10 bg-white shadow-sm focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/25",
+        ].join(" ")}
+      >
+        <Search
+          className={[
+            "h-5 w-5",
+            isHeroVariant ? "text-white/80" : "text-slate-600",
+          ].join(" ")}
+          aria-hidden="true"
+        />
         <input
           ref={inputRef}
           id={inputId}
@@ -445,7 +455,12 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
           onFocus={() => setIsPanelOpen(true)}
           placeholder="Search packages, blogs, categories..."
           autoComplete="off"
-          className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+          className={[
+            "w-full bg-transparent text-sm font-semibold outline-none",
+            isHeroVariant
+              ? "text-white placeholder:text-white/60"
+              : "text-slate-900 placeholder:text-slate-400",
+          ].join(" ")}
           role="combobox"
           aria-expanded={isPanelOpen}
           aria-controls={`${inputId}-panel`}
@@ -459,7 +474,12 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
               setResults(normalizeResponse(null));
               inputRef.current?.focus();
             }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-black/10 bg-white text-base font-black text-slate-700 hover:bg-slate-50"
+            className={[
+              "inline-flex h-8 w-8 items-center justify-center rounded-xl text-base font-black",
+              isHeroVariant
+                ? "border border-white/15 bg-white/10 text-white hover:bg-white/15"
+                : "border border-black/10 bg-white text-slate-700 hover:bg-slate-50",
+            ].join(" ")}
             aria-label="Clear search"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -470,11 +490,12 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
       {isPanelOpen && (
         <div
           id={`${inputId}-panel`}
-          className="absolute left-0 right-0 top-full mt-2 w-[22rem] max-w-[92vw] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]"
+          className={[
+            "absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]",
+            isHeroVariant ? "w-full max-w-full" : "w-[22rem] max-w-[92vw]",
+          ].join(" ")}
         >
-          <div className="max-h-[26rem] overflow-y-auto">
-            {resultPanel}
-          </div>
+          <div className="max-h-[26rem] overflow-y-auto">{resultPanel}</div>
         </div>
       )}
     </div>

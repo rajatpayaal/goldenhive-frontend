@@ -55,7 +55,7 @@ export function FooterTabs({ tabs }) {
           const packageObj = typeof pkg === "string" ? { id: pkg, name: pkg } : pkg;
           const packageId = packageObj.packageCode || packageObj._id || packageObj.id || `pkg-${idx}`;
           const packageName = packageObj.basic?.name || packageObj.name || packageObj.slug || packageId;
-          const href = packageObj.basic?.slug ? `/package/${packageObj.basic.slug}` : `/package/${packageId}`;
+          const href = packageObj.basic?.slug ? `/packages/${packageObj.basic.slug}` : `/packages/${packageId}`;
 
           return (
             <Link
@@ -76,4 +76,3 @@ export function FooterTabs({ tabs }) {
     </div>
   );
 }
-

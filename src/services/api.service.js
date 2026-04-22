@@ -107,6 +107,33 @@ export const apiService = {
     }
   },
 
+  async getAllPackages({ page = 1, limit = 100, sort = "-createdAt" } = {}) {
+    try {
+      const firstPage = await this.getPackages({ page, limit, sort });
+      const items = [...(firstPage.items || [])];
+      const totalPages = Number(firstPage.totalPages || 0);
+
+      if (totalPages <= 1) {
+        return items;
+      }
+
+      const remaining = [];
+      for (let currentPage = page + 1; currentPage <= totalPages; currentPage += 1) {
+        remaining.push(this.getPackages({ page: currentPage, limit, sort }));
+      }
+
+      const responses = await Promise.all(remaining);
+      responses.forEach((response) => {
+        items.push(...(response.items || []));
+      });
+
+      return items;
+    } catch (error) {
+      console.error("Error fetching all packages:", error);
+      return [];
+    }
+  },
+
   async getPackageSuggestions({ excludeId, limit = 6, sort = "-createdAt" } = {}) {
     try {
       const url = buildUrl("/suggestions/packages", { excludeId, limit, sort });
@@ -129,6 +156,21 @@ export const apiService = {
       return json.data || null;
     } catch (error) {
       console.error(`Error fetching package ${id}:`, error);
+      return null;
+    }
+  },
+
+  async getPackageBySlug(slug, { dynamic = true } = {}) {
+    try {
+      const decodedSlug = decodeURIComponent(slug || "");
+      if (!decodedSlug) return null;
+
+      const res = await fetch(`${API_BASE}/packages/slug/${decodedSlug}`, dynamic ? { cache: "no-store" } : { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error(`Error fetching package slug ${slug}:`, error);
       return null;
     }
   },

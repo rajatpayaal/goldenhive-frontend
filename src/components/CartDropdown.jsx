@@ -228,7 +228,7 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
                 const destination = pkg?.basic?.destination;
                 const days = pkg?.basic?.durationDays;
                 const nights = pkg?.basic?.durationNights;
-                const href = `/package/${pkg?.basic?.slug || packageId || ""}`;
+                const href = `/packages/${pkg?.basic?.slug || packageId || ""}`;
 
                 return (
                   <div

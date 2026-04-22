@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --gh-bg: #fffaf2;
+  --gh-bg-soft: #fff2e7;
+  --gh-surface: rgba(255, 253, 249, 0.92);
+  --gh-surface-strong: #fffdf9;
+  --gh-border: rgba(233, 178, 132, 0.24);
+  --gh-text: #513831;
+  --gh-text-soft: #8c7168;
+  --gh-heading: #1f2940;
+  --gh-accent: #ff4f8a;
+  --gh-accent-strong: #ffb95e;
+  --gh-accent-soft: rgba(255, 79, 138, 0.12);
+  --gh-shadow: 0 22px 60px rgba(121, 68, 44, 0.12);
+}
+
 html,
 body {
   height: 100%;
@@ -12,22 +27,98 @@ html {
 }
 
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background:
+    radial-gradient(circle at top left, rgba(255, 206, 223, 0.82), transparent 34%),
+    radial-gradient(circle at top right, rgba(255, 228, 181, 0.7), transparent 30%),
+    linear-gradient(135deg, #fff7f0 0%, #fff2ea 42%, #fffaf3 100%);
+  background-attachment: fixed;
+  color: var(--gh-text);
 }
 
-/* Brand helpers (used with Tailwind arbitrary values). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.12) 0,
+      rgba(255, 255, 255, 0.12) 2px,
+      transparent 2px,
+      transparent 24px
+    );
+  opacity: 0.48;
+}
+
+main {
+  position: relative;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--gh-heading);
+  font-family: var(--font-display), serif;
+  letter-spacing: -0.02em;
+}
+
+p,
+span,
+div,
+button,
+a,
+input,
+textarea,
+select {
+  font-family: var(--font-body), sans-serif;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
 .gh-glass {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 40px rgba(111, 66, 39, 0.08);
+}
+
+.gh-surface {
+  background: var(--gh-surface);
+  border: 1px solid var(--gh-border);
+  box-shadow: var(--gh-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.gh-primary-btn {
+  background: linear-gradient(90deg, var(--gh-accent), var(--gh-accent-strong));
+  color: white;
+  box-shadow: 0 18px 40px rgba(255, 79, 138, 0.22);
+}
+
+.gh-primary-btn:hover {
+  background: linear-gradient(90deg, #f53b7d, #ffab4a);
 }
 
 /* Utility: hide scrollbars for horizontal carousels (still scrollable). */
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  display: none;
 }

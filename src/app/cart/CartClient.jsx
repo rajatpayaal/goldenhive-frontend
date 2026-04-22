@@ -133,20 +133,25 @@ export default function CartClient() {
 
   if (!user && !hasToken) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">Shopping Cart</h1>
-        <p className="mt-4 text-slate-600">Please log in to view your cart.</p>
+      <div className="mx-auto max-w-6xl px-5 py-16">
+        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-8 py-14 text-center shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+          <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+            Your Cart
+          </p>
+          <h1 className="mt-3 text-5xl font-black text-[color:var(--gh-heading)]">Shopping Cart</h1>
+          <p className="mt-4 text-[color:var(--gh-text-soft)]">Please log in to view your cart.</p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => setIsLoginOpen(true)}
-            className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600"
+            className="inline-flex rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-7 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)]"
           >
             Log In / Sign Up
           </button>
-          <Link href="/" className="inline-flex rounded-2xl border border-black/10 bg-white px-6 py-3 text-slate-900 font-bold hover:bg-slate-50">
+          <Link href="/" className="inline-flex rounded-full border border-[color:var(--gh-border)] bg-white px-6 py-3 font-bold text-[color:var(--gh-heading)]">
             Go Home
           </Link>
+        </div>
         </div>
         <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
       </div>
@@ -155,13 +160,18 @@ export default function CartClient() {
 
   if (cartItems.length === 0 && !loading) {
     return (
-      <div className="mx-auto px-5 py-20 text-center">
-        <h1 className="text-3xl font-black text-slate-900">Shopping Cart</h1>
-        <div className="mt-10 rounded-3xl border border-black/10 bg-slate-50 p-8">
-          <p className="text-lg font-semibold text-slate-600">Your cart is empty.</p>
-          <Link href="/" className="mt-6 inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600">
+      <div className="mx-auto max-w-6xl px-5 py-16 text-center">
+        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-10 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+          <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+            Your Cart
+          </p>
+          <h1 className="mt-3 text-5xl font-black text-[color:var(--gh-heading)]">Shopping Cart</h1>
+          <div className="mt-8 rounded-[1.5rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-8">
+            <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
+          <Link href="/" className="mt-6 inline-flex rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-7 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)]">
             Continue Shopping
           </Link>
+          </div>
         </div>
       </div>
     );
@@ -174,9 +184,21 @@ export default function CartClient() {
     return sum + getItemTotal(entry, selectedOption, quantity);
   }, 0);
 
+  const subtotal = totalPrice;
+  const taxesAndFees = Math.round(totalPrice * 0.03);
+  const grandTotal = subtotal + taxesAndFees;
+
   return (
-    <div className="mx-auto px-5 py-12">
-      <h1 className="mb-8 text-3xl font-black text-slate-900">Shopping Cart</h1>
+    <div className="mx-auto max-w-7xl px-5 py-10">
+      <div className="mb-8 flex flex-col gap-3">
+        <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+          Your Cart ({cartItems.length} Items)
+        </p>
+        <h1 className="text-5xl font-black text-[color:var(--gh-heading)]">Review your journey</h1>
+        <p className="max-w-2xl text-base font-medium text-[color:var(--gh-text-soft)]">
+          A clean two-part checkout flow inspired by your reference: premium package cards on the left and a sticky payment summary on the right.
+        </p>
+      </div>
 
       {error && (
         <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
@@ -184,7 +206,7 @@ export default function CartClient() {
         </div>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_380px]">
         <div className="space-y-5">
           {cartItems.map((item) => {
             const entry = normalizeEntry(item);
@@ -202,9 +224,9 @@ export default function CartClient() {
             const destination = pkg?.basic?.destination;
 
             return (
-              <div key={productId} className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-6">
+              <div key={productId} className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-5 shadow-[0_18px_45px_rgba(121,68,44,0.12)] sm:p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                  <div className="relative h-32 w-full overflow-hidden rounded-2xl bg-slate-100 sm:h-28 sm:w-40">
+                  <div className="relative h-36 w-full overflow-hidden rounded-[1.5rem] bg-[color:var(--gh-bg-soft)] sm:h-32 sm:w-44">
                     {pkg?.images?.primary?.url ? (
                       <div
                         className="h-full w-full bg-cover bg-center"
@@ -212,7 +234,7 @@ export default function CartClient() {
                       />
                     ) : null}
                     {(durationDays || durationNights) && (
-                      <div className="absolute left-3 top-3 rounded-full bg-white/85 px-3 py-1 text-xs font-black text-slate-900">
+                      <div className="absolute left-3 top-3 rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-xs font-black text-white shadow-sm">
                         {durationDays ? `${durationDays}D` : ""}
                         {durationDays && durationNights ? " / " : ""}
                         {durationNights ? `${durationNights}N` : ""}
@@ -223,10 +245,13 @@ export default function CartClient() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="line-clamp-2 text-lg font-black text-slate-900">
+                        <div className="text-xs font-extrabold uppercase tracking-[0.18em] text-[color:var(--gh-accent)]">
+                          {destination || "Featured Package"}
+                        </div>
+                        <h3 className="mt-2 line-clamp-2 text-3xl font-black leading-[1.05] text-[color:var(--gh-heading)]">
                           {pkg?.basic?.name || "Package"}
                         </h3>
-                        <p className="mt-2 text-sm font-semibold text-slate-600">
+                        <p className="mt-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">
                           {destination ? `${destination} • ` : ""}
                           {quantity} Traveller{quantity !== 1 ? "s" : ""}
                         </p>
@@ -234,14 +259,14 @@ export default function CartClient() {
 
                       <button
                         onClick={() => handleRemoveItem(removeId)}
-                        className="rounded-2xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-black text-rose-600 hover:bg-rose-100"
+                        className="rounded-full border border-[color:var(--gh-border)] bg-white px-4 py-2 text-xs font-black text-[color:var(--gh-heading)]"
                       >
                         Remove
                       </button>
                     </div>
 
                     {selectedOption ? (
-                      <p className="mt-3 text-sm text-slate-600">
+                      <p className="mt-3 text-sm text-[color:var(--gh-text-soft)]">
                         Vehicle: {vehicleLabel}
                       </p>
                     ) : pkg?.pricingOptions?.length > 0 ? (
@@ -250,49 +275,49 @@ export default function CartClient() {
                       </p>
                     ) : null}
 
-                    <div className="mt-4 flex flex-wrap items-end justify-between gap-4 border-t border-black/5 pt-4">
+                    <div className="mt-4 grid gap-4 border-t border-[color:var(--gh-border)] pt-4 sm:grid-cols-[1fr_auto] sm:items-end">
                       <div>
-                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--gh-text-soft)]">
                           Price per person
                         </div>
                         {selectedOption ? (
                           <>
                             {selectedOption.discountPercent > 0 && (
-                              <div className="text-sm font-bold text-slate-400 line-through">
+                              <div className="text-sm font-bold text-[color:var(--gh-text-soft)] line-through">
                                 ₹{selectedOption.pricePerPerson?.toLocaleString("en-IN")}
                               </div>
                             )}
-                            <div className="text-2xl font-black text-slate-900">
+                            <div className="text-3xl font-black text-[color:var(--gh-accent)]">
                               ₹{pricePerPerson?.toLocaleString("en-IN") || "TBA"}
                             </div>
                           </>
                         ) : (
                           <>
                             {pkg?.basic?.discount > 0 && (
-                              <div className="text-sm font-bold text-slate-400 line-through">
+                              <div className="text-sm font-bold text-[color:var(--gh-text-soft)] line-through">
                                 {pkg.basic.basePrice?.toLocaleString("en-IN")}
                               </div>
                             )}
-                            <div className="text-2xl font-black text-slate-900">
+                            <div className="text-3xl font-black text-[color:var(--gh-accent)]">
                               ₹{pkg?.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
                             </div>
                           </>
                         )}
                         {selectedOption?.discountPercent > 0 && (
-                          <div className="mt-1 text-xs font-bold text-emerald-600">
+                          <div className="mt-1 text-xs font-bold text-[color:var(--gh-accent)]">
                             Save {selectedOption.discountPercent}%
                           </div>
                         )}
                       </div>
 
-                      <div className="text-right">
-                        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <div className="rounded-[1.3rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-5 py-4 text-right">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-[color:var(--gh-text-soft)]">
                           Total
                         </div>
-                        <div className="mt-1 text-lg font-black text-slate-900">
+                        <div className="mt-1 text-2xl font-black text-[color:var(--gh-heading)]">
                           ₹{total?.toLocaleString("en-IN")}
                         </div>
-                        <div className="mt-1 text-xs font-semibold text-slate-500">
+                        <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">
                           Qty: {quantity}
                         </div>
                       </div>
@@ -305,42 +330,92 @@ export default function CartClient() {
         </div>
 
         <div className="lg:sticky lg:top-24 h-fit">
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-black text-slate-900">Cart Summary</h2>
-
-            <div className="mt-6 space-y-3 border-b border-black/5 pb-6">
-              <div className="flex justify-between text-sm font-semibold text-slate-600">
-                <span>Items:</span>
-                <span>{cartItems.length}</span>
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.28em] text-[color:var(--gh-accent)]">
+                  Mini Cart Summary
+                </div>
+                <h2 className="mt-2 text-3xl font-black text-[color:var(--gh-heading)]">My Cart</h2>
               </div>
-              <div className="flex justify-between text-lg font-black text-slate-900">
-                <span>Total:</span>
-                <span>₹{totalPrice.toLocaleString("en-IN")}</span>
+              <div className="rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-xs font-black text-white">
+                {cartItems.length} items
               </div>
             </div>
 
-            <p className="mb-6 mt-4 text-xs text-slate-500">
+            <div className="mt-6 space-y-4 border-b border-[color:var(--gh-border)] pb-6">
+              <div className="flex justify-between text-sm font-semibold text-[color:var(--gh-text-soft)]">
+                <span>Subtotal</span>
+                <span>₹{subtotal.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex justify-between text-sm font-semibold text-[color:var(--gh-text-soft)]">
+                <span>Taxes & Fees</span>
+                <span>₹{taxesAndFees.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex justify-between text-xl font-black text-[color:var(--gh-accent)]">
+                <span>Total Amount</span>
+                <span>₹{grandTotal.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="rounded-[1.3rem] border border-dashed border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4 text-sm font-semibold text-[color:var(--gh-accent)]">
+                Add a coupon code
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {cartItems.slice(0, 3).map((item) => {
+                const entry = normalizeEntry(item);
+                const pkg = entry.packageId;
+                const selectedOption = getSelectedPricingOption(entry);
+                const quantity = getItemQuantity(entry, selectedOption);
+                const total = getItemTotal(entry, selectedOption, quantity);
+                return (
+                  <div key={getEntryPackageId(entry)} className="flex items-center gap-3 rounded-[1.3rem] border border-[color:var(--gh-border)] bg-white px-3 py-3">
+                    <div className="h-16 w-16 overflow-hidden rounded-2xl bg-[color:var(--gh-bg-soft)]">
+                      {pkg?.images?.primary?.url ? (
+                        <div
+                          className="h-full w-full bg-cover bg-center"
+                          style={{ backgroundImage: `url(${pkg.images.primary.url})` }}
+                        />
+                      ) : null}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="line-clamp-2 text-sm font-black text-[color:var(--gh-heading)]">
+                        {pkg?.basic?.name || "Package"}
+                      </div>
+                      <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">
+                        {quantity} traveller{quantity !== 1 ? "s" : ""}
+                      </div>
+                    </div>
+                    <div className="text-sm font-black text-[color:var(--gh-accent)]">
+                      ₹{total?.toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="mb-6 mt-5 text-xs text-[color:var(--gh-text-soft)]">
               Pricing options use group totals; otherwise prices are per person.
             </p>
 
             <div className="space-y-3">
               <Link
                 href="/booking"
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.35)] hover:bg-emerald-600"
+                className="inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)]"
               >
-                Proceed to Booking
+                Proceed to Checkout -&gt;
               </Link>
               <a
                 href="https://wa.me/7505917525?text=I%20want%20to%20book%20these%20packages"
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(14,165,233,0.35)] hover:bg-sky-600"
+                className="inline-flex w-full items-center justify-center rounded-full bg-[color:var(--gh-heading)] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(31,41,64,0.16)]"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Quick Inquiry via WhatsApp
+                Quick Inquiry on WhatsApp
               </a>
               <Link
-                href="/"
-                className="inline-flex w-full items-center justify-center rounded-2xl border border-black/10 bg-white px-5 py-4 text-base font-black text-slate-900 hover:bg-slate-50"
+                href="/packages"
+                className="inline-flex w-full items-center justify-center rounded-full border border-[color:var(--gh-border)] bg-white px-5 py-4 text-base font-black text-[color:var(--gh-heading)]"
               >
                 Continue Shopping
               </Link>

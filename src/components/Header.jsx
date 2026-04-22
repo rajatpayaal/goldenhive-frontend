@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, Menu } from "lucide-react";
@@ -10,7 +10,6 @@ import { UserMenu } from "./UserMenu";
 import { useAuth } from "../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions, refreshCartCount } from "@/store";
-import { GlobalSearch } from "./GlobalSearch";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { getUnreadNotificationsCountAction } from "@/actions/notifications.actions";
 import { NotificationsDropdown } from "./NotificationsDropdown";
@@ -41,7 +40,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
   const visibleCategoryCount = 6;
   const visibleCategories = categoryLinks.slice(0, visibleCategoryCount);
   const overflowCategories = categoryLinks.slice(visibleCategoryCount);
-  const headerTone = useMemo(() => (isHome ? "header-dark" : "header-light"), [isHome]);
+  const headerTone = isHome ? "header-dark" : "header-light";
 
   useEffect(() => {
     if (isLoading) return;
@@ -97,9 +96,6 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
 
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, [moreOpen]);
-
-  // Route changes close the mobile menu automatically because `isMobileMenuOpen`
-  // is derived from the pathname.
 
   return (
     <>
@@ -200,14 +196,6 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
           </nav>
 
           <div className="hidden flex-shrink-0 items-center gap-2 lg:flex xl:gap-3">
-            <GlobalSearch variant={isHome ? "icon" : "inline"} tone={headerTone} />
-            {/* <Link
-              href="/custom-requests"
-              className="hidden items-center justify-center rounded-2xl border border-emerald-500 bg-emerald-500/10 px-4 py-2 text-sm font-black text-emerald-700 hover:bg-emerald-500/20 md:inline-flex"
-            >
-              Custom Request
-            </Link> */}
-
             <NotificationsDropdown
               initialUnreadCount={unreadCount}
               onUnreadCountChange={setUnreadCount}
@@ -227,9 +215,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
               </Button>
             )}
 
-            {!isLoading && user && (
-              <UserMenu />
-            )}
+            {!isLoading && user && <UserMenu />}
           </div>
 
           <Sheet
@@ -239,7 +225,6 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
             }}
           >
             <div className="flex items-center gap-2 lg:hidden">
-              <GlobalSearch variant="icon" tone={headerTone} />
               <CartDropdown cartCount={cartCount} variant={headerTone} />
 
               {!isLoading && user && <UserMenu />}

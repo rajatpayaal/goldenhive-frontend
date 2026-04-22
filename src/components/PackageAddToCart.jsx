@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,9 +26,14 @@ export function PackageAddToCart({
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const pricingOptions = packageData?.pricingOptions || [];
   const requiresPricingSelection = pricingOptions.length > 0;
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const getPayload = () => {
     const payload = { packageId };
@@ -64,7 +69,7 @@ export function PackageAddToCart({
 
     try {
       const response = await addToCartAction(getPayload());
-      
+
       if (response.ok) {
         const successText = `${packageName} added to cart!`;
         setMessage(successText);
@@ -81,7 +86,7 @@ export function PackageAddToCart({
         setIsSuccess(false);
         showToast({ type: "error", message: errorText });
       }
-    } catch (error) {
+    } catch {
       const errorText = "Error adding to cart";
       setMessage(errorText);
       setIsSuccess(false);
@@ -93,30 +98,37 @@ export function PackageAddToCart({
 
   const padClasses = size === "sm" ? "px-4 py-3 text-sm" : "px-5 py-4 text-base";
   const selectionRequired = requiresPricingSelection && !selectedPricingOption;
+  const canUseAuthState = isHydrated;
+  const isLoggedIn = canUseAuthState && Boolean(user);
+  const addToCartDisabled = !canUseAuthState || loading || selectionRequired;
+  const addToCartClassName = !isLoggedIn
+    ? "bg-slate-200 text-slate-500"
+    : selectionRequired
+      ? "bg-[color:var(--gh-bg-soft)] text-[color:var(--gh-accent)]"
+      : isSuccess
+        ? "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]"
+        : "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white disabled:opacity-60";
+  const bookNowClassName = !isLoggedIn
+    ? "bg-slate-200 text-slate-500"
+    : "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]";
 
   return (
     <>
       <div className={showBookNow ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-3"}>
         <button
           onClick={handleAddToCart}
-          disabled={loading || selectionRequired}
-          className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(16,185,129,0.35)] transition ${
-            !user
-              ? "bg-slate-200 text-slate-500"
-              : selectionRequired
-                ? "bg-amber-100 text-amber-700"
-                : isSuccess
-                  ? "bg-sky-500 text-white hover:bg-sky-600"
-                  : "bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
-          }`}
+          disabled={addToCartDisabled}
+          className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${addToCartClassName}`}
         >
-          {loading
+          {!canUseAuthState
+            ? "Add to Cart"
+            : loading
             ? "Adding..."
             : selectionRequired
               ? "Select Pricing"
               : isSuccess
-                ? "✓ Added"
-                : "🛒 Add to Cart"}
+                ? "Added"
+                : "Add to Cart"}
         </button>
 
         {showBookNow ? (
@@ -147,24 +159,22 @@ export function PackageAddToCart({
                 router.push(`/booking?packageId=${encodeURIComponent(packageId)}`);
               }
             }}
-            className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(14,165,233,0.35)] transition ${
-              !user
-                ? "bg-slate-200 text-slate-500"
-                : "bg-sky-500 text-white hover:bg-sky-600"
-            }`}
+            className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${bookNowClassName}`}
             type="button"
           >
-            ✈️ Book Now
+            Book Now
           </button>
         ) : null}
       </div>
 
       {showMessage && message && (
-        <div className={`mt-3 rounded-2xl px-4 py-3 text-sm font-semibold text-center ${
-          isSuccess
-            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-            : "bg-rose-50 text-rose-700 border border-rose-200"
-        }`}>
+        <div
+          className={`mt-3 rounded-2xl px-4 py-3 text-center text-sm font-semibold ${
+            isSuccess
+              ? "border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] text-[color:var(--gh-heading)]"
+              : "border border-rose-200 bg-rose-50 text-rose-700"
+          }`}
+        >
           {message}
         </div>
       )}
