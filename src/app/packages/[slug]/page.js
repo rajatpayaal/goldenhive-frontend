@@ -316,7 +316,7 @@ export default async function PackagesSlugPage({ params }) {
 
   return (
     <div className="pb-20 pt-6">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-5 lg:px-6">
+      <div className="mx-auto px-4 sm:px-5 lg:px-6">
         <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.72)] px-4 py-3 backdrop-blur sm:px-5">
           <Breadcrumbs
             items={[
@@ -328,26 +328,31 @@ export default async function PackagesSlugPage({ params }) {
 
         <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="relative overflow-hidden rounded-[2.2rem] border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)]">
-            <div className="relative min-h-[560px]">
+            <div className="relative">
               <Image
                 src={heroImage}
                 alt={pkg.images?.primary?.alt || pkg.basic?.name || "Package image"}
                 fill
                 priority
-                sizes="(min-width: 1024px) 70vw, 100vw"
                 className="object-cover"
               />
+                {show.overview && (
+              <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
+                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-5">
+                  <div className="flex gap-4">
+                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white sm:inline-flex">
+                      <Mountain className="h-5 w-5" />
+                    </div>
+                    <p className="text-[15px] font-medium leading-8 text-[color:var(--gh-text)]">{overviewText}</p>
+                  </div>
+                </div>
+              </SectionShell>
+            )}
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,19,40,0.96)_0%,rgba(42,21,69,0.82)_38%,rgba(52,31,78,0.42)_62%,rgba(17,24,39,0.18)_100%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,79,138,0.26),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(255,185,94,0.22),transparent_22%)]" />
 
               <div className="relative flex min-h-[560px] flex-col justify-between p-6 text-white sm:p-8 lg:p-10">
                 <div className="flex justify-start">
-                  <Link
-                    href={backHref}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm font-bold text-white backdrop-blur transition hover:bg-white/14"
-                  >
-                    <span aria-hidden="true">&larr;</span> Back
-                  </Link>
                 </div>
 
                 <div className="max-w-3xl">
@@ -392,7 +397,7 @@ export default async function PackagesSlugPage({ params }) {
             </div>
           </section>
 
-          <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
             <PricingSidebarSync
               packageId={pkg._id}
               packageName={pkg.basic?.name}
@@ -406,106 +411,6 @@ export default async function PackagesSlugPage({ params }) {
               availability={pkg.availability}
               pricingOptions={pkg.pricingOptions}
             />
-
-            {show.travelPolicies && (
-              <SectionShell title="Travel & Policies" subtitle="Useful trip information" className="p-5 sm:p-6">
-                <div className="space-y-5">
-                  {travelInfoEntries.length > 0 ? (
-                    <div>
-                      <div className="text-xs font-black uppercase tracking-[0.26em] text-[color:var(--gh-accent)]">
-                        Travel Info
-                      </div>
-                      <div className="mt-3 space-y-3">
-                        {travelInfoEntries.map(([key, value]) => (
-                          <div key={key} className="flex items-start justify-between gap-4 text-sm">
-                            <span className="font-semibold text-[color:var(--gh-text-soft)]">{toLabel(key)}</span>
-                            <span className="max-w-[58%] text-right font-black text-[color:var(--gh-heading)]">
-                              {value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {policyEntries.length > 0 ? (
-                    <div className="border-t border-[color:var(--gh-border)] pt-5">
-                      <div className="text-xs font-black uppercase tracking-[0.26em] text-[color:var(--gh-accent)]">
-                        Policies
-                      </div>
-                      <div className="mt-3 space-y-3">
-                        {policyEntries.map(([key, value]) => (
-                          <div key={key} className="flex items-start justify-between gap-4 text-sm">
-                            <span className="font-semibold text-[color:var(--gh-text-soft)]">{toLabel(key)}</span>
-                            <span className="max-w-[58%] text-right font-black text-[color:var(--gh-heading)]">
-                              {value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-              </SectionShell>
-            )}
-
-            {show.location && (
-              <SectionShell title="Location" subtitle={pkg.location?.address || "Pickup and route region"} className="p-5 sm:p-6">
-                <div className="overflow-hidden rounded-[1.4rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,79,138,0.08),rgba(255,185,94,0.12))]">
-                  <div className="flex min-h-[120px] items-end bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.9),transparent_38%),linear-gradient(135deg,rgba(124,58,237,0.16),rgba(255,185,94,0.18))] p-4">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-black text-[color:var(--gh-heading)]">
-                      <MapPinned className="h-3.5 w-3.5 text-[color:var(--gh-accent)]" />
-                      {pkg.cityId?.name || "Travel Route"}
-                    </div>
-                  </div>
-                </div>
-                {pkg.location?.mapUrl ? (
-                  <a
-                    href={pkg.location.mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)]"
-                  >
-                    Open in Google Maps
-                    <ChevronRight className="h-4 w-4" />
-                  </a>
-                ) : null}
-              </SectionShell>
-            )}
-
-            {show.tags && (
-              <SectionShell title="Package Details" subtitle="Search-friendly highlights" className="p-5 sm:p-6">
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center rounded-full border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-3 py-2 text-xs font-black text-[color:var(--gh-heading)]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </SectionShell>
-            )}
-
-            <SectionShell title="Need Help?" subtitle="Our travel experts are here for you" className="p-5 sm:p-6">
-              <div className="grid gap-3">
-                <a
-                  href={`https://wa.me/${whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#16a34a] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(22,163,74,0.22)]"
-                >
-                  Chat on WhatsApp
-                </a>
-                <a
-                  href={`tel:${pkg.cta?.call}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-4 text-sm font-black text-[color:var(--gh-heading)]"
-                >
-                  Call {pkg.cta?.call || "our support team"}
-                </a>
-              </div>
-            </SectionShell>
           </aside>
         </div>
 
@@ -532,18 +437,6 @@ export default async function PackagesSlugPage({ params }) {
               </SectionShell>
             )}
 
-            {show.overview && (
-              <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
-                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-5">
-                  <div className="flex gap-4">
-                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white sm:inline-flex">
-                      <Mountain className="h-5 w-5" />
-                    </div>
-                    <p className="text-[15px] font-medium leading-8 text-[color:var(--gh-text)]">{overviewText}</p>
-                  </div>
-                </div>
-              </SectionShell>
-            )}
 
             {(pkg.pricingOptions || []).length > 0 && (
               <PricingOptionsSelector
@@ -719,6 +612,110 @@ export default async function PackagesSlugPage({ params }) {
                 </div>
               </SectionShell>
             )}
+
+            {show.travelPolicies && (
+              <SectionShell title="Travel & Policies" subtitle="Useful trip information">
+                <div className="grid gap-6 xl:grid-cols-2">
+                  {travelInfoEntries.length > 0 ? (
+                    <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-white p-5">
+                      <div className="text-xs font-black uppercase tracking-[0.26em] text-[color:var(--gh-accent)]">
+                        Travel Info
+                      </div>
+                      <div className="mt-4 space-y-3">
+                        {travelInfoEntries.map(([key, value]) => (
+                          <div key={key} className="flex items-start justify-between gap-4 text-sm">
+                            <span className="font-semibold text-[color:var(--gh-text-soft)]">{toLabel(key)}</span>
+                            <span className="max-w-[58%] text-right font-black text-[color:var(--gh-heading)]">
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {policyEntries.length > 0 ? (
+                    <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-white p-5">
+                      <div className="text-xs font-black uppercase tracking-[0.26em] text-[color:var(--gh-accent)]">
+                        Policies
+                      </div>
+                      <div className="mt-4 space-y-3">
+                        {policyEntries.map(([key, value]) => (
+                          <div key={key} className="flex items-start justify-between gap-4 text-sm">
+                            <span className="font-semibold text-[color:var(--gh-text-soft)]">{toLabel(key)}</span>
+                            <span className="max-w-[58%] text-right font-black text-[color:var(--gh-heading)]">
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </SectionShell>
+            )}
+
+            {(show.location || show.tags) && (
+              <div className="grid gap-6 xl:grid-cols-2">
+                {show.location && (
+                  <SectionShell title="Location" subtitle={pkg.location?.address || "Pickup and route region"} className="h-full">
+                    <div className="overflow-hidden rounded-[1.4rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,79,138,0.08),rgba(255,185,94,0.12))]">
+                      <div className="flex min-h-[120px] items-end bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.9),transparent_38%),linear-gradient(135deg,rgba(124,58,237,0.16),rgba(255,185,94,0.18))] p-4">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-black text-[color:var(--gh-heading)]">
+                          <MapPinned className="h-3.5 w-3.5 text-[color:var(--gh-accent)]" />
+                          {pkg.cityId?.name || "Travel Route"}
+                        </div>
+                      </div>
+                    </div>
+                    {pkg.location?.mapUrl ? (
+                      <a
+                        href={pkg.location.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)]"
+                      >
+                        Open in Google Maps
+                        <ChevronRight className="h-4 w-4" />
+                      </a>
+                    ) : null}
+                  </SectionShell>
+                )}
+
+                {show.tags && (
+                  <SectionShell title="Package Details" subtitle="Search-friendly highlights" className="h-full">
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center rounded-full border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-3 py-2 text-xs font-black text-[color:var(--gh-heading)]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </SectionShell>
+                )}
+              </div>
+            )}
+
+            <SectionShell title="Need Help?" subtitle="Our travel experts are here for you">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <a
+                  href={`https://wa.me/${whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#16a34a] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(22,163,74,0.22)]"
+                >
+                  Chat on WhatsApp
+                </a>
+                <a
+                  href={`tel:${pkg.cta?.call}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-4 text-sm font-black text-[color:var(--gh-heading)]"
+                >
+                  Call {pkg.cta?.call || "our support team"}
+                </a>
+              </div>
+            </SectionShell>
           </div>
 
           <div className="hidden lg:block" />
