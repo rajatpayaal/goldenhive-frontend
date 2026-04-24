@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const getPackageImage = (pkg) => {
   return (
@@ -46,8 +47,42 @@ const calcSavings = ({ basePrice, finalPrice, discountPercent }) => {
 export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500 }) {
   const scrollerRef = useRef(null);
   const [paused, setPaused] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const safePackages = useMemo(() => (packages || []).filter(Boolean), [packages]);
+
+  const checkScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  };
+
+  const scroll = (direction) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const card = el.querySelector("[data-card]");
+    const step = card ? card.getBoundingClientRect().width + 20 : 360;
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    
+    let next;
+    if (direction === "next") {
+      next = Math.min(el.scrollLeft + step, maxScrollLeft);
+    } else {
+      next = Math.max(el.scrollLeft - step, 0);
+    }
+    
+    el.scrollTo({ left: next, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScroll);
+    checkScroll();
+    return () => el.removeEventListener("scroll", checkScroll);
+  }, []);
 
   useEffect(() => {
     if (!autoSlide || paused) return;
@@ -74,14 +109,43 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
   if (safePackages.length === 0) return null;
 
   return (
-    <div
-      ref={scrollerRef}
-      className="no-scrollbar mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onPointerDown={() => setPaused(true)}
-      onTouchStart={() => setPaused(true)}
-    >
+    <div className="relative">
+      {/* Navigation Buttons */}
+      <div className="absolute right-16 top-0 z-10 flex gap-2">
+        <button
+          onClick={() => scroll("prev")}
+          disabled={!canScrollLeft}
+          className={`flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--gh-border)] bg-white shadow-md transition-all hover:shadow-lg ${
+            canScrollLeft 
+              ? "text-[color:var(--gh-accent)] hover:bg-[color:var(--gh-accent)] hover:text-white" 
+              : "cursor-not-allowed text-gray-300"
+          }`}
+          aria-label="Previous packages"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => scroll("next")}
+          disabled={!canScrollRight}
+          className={`flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--gh-border)] bg-white shadow-md transition-all hover:shadow-lg ${
+            canScrollRight 
+              ? "text-[color:var(--gh-accent)] hover:bg-[color:var(--gh-accent)] hover:text-white" 
+              : "cursor-not-allowed text-gray-300"
+          }`}
+          aria-label="Next packages"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div
+        ref={scrollerRef}
+        className="no-scrollbar mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onPointerDown={() => setPaused(true)}
+        onTouchStart={() => setPaused(true)}
+      >
       {safePackages.map((pkg, index) => {
         const savings = calcSavings({
           basePrice: pkg.pricing?.basePrice,
@@ -161,6 +225,7 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
           </Link>
         );
       })}
+      </div>
     </div>
   );
 }

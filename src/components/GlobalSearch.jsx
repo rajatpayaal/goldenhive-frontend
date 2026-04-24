@@ -425,7 +425,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
     <div
       ref={containerRef}
       className={[
-        "relative w-full",
+        "relative z-50 w-full",
         isHeroVariant ? "max-w-none" : "max-w-[24rem] lg:max-w-[22rem]",
       ].join(" ")}
     >
@@ -436,17 +436,10 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
         className={[
           "flex items-center gap-2 rounded-2xl px-3 py-2 transition",
           isHeroVariant
-            ? "bg-transparent text-white"
+            ? "border border-gh-gold/20 bg-white text-slate-900 shadow-sm focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/20"
             : "border border-black/10 bg-white shadow-sm focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/25",
         ].join(" ")}
       >
-        <Search
-          className={[
-            "h-5 w-5",
-            isHeroVariant ? "text-white/80" : "text-slate-600",
-          ].join(" ")}
-          aria-hidden="true"
-        />
         <input
           ref={inputRef}
           id={inputId}
@@ -458,12 +451,19 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
           className={[
             "w-full bg-transparent text-sm font-semibold outline-none",
             isHeroVariant
-              ? "text-white placeholder:text-white/60"
+              ? "text-slate-900 placeholder:text-slate-400"
               : "text-slate-900 placeholder:text-slate-400",
           ].join(" ")}
           role="combobox"
           aria-expanded={isPanelOpen}
           aria-controls={`${inputId}-panel`}
+        />
+        <Search
+          className={[
+            "h-5 w-5 shrink-0",
+            isHeroVariant ? "text-gh-gold" : "text-slate-600",
+          ].join(" ")}
+          aria-hidden="true"
         />
         {query.length > 0 && (
           <button
@@ -477,7 +477,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
             className={[
               "inline-flex h-8 w-8 items-center justify-center rounded-xl text-base font-black",
               isHeroVariant
-                ? "border border-white/15 bg-white/10 text-white hover:bg-white/15"
+                ? "border border-gh-gold/20 bg-white text-slate-700 hover:bg-slate-50"
                 : "border border-black/10 bg-white text-slate-700 hover:bg-slate-50",
             ].join(" ")}
             aria-label="Clear search"
@@ -491,7 +491,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
         <div
           id={`${inputId}-panel`}
           className={[
-            "absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]",
+            "absolute left-0 right-0 top-full z-[70] mt-2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]",
             isHeroVariant ? "w-full max-w-full" : "w-[22rem] max-w-[92vw]",
           ].join(" ")}
         >
