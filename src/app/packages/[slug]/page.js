@@ -50,7 +50,7 @@ async function resolvePackageId(slugOrId) {
   const categories = await apiService.getCategories();
   for (const category of categories || []) {
     const { items } = await apiService.getPackages({
-      categoryName: category.name,
+      categoryId: category._id,
       page: 1,
       limit: 100,
       sort: "-createdAt",

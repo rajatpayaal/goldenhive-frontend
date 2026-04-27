@@ -103,9 +103,6 @@ export function DialogContent({
   const ctx = React.useContext(DialogContext);
   if (!ctx) throw new Error("DialogContent must be used within Dialog");
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-
   React.useEffect(() => {
     if (!ctx.open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -115,7 +112,7 @@ export function DialogContent({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [ctx]);
 
-  if (!mounted || !ctx.open) return null;
+  if (!ctx.open || typeof document === "undefined") return null;
 
   return createPortal(
     <div className="fixed inset-0 z-50">

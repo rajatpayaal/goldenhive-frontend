@@ -33,7 +33,7 @@ export default async function CategoryPage({ params }) {
   }
 
   const { items } = await apiService.getPackages({
-    categoryName: category.name,
+    categoryId: category._id,
     limit: 60,
     sort: "-createdAt",
   });

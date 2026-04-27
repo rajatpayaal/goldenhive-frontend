@@ -125,7 +125,10 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
 
   useEffect(() => {
     if (!open) return;
-    refresh();
+    const timeoutId = window.setTimeout(() => {
+      void refresh();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [open, refresh]);
 
   const removeItem = async (packageId) => {

@@ -103,9 +103,6 @@ export function SheetContent({
   const ctx = React.useContext(SheetContext);
   if (!ctx) throw new Error("SheetContent must be used within Sheet");
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-
   React.useEffect(() => {
     if (!ctx.open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -115,7 +112,7 @@ export function SheetContent({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [ctx]);
 
-  if (!mounted || !ctx.open) return null;
+  if (!ctx.open || typeof document === "undefined") return null;
 
   const sideClass =
     side === "left" ? "left-0 -translate-x-0" : "right-0 translate-x-0";

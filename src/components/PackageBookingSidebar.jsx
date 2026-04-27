@@ -12,12 +12,8 @@ function formatInr(value) {
 }
 
 function normalizeGroupSize(selectedOption, bestDeal, pricingOptions) {
-  const pax =
-    selectedOption?.pax ||
-    bestDeal?.pax ||
-    pricingOptions?.find((option) => option?.isBestDeal)?.pax ||
-    pricingOptions?.[0]?.pax;
-  return pax ? `4 to ${Math.max(4, Number(pax))}` : "Small groups";
+  const pax = selectedOption?.pax;
+  return pax ? `4 to ${Math.max(4, Number(pax))}` : null;
 }
 
 export function PackageBookingSidebar({
@@ -37,16 +33,25 @@ export function PackageBookingSidebar({
 }) {
   const finalPrice =
     selectedOption?.finalPricePerPerson ??
-    bestDeal?.finalPricePerPerson ??
     pricing?.finalPrice ??
     packageData?.basic?.finalPrice;
-  const basePrice =
-    selectedOption?.pricePerPerson ?? bestDeal?.pricePerPerson ?? pricing?.basePrice ?? null;
+  const basePrice = selectedOption?.pricePerPerson ?? pricing?.basePrice ?? packageData?.basic?.basePrice ?? null;
   const durationLabel = `${packageData?.basic?.durationDays ?? "-"}D / ${packageData?.basic?.nights ?? "-"}N`;
-  const groupSize = normalizeGroupSize(selectedOption, bestDeal, pricingOptions);
+  const groupSize =
+    normalizeGroupSize(selectedOption, bestDeal, pricingOptions) ??
+    packageData?.quickInfo?.groupSize ??
+    "Small groups";
   const seatsLeft = availability?.seatsLeft ?? packageData?.availability?.seatsLeft ?? 5;
   const reviewCount = packageData?.reviews?.length ?? 120;
   const trustCount = packageData?.meta?.status === "ACTIVE" ? "Trusted by 50K+ travelers" : "Verified package support";
+  const clearSelectedOption = () => {
+    onOptionSelect?.(null);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("pricing-option-selected", { detail: null })
+      );
+    }
+  };
 
   return (
     <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_22px_60px_rgba(121,68,44,0.14)]">
@@ -121,7 +126,7 @@ export function PackageBookingSidebar({
               </div>
               <button
                 type="button"
-                onClick={() => onOptionSelect(null)}
+                onClick={clearSelectedOption}
                 className="rounded-full border border-[color:var(--gh-border)] bg-white px-3 py-1 text-xs font-black text-[color:var(--gh-heading)]"
               >
                 Clear

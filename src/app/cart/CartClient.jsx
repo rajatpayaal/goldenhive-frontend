@@ -80,16 +80,18 @@ export default function CartClient() {
   }, []);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (authLoading) {
       return;
     }
 
     if (!user && !hasToken) {
-      setLoading(false);
+      // User not logged in and no token - don't load cart
       return;
     }
 
     fetchCart();
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [authLoading, user, hasToken, fetchCart]);
 
   useEffect(() => {

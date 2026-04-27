@@ -18,7 +18,7 @@ export function PackageDetailsClient({
   availability,
   mainContent, // The main content sections (Overview, Highlights, etc.)
 }) {
-  const [selectedOption, setSelectedOption] = useState(bestDeal || pricingOptions?.[0] || null);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   return (
     <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_380px]">

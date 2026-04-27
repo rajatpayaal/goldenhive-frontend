@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { createBookingAction } from "@/actions/booking.actions";
@@ -20,18 +20,6 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
     status: "REQUESTED",
     paymentStatus: "UNPAID",
   });
-
-  useEffect(() => {
-    if (!isOpen) return;
-    setPackageTravellers((prev) => {
-      const next = { ...prev };
-      for (const pkg of packages) {
-        if (!pkg?._id) continue;
-        if (next[pkg._id] == null) next[pkg._id] = 1;
-      }
-      return next;
-    });
-  }, [isOpen, packages]);
 
   const totalTravellers = useMemo(() => {
     const values = packages.map((pkg) => Math.max(1, Number(packageTravellers[pkg?._id] || 1)));
@@ -69,6 +57,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
     setError("");
 
     try {
+      const userId = user?._id || user?.id;
       const packageItems = packages
         .filter((pkg) => pkg?._id)
         .map((pkg) => ({
@@ -82,7 +71,8 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
         packageId: packages.map((pkg) => pkg._id),
         packageItems,
         travellers: totalTravellers,
-        userId: user._id,
+        userId,
+        user_id: userId,
         totalAmount,
       };
 

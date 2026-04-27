@@ -19,7 +19,6 @@ export default function SupportTicketPage() {
   const { user, isLoading } = useAuth();
   const { showToast } = useToast();
   const { slug } = useParams();
-  const [hasMounted, setHasMounted] = useState(false);
   const [form, setForm] = useState({
     ...DEFAULT_FORM,
     phone: user?.mobile || "",
@@ -33,19 +32,17 @@ export default function SupportTicketPage() {
   const [ticketRefreshKey, setTicketRefreshKey] = useState(0);
 
   useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!hasMounted || !user) {
+    if (!user) {
       return;
     }
 
     let active = true;
-    setTicketsLoading(true);
-    setTicketsError("");
 
     const fetchTickets = async () => {
+      if (active) {
+        setTicketsLoading(true);
+        setTicketsError("");
+      }
       try {
         const response = await fetch("/api/support/my", {
           method: "GET",
@@ -86,11 +83,11 @@ export default function SupportTicketPage() {
     return () => {
       active = false;
     };
-  }, [hasMounted, user, ticketRefreshKey]);
+  }, [user, ticketRefreshKey]);
 
   const refreshTickets = () => setTicketRefreshKey((prev) => prev + 1);
 
-  if (!hasMounted || isLoading) {
+  if (isLoading) {
     return <Loader message="Loading support..." />;
   }
 

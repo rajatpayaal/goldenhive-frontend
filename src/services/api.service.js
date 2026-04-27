@@ -1,7 +1,6 @@
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE ||
-  process.env.GOLDENHIVE_API_BASE ||
-  "https://goldenhive-backend-g1xv.onrender.com/api";
+import { BACKEND_API_BASE } from "@/lib/backend";
+
+const API_BASE = BACKEND_API_BASE;
 
 const buildUrl = (path, query = {}) => {
   const url = new URL(`${API_BASE}${path}`);
@@ -87,9 +86,9 @@ export const apiService = {
     }
   },
 
-  async getPackages({ categoryName, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
+  async getPackages({ categoryId, categoryName, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
     try {
-      const url = buildUrl("/packages", { categoryName, destination, status, search, page, limit, sort });
+      const url = buildUrl("/packages", { categoryId, categoryName, destination, status, search, page, limit, sort });
       const res = await fetch(url, { next: { revalidate: 3600 } });
       if (!res.ok) return { items: [], total: 0, page, limit, totalPages: 0 };
       const json = await res.json();

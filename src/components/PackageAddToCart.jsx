@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,24 +26,22 @@ export function PackageAddToCart({
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  const pricingOptions = packageData?.pricingOptions || [];
-  const requiresPricingSelection = pricingOptions.length > 0;
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   const getPayload = () => {
+    const userId = user?._id || user?.id;
     const payload = { packageId };
+
+    if (userId) {
+      payload.userId = userId;
+      payload.user_id = userId;
+    }
     if (!selectedPricingOption) return payload;
 
     const vehicleId = selectedPricingOption.vehicleId?._id || selectedPricingOption.vehicleId;
-    const pricingOptions = selectedPricingOption._id || selectedPricingOption.pricingId;
+    const pricingId = selectedPricingOption._id || selectedPricingOption.pricingId;
     const selectedPax = Number(selectedPricingOption.pax || selectedPricingOption.selectedPax || 0) || 0;
 
-    if (pricingOptions) payload.pricingOptions = pricingOptions;
+    if (pricingId) payload.pricingId = pricingId;
     if (vehicleId) payload.vehicleId = vehicleId;
     if (selectedPax > 0) payload.selectedPax = selectedPax;
     return payload;
@@ -52,14 +50,6 @@ export function PackageAddToCart({
   const handleAddToCart = async () => {
     if (!user) {
       setIsLoginOpen(true);
-      return;
-    }
-
-    if (requiresPricingSelection && !selectedPricingOption) {
-      const messageText = "Please select a pricing option before adding to cart.";
-      setMessage(messageText);
-      setIsSuccess(false);
-      showToast({ type: "error", message: messageText });
       return;
     }
 
@@ -97,20 +87,17 @@ export function PackageAddToCart({
   };
 
   const padClasses = size === "sm" ? "px-4 py-3 text-sm" : "px-5 py-4 text-base";
-  const selectionRequired = requiresPricingSelection && !selectedPricingOption;
-  const canUseAuthState = isHydrated;
-  const isLoggedIn = canUseAuthState && Boolean(user);
-  const addToCartDisabled = !canUseAuthState || loading || selectionRequired;
+  const isLoggedIn = Boolean(user);
+  const addToCartDisabled = loading;
+  const bookNowDisabled = loading;
   const addToCartClassName = !isLoggedIn
     ? "bg-slate-200 text-slate-500"
-    : selectionRequired
-      ? "bg-[color:var(--gh-bg-soft)] text-[color:var(--gh-accent)]"
-      : isSuccess
-        ? "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]"
-        : "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white disabled:opacity-60";
+    : isSuccess
+      ? "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]"
+      : "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white disabled:opacity-60";
   const bookNowClassName = !isLoggedIn
     ? "bg-slate-200 text-slate-500"
-    : "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]";
+    : "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)] disabled:opacity-60";
 
   return (
     <>
@@ -120,15 +107,7 @@ export function PackageAddToCart({
           disabled={addToCartDisabled}
           className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${addToCartClassName}`}
         >
-          {!canUseAuthState
-            ? "Add to Cart"
-            : loading
-            ? "Adding..."
-            : selectionRequired
-              ? "Select Pricing"
-              : isSuccess
-                ? "Added"
-                : "Add to Cart"}
+          {loading ? "Adding..." : isSuccess ? "Added" : "Add to Cart"}
         </button>
 
         {showBookNow ? (
@@ -139,30 +118,30 @@ export function PackageAddToCart({
                 return;
               }
 
-              if (requiresPricingSelection && !selectedPricingOption) {
-                const messageText = "Please select a pricing option before booking.";
-                setMessage(messageText);
-                setIsSuccess(false);
-                showToast({ type: "error", message: messageText });
-                return;
-              }
-
               setLoading(true);
               try {
-                await addToCartAction(getPayload());
-                dispatch(refreshCartCount());
-                if (typeof window !== "undefined") {
-                  window.dispatchEvent(new Event("gh_cart_updated"));
+                const response = await addToCartAction(getPayload());
+                if (response.ok) {
+                  dispatch(refreshCartCount());
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new Event("gh_cart_updated"));
+                  }
+                  router.push(`/booking?packageId=${encodeURIComponent(packageId)}`);
+                } else {
+                  const errorText = response.data?.message || response.data?.error || "Failed to add package for booking";
+                  setMessage(errorText);
+                  setIsSuccess(false);
+                  showToast({ type: "error", message: errorText });
                 }
               } finally {
                 setLoading(false);
-                router.push(`/booking?packageId=${encodeURIComponent(packageId)}`);
               }
             }}
+            disabled={bookNowDisabled}
             className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${bookNowClassName}`}
             type="button"
           >
-            Book Now
+            {loading ? "Processing..." : "Book Now"}
           </button>
         ) : null}
       </div>

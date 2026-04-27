@@ -15,7 +15,11 @@ export default async function HomeContent({ initialSection }) {
   const packagesBySlug = Object.fromEntries(
     await Promise.all(
       activeCategories.map(async (category) => {
-        const { items } = await apiService.getPackages({ categoryName: category.name });
+        const { items } = await apiService.getPackages({
+          categoryId: category._id,
+          limit: 60,
+          sort: "-createdAt",
+        });
         return [category.slug, items];
       })
     )

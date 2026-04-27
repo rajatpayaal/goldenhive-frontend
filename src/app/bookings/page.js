@@ -166,7 +166,7 @@ export default function BookingsPage() {
     if (!user && hasToken === null) return;
 
     if (!user && hasToken === false) {
-      setLoading(false);
+      // User not logged in and no token - don't load bookings
       return;
     }
 

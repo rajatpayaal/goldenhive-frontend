@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/useToast";
 import { useDispatch } from "react-redux";
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
@@ -27,14 +27,14 @@ export default function BookingPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [hasToken, setHasToken] = useState(false);
+  const [hasToken, setHasToken] = useState(null);
 
   // Booking form data
   const [bookingData, setBookingData] = useState({
     startDate: "",
     endDate: "",
-    travellers: 1,
     note: "",
+    travellers: 1,
   });
 
   // Traveler details
@@ -66,7 +66,7 @@ export default function BookingPage() {
   const getItemTotal = (entry, selectedOption, quantity) =>
     selectedOption?.totalPrice ?? getItemPrice(entry, selectedOption) * quantity;
 
-  const getEffectiveQuantity = (entry) => {
+  const getEffectiveQuantity = useCallback((entry) => {
     const itemId = getEntryPackageId(entry);
     const selectedOption = getSelectedPricingOption(entry);
 
@@ -74,7 +74,7 @@ export default function BookingPage() {
     if (selectedOption?.pax) return Math.max(1, Number(selectedOption.pax || 1));
 
     return Math.max(1, Number(packageTravellers[itemId] || 1));
-  };
+  }, [packageTravellers]);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -91,9 +91,9 @@ export default function BookingPage() {
 
   useEffect(() => {
     if (authLoading) return;
-
+    if (hasToken === null) return;
     if (!user && !hasToken) {
-      setLoading(false);
+      // User not logged in and no token - don't load cart
       return;
     }
 
@@ -123,18 +123,6 @@ export default function BookingPage() {
             }
             return next;
           });
-          const travelerCount = Math.max(
-            1,
-            ...orderedPackages.map((item) => {
-              const entry = normalizeEntry(item);
-              return Number(item.selectedPax || getSelectedPricingOption(entry)?.pax || 1) || 1;
-            })
-          );
-          setBookingData(prev => ({ ...prev, travellers: travelerCount }));
-          // Initialize traveler details based on number of packages/travelers
-          setTravelerDetails(Array(travelerCount).fill().map(() => ({
-            name: "", age: "", email: "", phone: ""
-          })));
         } else {
           setError(response.data?.message || response.data?.error || "Failed to load cart.");
         }
@@ -148,49 +136,49 @@ export default function BookingPage() {
     fetchCart();
   }, [authLoading, user, hasToken, highlightedPackageId]);
 
-  const totalTravellers = (() => {
+  const totalTravellers = useMemo(() => {
     const quantities = (cartItems || [])
       .map((item) => getEffectiveQuantity(normalizeEntry(item)))
       .filter((v) => Number.isFinite(v));
     return quantities.length > 0 ? Math.max(...quantities) : 1;
-  })();
+  }, [cartItems, getEffectiveQuantity]);
 
+  const travelerCount = Math.max(1, Number(totalTravellers || 1));
+
+  // Sync bookingData.travellers when totalTravellers changes
   useEffect(() => {
-    if (cartItems.length === 0) return;
     const next = Math.max(1, totalTravellers || 1);
-    if (bookingData.travellers !== next) {
-      setBookingData((prev) => ({ ...prev, travellers: next }));
-    }
-  }, [cartItems.length, totalTravellers, bookingData.travellers]);
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setBookingData(prev => {
+      if (prev.travellers === next) return prev;
+      return { ...prev, travellers: next };
+    });
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [totalTravellers]);
 
-  // Ensure travelers count is always valid
+  // Sync traveler details when traveler count changes
   useEffect(() => {
-    if (bookingData.travellers < 1 || isNaN(bookingData.travellers)) {
-      setBookingData(prev => ({ ...prev, travellers: 1 }));
-    }
-  }, [bookingData.travellers]);
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setTravelerDetails(prev => {
+      const currentCount = prev.length;
+      const targetCount = travelerCount;
+      if (currentCount === targetCount) return prev;
 
-  // Ensure traveler details array matches travelers count
-  useEffect(() => {
-    const currentCount = travelerDetails.length;
-    const targetCount = Math.max(1, bookingData.travellers);
+      const updated = Array.from({ length: targetCount }, (_, index) =>
+        prev[index] || { name: "", age: "", email: "", phone: "" }
+      );
+      return updated;
+    });
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [travelerCount]);
 
-    if (currentCount !== targetCount) {
-      setTravelerDetails(prev => {
-        const updated = [...prev];
-        if (targetCount > currentCount) {
-          // Add more travelers
-          while (updated.length < targetCount) {
-            updated.push({ name: "", age: "", email: "", phone: "" });
-          }
-        } else {
-          // Remove travelers
-          updated.splice(targetCount);
-        }
-        return updated;
-      });
-    }
-  }, [bookingData.travellers, travelerDetails.length]);
+  const normalizedTravelerDetails = useMemo(
+    () =>
+      Array.from({ length: travelerCount }, (_, index) => (
+        travelerDetails[index] || { name: "", age: "", email: "", phone: "" }
+      )),
+    [travelerCount, travelerDetails]
+  );
 
   const handleBookingDataChange = (e) => {
     const { name, value } = e.target;
@@ -202,7 +190,9 @@ export default function BookingPage() {
 
   const handleTravelerChange = (index, field, value) => {
     setTravelerDetails(prev => {
-      const updated = [...prev];
+      const updated = Array.from({ length: travelerCount }, (_, currentIndex) => (
+        prev[currentIndex] || { name: "", age: "", email: "", phone: "" }
+      ));
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
@@ -219,14 +209,14 @@ export default function BookingPage() {
     //   return false;
     // }
 
-    if (bookingData.travellers <= 0) {
+    if (travelerCount <= 0) {
       setError("Number of travelers must be at least 1.");
       return false;
     }
 
     // Validate traveler details
-    for (let i = 0; i < bookingData.travellers; i++) {
-      const traveler = travelerDetails[i];
+    for (let i = 0; i < travelerCount; i++) {
+      const traveler = normalizedTravelerDetails[i];
       if (!traveler.name.trim()) {
         setError(`Please enter name for Traveler ${i + 1}.`);
         return false;
@@ -257,6 +247,7 @@ export default function BookingPage() {
     setError("");
 
     try {
+      const userId = user?._id || user?.id;
       const totalAmount = cartItems.reduce((sum, item) => {
         const entry = normalizeEntry(item);
         const selectedOption = getSelectedPricingOption(entry);
@@ -294,10 +285,11 @@ export default function BookingPage() {
         ...bookingData,
         packageId: cartItems.map(item => item._id),
         packageItems,
-        travellers: Math.max(1, totalTravellers || 1),
-        userId: user._id,
+        travellers: travelerCount,
+        userId,
+        user_id: userId,
         totalAmount,
-        travelerDetails,
+        travelerDetails: normalizedTravelerDetails,
       };
 
       const response = await createBookingAction(payload);

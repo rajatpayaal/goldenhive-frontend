@@ -39,10 +39,7 @@ export function NotificationsDropdown({
 
   const positionClass = useMemo(() => (align === "left" ? "left-0" : "right-0"), [align]);
   const isDark = variant === "header-dark";
-
-  useEffect(() => {
-    setUnreadCount(initialUnreadCount);
-  }, [initialUnreadCount]);
+  const displayUnreadCount = items.length > 0 || open || loading || error ? unreadCount : initialUnreadCount;
 
   useEffect(() => {
     onUnreadCountChange?.(unreadCount);
@@ -107,7 +104,10 @@ export function NotificationsDropdown({
 
   useEffect(() => {
     if (!open) return;
-    refresh();
+    const timeoutId = window.setTimeout(() => {
+      void refresh();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [open, refresh]);
 
   const markAllRead = async () => {
@@ -165,9 +165,9 @@ export function NotificationsDropdown({
       >
         <Bell className="h-5 w-5" aria-hidden="true" />
         <span className="hidden sm:inline">Alerts</span>
-        {unreadCount > 0 && (
+        {displayUnreadCount > 0 && (
           <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gh-gold px-1.5 text-xs font-black text-gh-plum shadow-sm">
-            {unreadCount}
+            {displayUnreadCount}
           </span>
         )}
       </button>
@@ -187,9 +187,9 @@ export function NotificationsDropdown({
                 </span>
               </div>
               <div className="text-xs font-semibold text-slate-500">
-                {unreadCount > 0 ? (
+                {displayUnreadCount > 0 ? (
                   <>
-                    Unread: <span className="font-black text-slate-900">{unreadCount}</span>
+                    Unread: <span className="font-black text-slate-900">{displayUnreadCount}</span>
                   </>
                 ) : (
                   "All caught up"
