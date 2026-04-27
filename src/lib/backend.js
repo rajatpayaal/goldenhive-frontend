@@ -1,7 +1,7 @@
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ||
   process.env.GOLDENHIVE_API_BASE ||
-  "https://goldenhive-backend-g1xv.onrender.com/api";
+  "http://13.206.107.203/api";
 
 export const BACKEND_API_BASE = API_BASE;
 
