@@ -20,6 +20,7 @@
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
 }
 
 html {
@@ -33,6 +34,7 @@ body {
     linear-gradient(135deg, #fff7f0 0%, #fff2ea 42%, #fffaf3 100%);
   background-attachment: fixed;
   color: var(--gh-text);
+  text-rendering: optimizeLegibility;
 }
 
 body::before {
@@ -54,6 +56,7 @@ body::before {
 
 main {
   position: relative;
+  min-width: 0;
 }
 
 h1,
@@ -121,4 +124,12 @@ select {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
 }

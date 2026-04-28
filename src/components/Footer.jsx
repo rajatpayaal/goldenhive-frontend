@@ -130,21 +130,24 @@ export function Footer({ footer }) {
 
   return (
     <footer className="bg-slate-950 text-white">
-      <div className="bg-gradient-to-b from-slate-950 via-slate-950 to-black">
-        <div className="w-full px-5 py-14 sm:px-8 lg:px-12">
+      <div className="bg-[linear-gradient(135deg,#111827_0%,#1f2940_42%,#4a2d68_72%,#ff4f8a_130%)]">
+        <div className="w-full px-4 py-12 sm:px-6 sm:py-14 lg:px-12">
           {tabs.length > 0 && (
             <div className="mb-10">
               <FooterTabs tabs={tabs} />
             </div>
           )}
 
-          <div className="grid gap-10 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-5">
             {columns.map((col) => (
-              <div key={col.title} className="space-y-4">
-                <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
+              <div
+                key={col.title}
+                className="space-y-4 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-5 backdrop-blur-sm"
+              >
+                <div className="text-[11px] font-extrabold uppercase tracking-[0.32em] text-white/65">
                   {col.title}
                 </div>
-                <div className="grid gap-2">
+                <div className="grid gap-2.5">
                   {(col.items || []).map((item) => (
                     <FooterLink
                       key={`${col.title}-${item.label}-${item.slug || item.url}`}
@@ -158,20 +161,21 @@ export function Footer({ footer }) {
             ))}
 
             {footer?.qrCode?.isActive && (
-              <div className="space-y-4 md:justify-self-end">
-                <div className="text-sm font-extrabold uppercase tracking-wider text-white/80">
+              <div className="space-y-4 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-5 backdrop-blur-sm md:justify-self-end">
+                <div className="text-[11px] font-extrabold uppercase tracking-[0.32em] text-white/65">
                   {footer.qrCode.title || "Download App"}
                 </div>
                 {footer.qrCode.subtitle && (
                   <p className="text-sm text-white/70">{footer.qrCode.subtitle}</p>
                 )}
                 {footer.qrCode.imageUrl && (
-                  <div className="w-fit overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-4">
+                  <div className="w-fit overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-4">
                     <Image
                       src={footer.qrCode.imageUrl}
                       alt={footer.qrCode.title || "QR code"}
                       width={220}
                       height={220}
+                      sizes="(max-width: 640px) 144px, 176px"
                       className="h-40 w-40 object-contain sm:h-44 sm:w-44"
                     />
                   </div>
@@ -180,16 +184,16 @@ export function Footer({ footer }) {
             )}
           </div>
 
-          <div className="mt-12 flex flex-col gap-6 border-t border-white/10 pt-7 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="text-lg font-black tracking-tight">GoldenHive</div>
+          <div className="mt-10 flex flex-col gap-5 rounded-[1.8rem] border border-white/10 bg-slate-950/35 px-5 py-6 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0">
+              <div className="text-xl font-black tracking-tight text-white">GoldenHive</div>
               <div className="mt-1 text-xs font-semibold text-white/60">
-                © {new Date().getFullYear()} GoldenHive. All rights reserved.
+                {"\u00A9"} {new Date().getFullYear()} GoldenHive. All rights reserved.
               </div>
             </div>
-            <div className="text-xs font-medium leading-6 text-white/55">
+            <div className="max-w-3xl text-xs font-medium leading-6 text-white/60">
               By accessing this page, you confirm that you have read, understood, and agreed to our{" "}
-              <Link href="/policies" className="text-white/75 hover:text-white underline">
+              <Link href="/policies" className="font-semibold text-white/85 underline hover:text-white">
                 Policies
               </Link>
               , Terms of Service, Cookie Policy, Privacy Policy, and Content Guidelines.

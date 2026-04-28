@@ -337,7 +337,7 @@ export default function BookingPage() {
 
   if (!user && !hasToken) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-5 sm:py-20">
         <h1 className="text-3xl font-black text-[color:var(--gh-heading)]">Create Booking</h1>
         <p className="mt-4 text-[color:var(--gh-text-soft)]">Please log in to create a booking.</p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3">
@@ -359,7 +359,7 @@ export default function BookingPage() {
 
   if (cartItems.length === 0 && !loading) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-5 sm:py-20">
         <h1 className="text-3xl font-black text-[color:var(--gh-heading)]">Create Booking</h1>
         <div className="mt-10 rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-8 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
           <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
@@ -374,7 +374,7 @@ export default function BookingPage() {
 
   if (success) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-20 text-center">
+      <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-5 sm:py-20">
         <div className="rounded-[2rem] border border-emerald-200 bg-emerald-50 p-8 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
           <div className="text-6xl text-emerald-600">✓</div>
           <h1 className="mt-4 text-3xl font-black text-[color:var(--gh-heading)]">Booking Confirmed!</h1>
@@ -408,8 +408,8 @@ export default function BookingPage() {
   }, 0);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12">
-      <h1 className="text-3xl font-black text-[color:var(--gh-heading)] mb-8">Create Booking</h1>
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-12">
+      <h1 className="mb-8 text-3xl font-black text-[color:var(--gh-heading)] sm:text-4xl">Create Booking</h1>
 
       <form onSubmit={handleSubmitBooking} className="grid gap-8 lg:grid-cols-3">
         {/* Package Details */}
@@ -428,8 +428,8 @@ export default function BookingPage() {
                 const vehicleLabel = selectedOption?.vehicleId?.name || selectedOption?.vehicleId || entry.vehicleId || "Not selected";
 
                 return (
-                  <div key={itemId} className="flex items-center gap-4 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-[color:var(--gh-bg-soft)] flex-shrink-0">
+                  <div key={itemId} className="flex flex-col gap-4 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4 sm:flex-row sm:items-center">
+                    <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-[color:var(--gh-bg-soft)]">
                       {pkg?.images?.primary?.url && (
                         <Image
                           src={pkg.images.primary.url}
@@ -440,7 +440,7 @@ export default function BookingPage() {
                         />
                       )}
                     </div>
-                    <div className="flex-1">
+                    <div className="min-w-0 flex-1">
                       <h3 className="font-bold text-[color:var(--gh-heading)]">{pkg?.basic?.name}</h3>
                       <p className="text-sm text-[color:var(--gh-text-soft)]">
                         ₹{pricePerPerson?.toLocaleString("en-IN")} per traveller
@@ -456,7 +456,7 @@ export default function BookingPage() {
                         Subtotal: ₹{subtotal.toLocaleString("en-IN")}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex flex-col gap-2 sm:items-end">
                       <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Travellers</label>
                       <input
                         type="number"
@@ -569,7 +569,7 @@ export default function BookingPage() {
                   name="endDate"
                   value={bookingData.endDate}
                   onChange={handleBookingDataChange}
-                  className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-emerald-500"
+                  className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
                   required
                 />
               </div> */}

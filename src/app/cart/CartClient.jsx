@@ -135,12 +135,12 @@ export default function CartClient() {
 
   if (!user && !hasToken) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-16">
-        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-8 py-14 text-center shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
+        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-5 py-10 text-center shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:px-8 sm:py-14">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
             Your Cart
           </p>
-          <h1 className="mt-3 text-5xl font-black text-[color:var(--gh-heading)]">Shopping Cart</h1>
+          <h1 className="mt-3 text-3xl font-black text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">Shopping Cart</h1>
           <p className="mt-4 text-[color:var(--gh-text-soft)]">Please log in to view your cart.</p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3">
           <button
@@ -162,12 +162,12 @@ export default function CartClient() {
 
   if (cartItems.length === 0 && !loading) {
     return (
-      <div className="mx-auto max-w-6xl px-5 py-16 text-center">
+      <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-5 sm:py-16">
         <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-10 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
             Your Cart
           </p>
-          <h1 className="mt-3 text-5xl font-black text-[color:var(--gh-heading)]">Shopping Cart</h1>
+          <h1 className="mt-3 text-3xl font-black text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">Shopping Cart</h1>
           <div className="mt-8 rounded-[1.5rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-8">
             <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
           <Link href="/" className="mt-6 inline-flex rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-7 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)]">
@@ -191,12 +191,12 @@ export default function CartClient() {
   const grandTotal = subtotal + taxesAndFees;
 
   return (
-    <div className="mx-auto max-w-7xl px-5 py-10">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-5 sm:py-10">
       <div className="mb-8 flex flex-col gap-3">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
           Your Cart ({cartItems.length} Items)
         </p>
-        <h1 className="text-5xl font-black text-[color:var(--gh-heading)]">Review your journey</h1>
+        <h1 className="text-3xl font-black text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">Review your journey</h1>
         <p className="max-w-2xl text-base font-medium text-[color:var(--gh-text-soft)]">
           A clean two-part checkout flow inspired by your reference: premium package cards on the left and a sticky payment summary on the right.
         </p>
@@ -245,12 +245,12 @@ export default function CartClient() {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0 flex-1">
                         <div className="text-xs font-extrabold uppercase tracking-[0.18em] text-[color:var(--gh-accent)]">
                           {destination || "Featured Package"}
                         </div>
-                        <h3 className="mt-2 line-clamp-2 text-3xl font-black leading-[1.05] text-[color:var(--gh-heading)]">
+                        <h3 className="mt-2 line-clamp-2 text-2xl font-black leading-[1.05] text-[color:var(--gh-heading)] sm:text-3xl">
                           {pkg?.basic?.name || "Package"}
                         </h3>
                         <p className="mt-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">
@@ -261,7 +261,7 @@ export default function CartClient() {
 
                       <button
                         onClick={() => handleRemoveItem(removeId)}
-                        className="rounded-full border border-[color:var(--gh-border)] bg-white px-4 py-2 text-xs font-black text-[color:var(--gh-heading)]"
+                        className="w-fit rounded-full border border-[color:var(--gh-border)] bg-white px-4 py-2 text-xs font-black text-[color:var(--gh-heading)]"
                       >
                         Remove
                       </button>
@@ -289,7 +289,7 @@ export default function CartClient() {
                                 ₹{selectedOption.pricePerPerson?.toLocaleString("en-IN")}
                               </div>
                             )}
-                            <div className="text-3xl font-black text-[color:var(--gh-accent)]">
+                            <div className="text-2xl font-black text-[color:var(--gh-accent)] sm:text-3xl">
                               ₹{pricePerPerson?.toLocaleString("en-IN") || "TBA"}
                             </div>
                           </>
@@ -300,7 +300,7 @@ export default function CartClient() {
                                 {pkg.basic.basePrice?.toLocaleString("en-IN")}
                               </div>
                             )}
-                            <div className="text-3xl font-black text-[color:var(--gh-accent)]">
+                            <div className="text-2xl font-black text-[color:var(--gh-accent)] sm:text-3xl">
                               ₹{pkg?.basic?.finalPrice?.toLocaleString("en-IN") || "TBA"}
                             </div>
                           </>

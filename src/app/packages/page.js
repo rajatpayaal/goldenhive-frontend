@@ -14,12 +14,12 @@ export default async function PackagesPage() {
   const packages = await apiService.getAllPackages({ limit: 100, sort: "-createdAt" });
 
   return (
-    <main className="px-5 py-10">
-      <section className="mx-auto max-w-6xl rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-8 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+    <main className="px-4 py-8 sm:px-5 sm:py-10">
+      <section className="mx-auto max-w-6xl rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-5 shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:p-8">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
           GoldenHive Holidays
         </p>
-        <h1 className="mt-3 text-5xl font-black tracking-tight text-[color:var(--gh-heading)]">
+        <h1 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">
           All Packages
         </h1>
         <p className="mt-3 max-w-2xl text-base font-medium text-[color:var(--gh-text-soft)]">
@@ -44,15 +44,15 @@ export default async function PackagesPage() {
                 <div className="text-xs font-extrabold uppercase tracking-[0.2em] text-[color:var(--gh-accent)]">
                   {pkg.basic?.destination || "Featured"}
                 </div>
-                <h2 className="line-clamp-2 text-3xl font-black text-[color:var(--gh-heading)]">
+                <h2 className="line-clamp-2 text-2xl font-black text-[color:var(--gh-heading)] sm:text-3xl">
                   {pkg.basic?.name}
                 </h2>
-                <p className="line-clamp-2 text-sm font-medium text-[color:var(--gh-text-soft)]">
+                <p className="line-clamp-3 text-sm font-medium text-[color:var(--gh-text-soft)]">
                   {pkg.basic?.tagline || "Curated holiday experience"}
                 </p>
-                <div className="flex items-end justify-between border-t border-[color:var(--gh-border)] pt-4">
+                <div className="flex flex-col gap-3 border-t border-[color:var(--gh-border)] pt-4 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <div className="text-3xl font-black text-[color:var(--gh-accent)]">
+                    <div className="text-2xl font-black text-[color:var(--gh-accent)] sm:text-3xl">
                       Rs.{Number(pkg.pricing?.finalPrice || 0).toLocaleString("en-IN")}
                     </div>
                     <div className="text-xs font-semibold text-[color:var(--gh-text-soft)]">/ person</div>

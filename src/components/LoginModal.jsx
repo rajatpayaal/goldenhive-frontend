@@ -9,10 +9,19 @@ import {
 } from "../actions/auth.actions";
 import { useAuth } from "../hooks/useAuth";
 
+const inputClassName =
+  "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-[color:var(--gh-accent)]";
+
+const passwordInputClassName =
+  "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-16 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-[color:var(--gh-accent)]";
+
+const primaryButtonClassName =
+  "inline-flex w-full items-center justify-center rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60";
+
 export function LoginModal({ isOpen, onClose }) {
   const { setUser, refreshUser } = useAuth();
-  const [mode, setMode] = useState("register"); // register | login
-  const [step, setStep] = useState(1); // register steps: 1 -> phone, 2 -> details, 3 -> otp
+  const [mode, setMode] = useState("register");
+  const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -32,10 +41,37 @@ export function LoginModal({ isOpen, onClose }) {
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
 
+  const resetState = () => {
+    setMode("register");
+    setStep(1);
+    setOtp("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    setError(null);
+    setFieldErrors({});
+    setFormData({
+      firstName: "",
+      lastName: "",
+      userName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      termsAccepted: false,
+    });
+  };
+
+  const closeModal = () => {
+    resetState();
+    setSuccess(false);
+    onClose();
+  };
+
   const title = (() => {
     if (mode === "login") return "Log In";
     if (step === 3) return "Verify OTP";
     if (step === 2) return "Complete Registration";
+    return "Create Account";
   })();
 
   if (!isOpen) return null;
@@ -53,25 +89,19 @@ export function LoginModal({ isOpen, onClose }) {
     });
   };
 
-  const handleContinue = () => {
-    const phoneError = validatePhone(formData.phone);
-    if (phoneError) {
-      setError(phoneError);
-      return;
-    }
-    setError(null);
-    setStep(2);
-  };
-
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address.";
     }
 
-    // Check for common disposable email domains
-    const disposableDomains = ['10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'temp-mail.org'];
-    const domain = email.split('@')[1]?.toLowerCase();
+    const disposableDomains = [
+      "10minutemail.com",
+      "guerrillamail.com",
+      "mailinator.com",
+      "temp-mail.org",
+    ];
+    const domain = email.split("@")[1]?.toLowerCase();
     if (disposableDomains.includes(domain)) {
       return "Please use a valid email address that can receive OTP.";
     }
@@ -81,7 +111,7 @@ export function LoginModal({ isOpen, onClose }) {
 
   const validatePhone = (phone) => {
     const phoneRegex = /^[6-9]\d{9}$/;
-    const cleanPhone = String(phone || "").replace(/\s+/g, '');
+    const cleanPhone = String(phone || "").replace(/\s+/g, "");
     if (!phoneRegex.test(cleanPhone)) {
       return "Please enter a valid 10-digit mobile number starting with 6-9.";
     }
@@ -90,7 +120,7 @@ export function LoginModal({ isOpen, onClose }) {
 
   const isPhoneValid = (phone) => {
     const phoneRegex = /^[6-9]\d{9}$/;
-    const cleanPhone = String(phone || "").replace(/\s+/g, '');
+    const cleanPhone = String(phone || "").replace(/\s+/g, "");
     return phoneRegex.test(cleanPhone);
   };
 
@@ -157,6 +187,16 @@ export function LoginModal({ isOpen, onClose }) {
     return Object.values(errors).every((value) => !value);
   };
 
+  const handleContinue = () => {
+    const phoneError = validatePhone(formData.phone);
+    if (phoneError) {
+      setError(phoneError);
+      return;
+    }
+    setError(null);
+    setStep(2);
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -181,11 +221,9 @@ export function LoginModal({ isOpen, onClose }) {
     };
 
     const { ok, data } = await registerUserAction(payload);
-
     setLoading(false);
 
     if (ok) {
-      // Backend sends OTP on register; move to verify step.
       setOtp("");
       setStep(3);
     } else {
@@ -198,6 +236,7 @@ export function LoginModal({ isOpen, onClose }) {
     setLoading(true);
     setError(null);
     const otpValue = String(otp || "").trim();
+
     if (otpValue.length < 4) {
       setError("Please enter the OTP.");
       setLoading(false);
@@ -217,32 +256,15 @@ export function LoginModal({ isOpen, onClose }) {
           const me = await refreshUser();
           if (me) verifiedUser = me;
         } catch {
-          // ignore and fallback to response user, if any
+          // Ignore and use response user fallback.
         }
       }
       if (verifiedUser) {
         setUser(verifiedUser);
       }
-      // Token is stored in HttpOnly cookie by the Next.js route handler.
       setSuccess(true);
       setTimeout(() => {
-        setSuccess(false);
-        setMode("register");
-        setStep(1);
-        setOtp("");
-        setShowPassword(false);
-        setShowConfirmPassword(false);
-        setFormData({
-          firstName: "",
-          lastName: "",
-          userName: "",
-          email: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          termsAccepted: false,
-        });
-        onClose();
+        closeModal();
       }, 1200);
     } else {
       setError(data?.message || data?.error || "OTP verification failed.");
@@ -281,7 +303,7 @@ export function LoginModal({ isOpen, onClose }) {
         const me = await refreshUser();
         if (me) loggedInUser = me;
       } catch {
-        // ignore and fallback to response user, if any
+        // Ignore and use response user fallback.
       }
     }
 
@@ -294,23 +316,7 @@ export function LoginModal({ isOpen, onClose }) {
     if (ok) {
       setSuccess(true);
       setTimeout(() => {
-        setSuccess(false);
-        setMode("register");
-        setStep(1);
-        setOtp("");
-        setShowPassword(false);
-        setShowConfirmPassword(false);
-        setFormData({
-          firstName: "",
-          lastName: "",
-          userName: "",
-          email: "",
-          phone: "",
-          password: "",
-          confirmPassword: "",
-          termsAccepted: false,
-        });
-        onClose();
+        closeModal();
       }, 900);
     } else {
       setError(data?.message || data?.error || "Login failed.");
@@ -319,43 +325,52 @@ export function LoginModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-5 backdrop-blur-sm"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-3 backdrop-blur-sm sm:p-5"
+      onClick={closeModal}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.22)] max-h-[calc(100vh-3.5rem)]"
+        className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(135deg,rgba(255,250,245,0.98),rgba(255,255,255,0.96))] shadow-[0_28px_70px_rgba(2,6,23,0.3)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
-          onClick={onClose}
+          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xl font-black text-white backdrop-blur-sm hover:bg-white/20 sm:right-4 sm:top-4"
+          onClick={closeModal}
           aria-label="Close"
+          type="button"
         >
-          ×
+          {"\u00D7"}
         </button>
 
-        <div className="bg-gradient-to-br from-slate-950 to-slate-900 px-8 py-7 text-white">
-          <div className="text-2xl font-black tracking-tight">GoldenHive</div>
-          <div className="mt-1 text-sm font-semibold text-white/80">Premium Travels</div>
+        <div className="bg-[linear-gradient(135deg,#111827_0%,#1f2940_40%,#4a2d68_70%,#ff4f8a_130%)] px-5 py-6 text-white sm:px-8 sm:py-7">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
+            Premium Access
+          </div>
+          <div className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">GoldenHive</div>
+          <div className="mt-1 text-sm font-semibold text-white/80">Sign in or create your travel account</div>
         </div>
 
-        <div className="px-8 py-7 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 7rem)' }}>
+        <div className="max-h-[calc(100vh-8.5rem)] overflow-y-auto px-4 py-5 sm:px-8 sm:py-7">
           {success ? (
             <div className="py-10 text-center">
-              <div className="text-5xl">✓</div>
+              <div className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-3xl font-black text-white shadow-[0_18px_35px_rgba(255,79,138,0.22)]">
+                {"\u2713"}
+              </div>
               <h2 className="mt-5 text-2xl font-black tracking-tight text-slate-900">You are logged in</h2>
-              <p className="mt-2 text-sm font-semibold text-slate-600">
-                Session cookie has been saved.
-              </p>
+              <p className="mt-2 text-sm font-semibold text-slate-600">Session cookie has been saved.</p>
             </div>
           ) : (
             <>
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-2xl font-black tracking-tight text-slate-900 truncate">{title}</h2>
-                  <p className="mt-2 text-sm font-semibold text-slate-600">
+                  <div className="text-[11px] font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+                    Welcome Back
+                  </div>
+                  <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+                    {title}
+                  </h2>
+                  <p className="mt-2 max-w-xl text-sm font-semibold text-slate-600">
                     {mode === "login"
                       ? "Enter your credentials to continue."
                       : step === 3
@@ -366,7 +381,7 @@ export function LoginModal({ isOpen, onClose }) {
                   </p>
                 </div>
 
-                <div className="flex-shrink-0 inline-flex rounded-2xl border border-black/10 bg-slate-50 p-1">
+                <div className="flex w-full shrink-0 rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-1 sm:w-auto">
                   <button
                     type="button"
                     onClick={() => {
@@ -378,8 +393,10 @@ export function LoginModal({ isOpen, onClose }) {
                       setShowConfirmPassword(false);
                     }}
                     className={[
-                      "rounded-xl px-4 py-2 text-sm font-black transition",
-                      mode !== "login" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900",
+                      "flex-1 rounded-xl px-4 py-2 text-sm font-black transition sm:flex-none",
+                      mode !== "login"
+                        ? "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white shadow-[0_10px_24px_rgba(255,79,138,0.18)]"
+                        : "text-slate-600 hover:text-slate-900",
                     ].join(" ")}
                   >
                     Sign Up
@@ -395,8 +412,10 @@ export function LoginModal({ isOpen, onClose }) {
                       setShowConfirmPassword(false);
                     }}
                     className={[
-                      "rounded-xl px-4 py-2 text-sm font-black transition",
-                      mode === "login" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900",
+                      "flex-1 rounded-xl px-4 py-2 text-sm font-black transition sm:flex-none",
+                      mode === "login"
+                        ? "bg-[color:var(--gh-heading)] text-white shadow-[0_10px_24px_rgba(31,41,64,0.18)]"
+                        : "text-slate-600 hover:text-slate-900",
                     ].join(" ")}
                   >
                     Log In
@@ -415,7 +434,7 @@ export function LoginModal({ isOpen, onClose }) {
                   <input
                     type="email"
                     name="email"
-                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                    className={inputClassName}
                     placeholder="Email Address"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -427,7 +446,7 @@ export function LoginModal({ isOpen, onClose }) {
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
-                      className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                      className={passwordInputClassName}
                       placeholder="Password"
                       value={formData.password}
                       onChange={handleInputChange}
@@ -436,18 +455,14 @@ export function LoginModal({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black uppercase tracking-[0.18em] text-slate-500 hover:text-slate-900"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? "🙈" : "👁️"}
+                      {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={loading}
-                  >
+                  <button type="submit" className={primaryButtonClassName} disabled={loading}>
                     {loading ? "Logging in..." : "Log In"}
                   </button>
                 </form>
@@ -459,7 +474,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </label>
                     <div className="mt-2 flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3">
                       <div className="shrink-0 rounded-xl bg-slate-50 px-3 py-2 text-sm font-extrabold text-slate-700">
-                        🇮🇳 +91
+                        IN +91
                       </div>
                       <input
                         id="phone"
@@ -475,7 +490,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </div>
                   </div>
                   <button
-                    className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    className={primaryButtonClassName}
                     onClick={handleContinue}
                     disabled={!isPhoneValid(formData.phone)}
                     type="button"
@@ -487,14 +502,14 @@ export function LoginModal({ isOpen, onClose }) {
                 <form className="mt-6 space-y-4" onSubmit={handleRegister}>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="firstName" className="mb-2 block text-sm font-bold text-slate-900">
                         First Name <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="firstName"
                         type="text"
                         name="firstName"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                        className={inputClassName}
                         placeholder="Enter first name"
                         value={formData.firstName}
                         onChange={handleInputChange}
@@ -507,14 +522,14 @@ export function LoginModal({ isOpen, onClose }) {
                     </div>
 
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="lastName" className="mb-2 block text-sm font-bold text-slate-900">
                         Last Name <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="lastName"
                         type="text"
                         name="lastName"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                        className={inputClassName}
                         placeholder="Enter last name"
                         value={formData.lastName}
                         onChange={handleInputChange}
@@ -526,14 +541,14 @@ export function LoginModal({ isOpen, onClose }) {
                     </div>
 
                     <div>
-                      <label htmlFor="userName" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="userName" className="mb-2 block text-sm font-bold text-slate-900">
                         Username <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="userName"
                         type="text"
                         name="userName"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                        className={inputClassName}
                         placeholder="Choose a username"
                         value={formData.userName}
                         onChange={handleInputChange}
@@ -545,14 +560,14 @@ export function LoginModal({ isOpen, onClose }) {
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="email" className="mb-2 block text-sm font-bold text-slate-900">
                         Email Address <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="email"
                         type="email"
                         name="email"
-                        className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                        className={inputClassName}
                         placeholder="Enter your email"
                         value={formData.email}
                         onChange={handleInputChange}
@@ -566,7 +581,7 @@ export function LoginModal({ isOpen, onClose }) {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="password" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="password" className="mb-2 block text-sm font-bold text-slate-900">
                         Password <span className="text-rose-500">*</span>
                       </label>
                       <div className="relative">
@@ -574,7 +589,7 @@ export function LoginModal({ isOpen, onClose }) {
                           id="password"
                           type={showPassword ? "text" : "password"}
                           name="password"
-                          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                          className={passwordInputClassName}
                           placeholder="Create a password"
                           value={formData.password}
                           onChange={handleInputChange}
@@ -583,10 +598,10 @@ export function LoginModal({ isOpen, onClose }) {
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black uppercase tracking-[0.18em] text-slate-500 hover:text-slate-900"
                           aria-label={showPassword ? "Hide password" : "Show password"}
                         >
-                          {showPassword ? "🙈" : "👁️"}
+                          {showPassword ? "Hide" : "Show"}
                         </button>
                       </div>
                       {fieldErrors.password && (
@@ -595,7 +610,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </div>
 
                     <div>
-                      <label htmlFor="confirmPassword" className="block text-sm font-bold text-slate-900 mb-2">
+                      <label htmlFor="confirmPassword" className="mb-2 block text-sm font-bold text-slate-900">
                         Confirm Password <span className="text-rose-500">*</span>
                       </label>
                       <div className="relative">
@@ -603,7 +618,7 @@ export function LoginModal({ isOpen, onClose }) {
                           id="confirmPassword"
                           type={showConfirmPassword ? "text" : "password"}
                           name="confirmPassword"
-                          className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-12 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                          className={passwordInputClassName}
                           placeholder="Re-enter your password"
                           value={formData.confirmPassword}
                           onChange={handleInputChange}
@@ -612,10 +627,10 @@ export function LoginModal({ isOpen, onClose }) {
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword((prev) => !prev)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black uppercase tracking-[0.18em] text-slate-500 hover:text-slate-900"
                           aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                         >
-                          {showConfirmPassword ? "🙈" : "👁️"}
+                          {showConfirmPassword ? "Hide" : "Show"}
                         </button>
                       </div>
                       {fieldErrors.confirmPassword && (
@@ -632,18 +647,19 @@ export function LoginModal({ isOpen, onClose }) {
                         name="termsAccepted"
                         checked={formData.termsAccepted}
                         onChange={(e) => {
-                          setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }));
-                          setFieldErrors(prev => {
+                          setFormData((prev) => ({ ...prev, termsAccepted: e.target.checked }));
+                          setFieldErrors((prev) => {
                             const next = { ...prev };
                             delete next.termsAccepted;
                             return next;
                           });
                         }}
-                        className="mt-1 h-4 w-4 rounded border border-black/10 text-emerald-500 focus:ring-emerald-500"
+                        className="mt-1 h-4 w-4 rounded border border-black/10 text-[color:var(--gh-accent)] focus:ring-[color:var(--gh-accent)]"
                         required
                       />
                       <label htmlFor="terms" className="text-sm text-slate-600">
-                        I agree to the <span className="font-semibold text-slate-900">Terms and Conditions</span> and <span className="font-semibold text-slate-900">Privacy Policy</span>.
+                        I agree to the <span className="font-semibold text-slate-900">Terms and Conditions</span> and{" "}
+                        <span className="font-semibold text-slate-900">Privacy Policy</span>.
                       </label>
                     </div>
                     {fieldErrors.termsAccepted && (
@@ -662,7 +678,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </button>
                     <button
                       type="submit"
-                      className="col-span-2 inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="col-span-2 inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
                       disabled={loading || !isRegistrationFormValid()}
                     >
                       {loading ? "Registering..." : "Sign Up"}
@@ -675,7 +691,7 @@ export function LoginModal({ isOpen, onClose }) {
                     type="text"
                     inputMode="numeric"
                     name="otp"
-                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-center text-lg font-black tracking-widest text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500"
+                    className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-center text-lg font-black tracking-widest text-slate-900 outline-none placeholder:text-slate-400 focus:border-[color:var(--gh-accent)]"
                     placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
@@ -683,18 +699,14 @@ export function LoginModal({ isOpen, onClose }) {
                     required
                   />
 
-                  <button
-                    type="submit"
-                    className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-500 px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(16,185,129,0.30)] hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={loading}
-                  >
+                  <button type="submit" className={primaryButtonClassName} disabled={loading}>
                     {loading ? "Verifying..." : "Verify & Continue"}
                   </button>
 
                   <div className="flex items-center justify-between pt-1 text-xs font-semibold text-slate-600">
                     <button
                       type="button"
-                      className="font-black text-slate-900 hover:text-emerald-700"
+                      className="font-black text-slate-900 hover:text-[color:var(--gh-accent)]"
                       onClick={() => {
                         setOtp("");
                         setStep(2);
@@ -705,7 +717,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </button>
                     <button
                       type="button"
-                      className="font-black text-slate-900 hover:text-emerald-700"
+                      className="font-black text-slate-900 hover:text-[color:var(--gh-accent)]"
                       onClick={handleResendOtp}
                       disabled={loading}
                     >
@@ -720,11 +732,11 @@ export function LoginModal({ isOpen, onClose }) {
           {!success && (
             <div className="mt-7 border-t border-black/5 pt-5 text-center text-xs font-semibold text-slate-500">
               By continuing, you agree to our{" "}
-              <a className="font-black text-slate-700 hover:text-emerald-700" href="#!">
+              <a className="font-black text-slate-700 hover:text-[color:var(--gh-accent)]" href="#!">
                 Terms of Service
               </a>{" "}
               &{" "}
-              <a className="font-black text-slate-700 hover:text-emerald-700" href="#!">
+              <a className="font-black text-slate-700 hover:text-[color:var(--gh-accent)]" href="#!">
                 Privacy Policy
               </a>
             </div>
@@ -734,3 +746,4 @@ export function LoginModal({ isOpen, onClose }) {
     </div>
   );
 }
+
