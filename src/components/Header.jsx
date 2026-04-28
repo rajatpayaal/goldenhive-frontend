@@ -40,7 +40,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
   const visibleCategoryCount = 6;
   const visibleCategories = categoryLinks.slice(0, visibleCategoryCount);
   const overflowCategories = categoryLinks.slice(visibleCategoryCount);
-  const headerTone = isHome ? "header-dark" : "header-light";
+  const headerTone = "header-light";
 
   useEffect(() => {
     if (isLoading) return;
@@ -100,34 +100,124 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
   return (
     <>
       <header
-        className={[
-          "sticky top-0 z-40 border-b backdrop-blur",
-          isHome
-            ? "border-white/10 bg-gradient-to-b from-gh-plum/80 via-gh-plum/55 to-gh-plum/15 text-white"
-            : "border-black/5 bg-white/80 text-slate-900",
-        ].join(" ")}
+        className="sticky top-0 z-40 border-b border-black/5 bg-white/80 text-slate-900 backdrop-blur"
       >
-        <div className="mx-auto flex w-full items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="leading-none">
-              <div
-                className={[
-                  "text-xl font-black tracking-tight",
-                  isHome ? "text-gh-gold" : "text-gh-plum",
-                ].join(" ")}
-              >
-                GoldenHive
+        <div className="mx-auto flex w-full items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+          <div className="flex items-center gap-3">
+            <Sheet
+              open={isMobileMenuOpen}
+              onOpenChange={(open) => {
+                setMobileMenu(open ? { open: true, path: pathname } : { open: false, path: null });
+              }}
+            >
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg lg:hidden"
+                  aria-label="Open menu"
+                  aria-haspopup="dialog"
+                  aria-expanded={isMobileMenuOpen}
+                >
+                  <Menu className="h-6 w-6 text-slate-800" strokeWidth={1.5} aria-hidden="true" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="border-r border-black/5">
+                <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
+                  <div className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">Menu</div>
+                  <SheetClose asChild>
+                    <button
+                      type="button"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-slate-900 hover:bg-slate-50"
+                      aria-label="Close"
+                    >
+                      <ChevronRight className="h-5 w-5 rotate-180" aria-hidden="true" />
+                    </button>
+                  </SheetClose>
+                </div>
+
+                <div className="no-scrollbar h-full overflow-y-auto px-5 pb-7 pt-5">
+                  <div className="grid gap-2">
+                    <SheetClose asChild>
+                      <Link
+                        href="/blogs"
+                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                      >
+                        Blogs
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        href="/policies"
+                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                      >
+                        Policies
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        href="/about-us"
+                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                      >
+                        About Us
+                      </Link>
+                    </SheetClose>
+                  </div>
+
+                  <div className="mt-6 border-t border-black/5 pt-5">
+                    <div className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">
+                      Categories
+                    </div>
+                    <div className="mt-3 grid gap-2">
+                      {categoryLinks.length > 0 ? (
+                        categoryLinks.map((category) => (
+                          <SheetClose key={category._id} asChild>
+                            <Link
+                              href={`/${resolveAnchorId(category.slug)}`}
+                              className="inline-flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                            >
+                              <span>{category.name}</span>
+                              <ChevronRight className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                            </Link>
+                          </SheetClose>
+                        ))
+                      ) : (
+                        <div className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
+                          Loading...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {!isLoading && !user && (
+                    <div className="mt-6 border-t border-black/5 pt-5">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenu({ open: false, path: null });
+                          setIsLoginOpen(true);
+                        }}
+                        variant="brand"
+                        className="w-full rounded-2xl py-3 text-sm font-black"
+                      >
+                        Log In / Sign Up
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Link href="/" className="flex items-center gap-1.5">
+              <div className="leading-none">
+                <div className="text-xl font-black tracking-tight text-gh-gold">
+                  GoldenHive
+                </div>
+                <div className="mt-[2px] text-[8px] font-extrabold tracking-[0.45em] text-slate-500">
+                  HOLIDAYS
+                </div>
               </div>
-              <div
-                className={[
-                  "mt-1 text-[10px] font-extrabold tracking-[0.45em]",
-                  isHome ? "text-white/70" : "text-slate-500",
-                ].join(" ")}
-              >
-                HOLIDAYS
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
 
           <nav
             className="hidden min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap px-1 no-scrollbar lg:flex lg:flex-nowrap"
@@ -138,12 +228,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                 {visibleCategories.map((category) => (
                   <Link
                     key={category._id}
-                    className={[
-                      "inline-flex whitespace-nowrap items-center justify-center rounded-xl px-3 py-2 text-sm font-extrabold transition",
-                      isHome
-                        ? "text-white/85 hover:text-gh-gold"
-                        : "text-slate-700 hover:text-gh-plum",
-                    ].join(" ")}
+                    className="inline-flex whitespace-nowrap items-center justify-center rounded-xl px-3 py-2 text-sm font-extrabold transition text-slate-700 hover:text-gh-plum"
                     href={`/${resolveAnchorId(category.slug)}`}
                   >
                     {category.name}
@@ -155,12 +240,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <button
                       type="button"
                       onClick={() => setMoreOpen((prev) => !prev)}
-                      className={[
-                        "inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold transition",
-                        isHome
-                          ? "text-white/85 hover:text-gh-gold"
-                          : "text-slate-700 hover:text-gh-plum",
-                      ].join(" ")}
+                      className="inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold transition text-slate-700 hover:text-gh-plum"
                       aria-expanded={moreOpen}
                       aria-haspopup="menu"
                     >
@@ -185,17 +265,13 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                 )}
               </>
             ) : (
-              <span
-                className={
-                  isHome ? "text-sm font-semibold text-white/70" : "text-sm font-semibold text-slate-500"
-                }
-              >
+              <span className="text-sm font-semibold text-slate-500">
                 Loading...
               </span>
             )}
           </nav>
 
-          <div className="hidden flex-shrink-0 items-center gap-2 lg:flex xl:gap-3">
+          <div className="flex items-center gap-3">
             <NotificationsDropdown
               initialUnreadCount={unreadCount}
               onUnreadCountChange={setUnreadCount}
@@ -208,141 +284,25 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
               <Button
                 type="button"
                 onClick={() => setIsLoginOpen(true)}
-                variant={isHome ? "brand" : "outline"}
-                className="rounded-2xl px-4 py-2 text-sm font-black"
+                variant="outline"
+                className="hidden rounded-2xl px-4 py-2 text-sm font-black lg:inline-flex"
               >
                 Log In
               </Button>
             )}
 
+            {!isLoading && !user && (
+              <button
+                onClick={() => setIsLoginOpen(true)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gh-gold text-white lg:hidden"
+                aria-label="Log In"
+              >
+                <div className="h-4 w-4 rounded-full border-2 border-white" />
+              </button>
+            )}
+
             {!isLoading && user && <UserMenu />}
           </div>
-
-          <Sheet
-            open={isMobileMenuOpen}
-            onOpenChange={(open) => {
-              setMobileMenu(open ? { open: true, path: pathname } : { open: false, path: null });
-            }}
-          >
-            <div className="flex items-center gap-2 lg:hidden">
-              <CartDropdown cartCount={cartCount} variant={headerTone} />
-
-              {!isLoading && user && <UserMenu />}
-
-              {!isLoading && !user && (
-                <Button
-                  type="button"
-                  onClick={() => setIsLoginOpen(true)}
-                  variant={isHome ? "brand" : "outline"}
-                  className="h-10 rounded-2xl px-3 text-sm font-black"
-                >
-                  Log In
-                </Button>
-              )}
-
-              <SheetTrigger asChild>
-                <button
-                  type="button"
-                  className={[
-                    "inline-flex h-10 items-center justify-center rounded-2xl border px-3 text-sm font-black transition",
-                    isHome
-                      ? "border-white/15 bg-white/10 text-white hover:bg-white/15"
-                      : "border-black/10 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
-                  aria-label="Open menu"
-                  aria-haspopup="dialog"
-                  aria-expanded={isMobileMenuOpen}
-                >
-                  <Menu className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </SheetTrigger>
-            </div>
-
-            <SheetContent className="border-l border-black/5">
-              <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
-                <div className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">Menu</div>
-                <SheetClose asChild>
-                  <button
-                    type="button"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-slate-900 hover:bg-slate-50"
-                    aria-label="Close"
-                  >
-                    <ChevronRight className="h-5 w-5 rotate-180" aria-hidden="true" />
-                  </button>
-                </SheetClose>
-              </div>
-
-              <div className="no-scrollbar h-full overflow-y-auto px-5 pb-7 pt-5">
-                <div className="grid gap-2">
-                  <SheetClose asChild>
-                    <Link
-                      href="/blogs"
-                      className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
-                    >
-                      Blogs
-                    </Link>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Link
-                      href="/policies"
-                      className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
-                    >
-                      Policies
-                    </Link>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Link
-                      href="/about-us"
-                      className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
-                    >
-                      About Us
-                    </Link>
-                  </SheetClose>
-                </div>
-
-                <div className="mt-6 border-t border-black/5 pt-5">
-                  <div className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">
-                    Categories
-                  </div>
-                  <div className="mt-3 grid gap-2">
-                    {categoryLinks.length > 0 ? (
-                      categoryLinks.map((category) => (
-                        <SheetClose key={category._id} asChild>
-                          <Link
-                            href={`/${resolveAnchorId(category.slug)}`}
-                            className="inline-flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
-                          >
-                            <span>{category.name}</span>
-                            <ChevronRight className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                          </Link>
-                        </SheetClose>
-                      ))
-                    ) : (
-                      <div className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
-                        Loading...
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {!isLoading && !user && (
-                  <div className="mt-6 border-t border-black/5 pt-5">
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        setMobileMenu({ open: false, path: null });
-                        setIsLoginOpen(true);
-                      }}
-                      variant="brand"
-                      className="w-full rounded-2xl py-3 text-sm font-black"
-                    >
-                      Log In / Sign Up
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
         </div>
       </header>
 

@@ -1,23 +1,36 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 
 export function HomeHeroSearch({ className = "" }) {
   return (
-    <form
+    <div
       className={[
-        "w-full rounded-2xl border border-gh-gold/20 bg-white p-3 text-slate-900 shadow-gh-soft md:rounded-[1.7rem] md:p-4",
+        "relative flex w-full items-center rounded-full bg-white",
+        "shadow-[0_8px_40px_rgba(0,0,0,0.28)] ring-1 ring-white/30",
         className,
       ].join(" ")}
-      onSubmit={(e) => {
-        e.preventDefault();
-      }}
     >
-      <div className="md:grid-cols-[1.45fr_0.8fr_0.8fr_0.85fr] md:items-center">
-        <div className="rounded-2xl bg-transparent px-4 py-3">
-          <GlobalSearch variant="hero" tone="header-light" />
-        </div>
+      {/* Search icon */}
+      <div className="flex shrink-0 items-center pl-5">
+        <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
       </div>
-    </form>
+
+      {/* Search input — naked variant (no inner border/bg) */}
+      <div className="min-w-0 flex-1 px-3 py-1">
+        <GlobalSearch variant="hero-naked" tone="header-light" />
+      </div>
+
+      {/* Search button */}
+      <div className="shrink-0 p-1.5">
+        <button
+          type="button"
+          className="rounded-full bg-gh-gold px-7 py-3 text-sm font-black text-gh-plum transition-colors hover:bg-gh-gold2 active:scale-[0.97]"
+        >
+          Search
+        </button>
+      </div>
+    </div>
   );
 }

@@ -6,6 +6,7 @@ import { HeaderServer } from "../components/HeaderServer";
 import { Footer } from "../components/Footer";
 import { apiService } from "../services/api.service";
 import { ChatbotWidget } from "../components/ChatbotWidget";
+import { MobileBottomNav } from "../components/MobileBottomNav";
 
 const bodyFont = Plus_Jakarta_Sans({
   variable: "--font-body",
@@ -52,8 +53,9 @@ export default async function RootLayout({ children }) {
           <ToastProvider>
             <div className="min-h-screen flex flex-col">
               <HeaderServer categories={activeCategories} />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-20 md:pb-0">{children}</main>
               <Footer footer={footer} />
+              <MobileBottomNav />
               <ChatbotWidget title="Help Center" />
             </div>
           </ToastProvider>

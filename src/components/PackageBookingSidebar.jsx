@@ -59,57 +59,47 @@ export function PackageBookingSidebar({
       <div className="absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(255,185,94,0.18),transparent_70%)]" />
 
       <div className="relative">
-        <div className="inline-flex rounded-full bg-[rgba(255,79,138,0.12)] px-3 py-1 text-xs font-black text-[color:var(--gh-accent)]">
-          Only {seatsLeft} seats left
+        <div className="flex justify-between items-start">
+          <div className="inline-flex rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-black text-gh-rose uppercase tracking-widest">
+            Special Offer
+          </div>
         </div>
 
-        <h2 className="mt-4 text-[1.8rem] font-black leading-tight text-[color:var(--gh-heading)]">
-          {packageName}
-        </h2>
-
-        <div className="mt-5 rounded-[1.6rem] border border-[color:var(--gh-border)] bg-white p-5 shadow-[0_12px_30px_rgba(121,68,44,0.06)]">
-          {basePrice && Number(basePrice) > Number(finalPrice) ? (
-            <div className="text-sm font-bold text-[color:var(--gh-text-soft)] line-through">
-              Rs.{formatInr(basePrice)}
+        <div className="mt-2 flex items-start justify-between">
+          <h2 className="text-xl font-bold leading-tight text-slate-800 max-w-[60%]">
+            {packageName}
+          </h2>
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-semibold text-slate-500">Starting from</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-gh-rose">Rs.{formatInr(finalPrice)}</span>
+              <span className="text-[10px] font-semibold text-slate-500">/person</span>
             </div>
-          ) : null}
-          <div className="mt-1 flex items-end gap-2">
-            <div className="text-5xl font-black tracking-tight text-[color:var(--gh-accent)]">
-              Rs.{formatInr(finalPrice)}
-            </div>
-            <div className="pb-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">/ person</div>
-          </div>
-          <p className="mt-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">
-            {pricing?.taxesIncluded ? "Inclusive of all taxes" : "Taxes calculated at checkout"}
-          </p>
-
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4">
-              <div className="flex items-center gap-2 text-[color:var(--gh-accent)]">
-                <CalendarDays className="h-4 w-4" />
-                <span className="text-xs font-black uppercase tracking-[0.22em]">Duration</span>
+            {basePrice && Number(basePrice) > Number(finalPrice) ? (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="rounded-full bg-gh-rose px-2 py-0.5 text-[9px] font-bold text-white">
+                  {Math.round(((basePrice - finalPrice) / basePrice) * 100)}% OFF
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 line-through">
+                  Rs.{formatInr(basePrice)}
+                </span>
               </div>
-              <div className="mt-3 text-sm font-black text-[color:var(--gh-heading)]">{durationLabel}</div>
-            </div>
-            <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4">
-              <div className="flex items-center gap-2 text-[color:var(--gh-accent)]">
-                <Users className="h-4 w-4" />
-                <span className="text-xs font-black uppercase tracking-[0.22em]">Group Size</span>
-              </div>
-              <div className="mt-3 text-sm font-black text-[color:var(--gh-heading)]">{groupSize}</div>
-            </div>
+            ) : null}
           </div>
+        </div>
 
-          <div className="mt-5 space-y-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 fill-[color:var(--gh-accent-strong)] text-[color:var(--gh-accent-strong)]" />
-              <span className="font-black text-[color:var(--gh-accent)]">4.8</span>
-              <span>({reviewCount} Reviews)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-[color:var(--gh-accent)]" />
-              <span>{trustCount}</span>
-            </div>
+        <div className="mt-5 flex items-center justify-between border-y border-black/5 py-3 text-[11px] font-semibold text-slate-700">
+          <div className="flex items-center gap-1.5">
+            <CalendarDays className="h-3.5 w-3.5 text-gh-rose" />
+            <span>{durationLabel}</span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-black/5 pl-3">
+            <ShieldCheck className="h-3.5 w-3.5 text-gh-rose" />
+            <span>{packageData?.basic?.destination || "Ex- Haridwar"}</span>
+          </div>
+          <div className="flex items-center gap-1.5 border-l border-black/5 pl-3">
+            <Users className="h-3.5 w-3.5 text-gh-rose" />
+            <span>{groupSize}</span>
           </div>
         </div>
 
@@ -138,47 +128,28 @@ export function PackageBookingSidebar({
           </div>
         ) : null}
 
-        <div className="mt-5">
-          <PackageAddToCart
-            packageId={packageId}
-            packageName={packageName}
-            packageData={packageData}
-            selectedPricingOption={selectedOption}
-          />
-        </div>
-
-        <div className="mt-3 grid gap-3">
+        <div className="mt-4 flex gap-3">
+          <button className="flex-1 rounded-xl border-2 border-slate-200 bg-slate-100 py-3 text-[11px] font-black text-slate-700 transition hover:bg-slate-200">
+            View Itinerary
+          </button>
           <a
             href={`https://wa.me/${whatsapp}`}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#16a34a] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(22,163,74,0.22)] transition hover:-translate-y-0.5 hover:bg-[#15803d]"
             target="_blank"
             rel="noopener noreferrer"
+            className="flex-1 rounded-xl bg-emerald-600 py-3 text-center text-[11px] font-black text-white shadow-md transition hover:bg-emerald-700"
           >
-            <MessageCircle className="h-4 w-4" />
-            Chat on WhatsApp
-          </a>
-          <a
-            href={`tel:${callNumber}`}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-4 text-base font-black text-[color:var(--gh-heading)] transition hover:bg-[color:var(--gh-bg-soft)]"
-          >
-            <Phone className="h-4 w-4" />
-            Call Now
+            Enquire Now
           </a>
         </div>
 
-        <div className="mt-5 space-y-2 rounded-[1.4rem] border border-dashed border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4 text-sm font-semibold text-[color:var(--gh-text-soft)]">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-[color:var(--gh-accent)]" />
-            <span>Secure Booking</span>
+        <div className="mt-4 flex items-start gap-3 rounded-2xl bg-orange-50/50 px-4 py-3 border border-orange-100">
+          <ShieldCheck className="h-5 w-5 text-gh-rose shrink-0" />
+          <div>
+            <div className="text-[11px] font-bold text-slate-800">Secure Booking</div>
+            <div className="text-[9px] font-semibold text-slate-500 mt-0.5">
+              100% secure payments • Easy cancellation • 24x7 support
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-[color:var(--gh-accent)]" />
-            <span>Best Price Guarantee</span>
-          </div>
-          {cancellationPolicy ? (
-            <div className="pt-2 text-xs leading-5">{cancellationPolicy}</div>
-          ) : null}
-          {refundPolicy ? <div className="text-xs leading-5">{refundPolicy}</div> : null}
         </div>
       </div>
     </div>

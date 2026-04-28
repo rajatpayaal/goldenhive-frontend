@@ -54,19 +54,17 @@ export function PricingOptionsSelector({
   }
 
   return (
-    <section className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-      <div className="mb-8 flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-black tracking-tight text-slate-900">
-            Select Group Size and Vehicle
-          </h2>
-          <p className="mt-2 text-sm font-semibold text-slate-500">
-            Choose the best option for your group
-          </p>
-        </div>
+    <section>
+      <div className="mb-4">
+        <h2 className="text-lg font-black tracking-tight text-slate-800">
+          Vehicle Options
+        </h2>
+        <p className="mt-0.5 text-[11px] font-semibold text-slate-500">
+          Choose your preferred vehicle
+        </p>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 no-scrollbar">
         {pricingOptions.map((option) => {
           const vehicle = option.vehicleId;
           const isBestDeal = option.isBestDeal;
@@ -76,110 +74,60 @@ export function PricingOptionsSelector({
             <div
               key={option._id}
               onClick={() => handleSelectOption(option)}
-              className={`relative cursor-pointer overflow-hidden rounded-3xl border-2 transition-all duration-200 ${
+              className={`relative shrink-0 snap-start w-[160px] cursor-pointer overflow-hidden rounded-2xl border-2 transition-all duration-200 bg-white ${
                 isSelected
-                  ? "border-sky-500 bg-sky-50 shadow-[0_12px_30px_rgba(14,165,233,0.15)]"
-                  : "border-black/5 bg-white hover:border-black/10 hover:shadow-md"
+                  ? "border-gh-rose shadow-[0_8px_20px_rgba(255,79,138,0.15)]"
+                  : "border-slate-100 hover:border-slate-200"
               }`}
             >
-              {isBestDeal && (
-                <div className="absolute -right-2 -top-2 z-10">
-                  <div className="rounded-bl-3xl border border-orange-300/50 bg-gradient-to-br from-orange-400 to-orange-500 px-4 py-3 text-white shadow-2xl">
-                    <span className="text-xs font-black uppercase tracking-widest">Best Deal</span>
-                  </div>
+              <div className="p-3">
+                <div className="inline-flex rounded bg-emerald-50 px-2 py-0.5 text-[9px] font-black text-emerald-600">
+                  {vehicle?.name || "Vehicle"}
                 </div>
-              )}
 
-              <div className="p-6">
                 {vehicle?.image?.url && (
-                  <div className="relative mb-4 h-40 w-full overflow-hidden rounded-2xl border border-black/5 bg-gradient-to-br from-slate-200 to-slate-100 transition-shadow group-hover:shadow-lg">
+                  <div className="relative mt-2 h-20 w-full overflow-hidden">
                     <Image
                       src={vehicle.image.url}
                       alt={vehicle.image.alt || vehicle.name}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-contain mix-blend-multiply"
                     />
-                    {vehicle?.type && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
-                        <p className="text-xs font-bold text-white/90">{vehicle.type}</p>
-                      </div>
-                    )}
                   </div>
                 )}
 
-                <div className="mb-4 inline-flex items-center rounded-full border border-emerald-200 bg-gradient-to-r from-emerald-100 to-emerald-50 px-4 py-2">
-                  <span className="text-sm font-black text-emerald-900">
-                    {option.pax} Person{option.pax !== 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                <div className="mb-4">
-                  <h3 className="text-lg font-black capitalize text-slate-900">
-                    {vehicle?.name || "Vehicle"}
-                  </h3>
-                  {vehicle?.seat && (
-                    <p className="mt-1 text-xs font-bold text-slate-600">
-                      Capacity: {vehicle.seat} seats
-                    </p>
-                  )}
-                </div>
-
-                <div className="mb-4 space-y-2 rounded-2xl border border-black/5 bg-gradient-to-br from-slate-50 to-slate-100/50 p-5">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                      Price Per Person
-                    </span>
-                    {option.discountPercent > 0 && (
-                      <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-black text-emerald-700">
-                        {option.discountPercent}% OFF
-                      </span>
-                    )}
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600">
+                    <span className="text-emerald-500">👤</span>
+                    {option.pax} Seats
                   </div>
-
-                  <div className="flex items-end gap-2">
-                    {option.discountPercent > 0 && (
-                      <div className="text-sm font-bold text-slate-400 line-through">
-                        Rs.{formatInr(option.pricePerPerson)}
-                      </div>
-                    )}
-                    <div className="text-3xl font-black tracking-tight text-slate-900">
-                      Rs.{formatInr(option.finalPricePerPerson)}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between border-t border-black/10 pt-3">
-                    <span className="text-xs font-bold text-slate-600">
-                      Total ({option.pax} pax):
-                    </span>
-                    <span className="text-lg font-black text-slate-900">
-                      Rs.{formatInr(option.totalPrice)}
-                    </span>
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-600">
+                    <span className="text-emerald-500">❄️</span>
+                    AC • Driver
                   </div>
                 </div>
 
-                {option.discountPercent > 0 && (
-                  <div className="mb-4 rounded-xl border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-100/50 px-4 py-3 text-center">
-                    <p className="text-xs font-black text-emerald-700">
-                      Save Rs.{formatInr(option.pricePerPerson - option.finalPricePerPerson)} per person
-                    </p>
+                <div className="mt-3 text-center">
+                  <div className="text-[9px] font-semibold text-slate-400">From</div>
+                  <div className="text-[14px] font-black text-slate-900">
+                    Rs.{formatInr(option.finalPricePerPerson)}<span className="text-[8px] font-normal text-slate-400">/vehicle</span>
                   </div>
-                )}
+                </div>
 
                 <button
                   type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleSelectOption(option);
-                  }}
-                  className={`flex h-12 w-full items-center justify-center rounded-xl border-2 font-extrabold transition-all duration-200 ${
+                  className={`mt-2 w-full rounded-full border border-emerald-600 py-1.5 text-[10px] font-bold transition-all duration-200 ${
                     isSelected
-                      ? "border-rose-600 bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg hover:shadow-xl"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-sky-50"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-transparent text-emerald-700 hover:bg-emerald-50"
                   }`}
                 >
-                  {isSelected ? "Remove Selection" : "Select This Option"}
+                  {isSelected ? "Selected" : "View Details"}
                 </button>
               </div>
+              {isSelected && (
+                <div className="absolute bottom-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-t-full bg-gh-rose" />
+              )}
             </div>
           );
         })}

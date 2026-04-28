@@ -143,7 +143,7 @@ const getFaqItems = (pkg) => {
 };
 
 function getInfoIcon(key) {
-  const iconClass = "h-4 w-4";
+  const iconClass = "h-4 w-4 shrink-0";
   const mapping = {
     pickup: <MapPinned className={iconClass} />,
     drop: <MapPinned className={iconClass} />,
@@ -158,7 +158,7 @@ function getInfoIcon(key) {
     language: <Languages className={iconClass} />,
     guide: <ShieldCheck className={iconClass} />,
   };
-  return mapping[key] || <Sparkles className={iconClass} />;
+  return <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-gh-rose">{mapping[key] || <Sparkles className={iconClass} />}</div>;
 }
 
 function SectionShell({ title, subtitle, children, className = "" }) {
@@ -169,10 +169,10 @@ function SectionShell({ title, subtitle, children, className = "" }) {
         className,
       ].join(" ")}
     >
-      <div className="mb-6">
-        <h2 className="text-3xl font-black tracking-tight text-[color:var(--gh-heading)]">{title}</h2>
+      <div className="mb-4">
+        <h2 className="text-lg font-black tracking-tight text-[color:var(--gh-heading)]">{title}</h2>
         {subtitle ? (
-          <p className="mt-1 text-sm font-semibold text-[color:var(--gh-text-soft)]">{subtitle}</p>
+          <p className="mt-0.5 text-xs font-semibold text-[color:var(--gh-text-soft)]">{subtitle}</p>
         ) : null}
       </div>
       {children}
@@ -315,9 +315,9 @@ export default async function PackagesSlugPage({ params }) {
   };
 
   return (
-    <div className="pb-20 pt-6">
-      <div className="mx-auto px-4 sm:px-5 lg:px-6">
-        <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.72)] px-4 py-3 backdrop-blur sm:px-5">
+    <div className="pb-20 pt-0 sm:pt-6">
+      <div className="mx-auto sm:px-5 lg:px-6">
+        <div className="hidden sm:block rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.72)] px-4 py-3 backdrop-blur sm:px-5">
           <Breadcrumbs
             items={[
               { href: backHref, label: pkg.categoryId?.name || "Tour Packages" },
@@ -326,8 +326,8 @@ export default async function PackagesSlugPage({ params }) {
           />
         </div>
 
-        <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <section className="relative overflow-hidden rounded-[2.2rem] border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)]">
+        <div className="mt-0 sm:mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <section className="relative overflow-hidden sm:rounded-[2.2rem] border-b sm:border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)] -mx-4 sm:mx-0">
             <div className="relative">
               <Image
                 src={heroImage}
@@ -336,56 +336,50 @@ export default async function PackagesSlugPage({ params }) {
                 priority
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,19,40,0.96)_0%,rgba(42,21,69,0.82)_38%,rgba(52,31,78,0.42)_62%,rgba(17,24,39,0.18)_100%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,79,138,0.26),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(255,185,94,0.22),transparent_22%)]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-              <div className="relative flex min-h-[560px] flex-col justify-between p-6 text-white sm:p-8 lg:p-10">
-                <div className="flex justify-start">
-                </div>
-
+              <div className="relative flex min-h-[400px] flex-col justify-end p-5 text-white sm:min-h-[560px] sm:p-8 lg:p-10 pb-16">
                 <div className="max-w-3xl">
                   <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-black text-white shadow-[0_10px_25px_rgba(16,185,129,0.25)]">
-                      <Star className="h-3.5 w-3.5 fill-white text-white" />
-                      4.8 ({pkg.reviews?.length || 120})
+                    <span className="inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white">
+                      {pkg.categoryId?.name || "Char Dham Yatra"}
                     </span>
-                    <span className="inline-flex items-center rounded-full bg-[rgba(124,58,237,0.9)] px-3 py-1.5 text-xs font-black text-white">
-                      {pkg.categoryId?.name || "Tour Package"}
+                    <span className="inline-flex items-center rounded-full bg-purple-500 px-2.5 py-1 text-[10px] font-bold text-white">
+                      Spiritual
                     </span>
-                    {pkg.basic?.destination ? (
-                      <span className="inline-flex items-center rounded-full bg-[rgba(99,102,241,0.9)] px-3 py-1.5 text-xs font-black text-white">
-                        {pkg.basic.destination}
-                      </span>
-                    ) : null}
+                    <span className="inline-flex items-center rounded-full bg-blue-600 px-2.5 py-1 text-[10px] font-bold text-white">
+                      2026 Season
+                    </span>
                   </div>
 
-                  <h1 className="mt-6 max-w-3xl text-4xl font-black leading-[0.96] tracking-tight text-white drop-shadow-[0_8px_22px_rgba(0,0,0,0.35)] sm:text-5xl lg:text-[4.2rem]">
+                  <h1 className="mt-3 max-w-3xl text-2xl font-black leading-tight text-white sm:text-5xl lg:text-[4.2rem]">
                     {pkg.hero?.title || pkg.basic?.name}
                   </h1>
-                  <p className="mt-5 max-w-2xl text-base font-medium leading-8 text-white/86 sm:text-lg">
-                    {pkg.hero?.subtitle || pkg.basic?.tagline}
+                  <p className="mt-2 max-w-2xl text-xs font-medium leading-relaxed text-slate-200 sm:text-lg">
+                    {pkg.hero?.subtitle || pkg.basic?.tagline || "A divine journey to the sacred source of Yamuna & Ganga"}
                   </p>
 
-                  <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold text-white/95">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-[rgba(9,14,29,0.4)] px-4 py-2.5 backdrop-blur">
-                      <ShieldCheck className="h-4 w-4 text-[color:var(--gh-accent-strong)]" />
-                      Verified drivers and secure support
-                    </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-[rgba(9,14,29,0.4)] px-4 py-2.5 backdrop-blur">
-                      <Users className="h-4 w-4 text-[color:var(--gh-accent-strong)]" />
-                      Family-friendly itinerary
-                    </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-[rgba(9,14,29,0.4)] px-4 py-2.5 backdrop-blur">
-                      <Sparkles className="h-4 w-4 text-[color:var(--gh-accent-strong)]" />
-                      Premium stays and local guidance
-                    </span>
+                  <div className="mt-4 flex flex-wrap items-center gap-3 text-[10px] font-semibold text-white/90">
+                    <div className="flex items-center gap-1.5">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      <span>{pkg.basic?.durationDays || 6} Days / {pkg.basic?.nights || 5} Nights</span>
+                    </div>
+                    <div className="w-px h-3 bg-white/30" />
+                    <div className="flex items-center gap-1.5">
+                      <MapPinned className="h-3.5 w-3.5" />
+                      <span>Ex- {pkg.basic?.destination || "Haridwar"}</span>
+                    </div>
+                    <div className="w-full sm:w-auto mt-1 sm:mt-0 flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5" />
+                      <span>Group Size: {pkg.quickInfo?.groupSize || "2-12 People"}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="relative z-10 -mt-12 mx-4 sm:mx-0 sm:mt-0 lg:sticky lg:top-24 lg:self-start">
             <PricingSidebarSync
               packageId={pkg._id}
               packageName={pkg.basic?.name}
@@ -402,7 +396,7 @@ export default async function PackagesSlugPage({ params }) {
           </aside>
         </div>
 
-        <div className="mt-7 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="mt-7 grid items-start gap-6 mx-4 sm:mx-0 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-6">
             {show.overview && (
               <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
@@ -423,15 +417,15 @@ export default async function PackagesSlugPage({ params }) {
                   {quickInfoEntries.map(([key, value]) => (
                     <div
                       key={key}
-                      className="rounded-[1.4rem] border border-[color:var(--gh-border)] bg-white px-4 py-4 shadow-[0_8px_20px_rgba(121,68,44,0.05)]"
+                      className="flex items-center gap-3 rounded-2xl border border-[color:var(--gh-border)] bg-white p-3 shadow-sm"
                     >
-                      <div className="flex items-center gap-2 text-[color:var(--gh-accent)]">
-                        {getInfoIcon(key)}
-                        <span className="text-[11px] font-black uppercase tracking-[0.22em]">
+                      {getInfoIcon(key)}
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
                           {toLabel(key)}
                         </span>
+                        <div className="text-[11px] font-black leading-tight text-slate-800">{value}</div>
                       </div>
-                      <div className="mt-3 text-sm font-black leading-6 text-[color:var(--gh-heading)]">{value}</div>
                     </div>
                   ))}
                 </div>
@@ -448,85 +442,65 @@ export default async function PackagesSlugPage({ params }) {
             )}
 
             {(show.highlights || show.whyChooseUs) && (
-              <div className="grid gap-6 xl:grid-cols-2">
+              <div className="grid grid-cols-2 gap-4 xl:gap-6">
                 {show.highlights && (
-                  <SectionShell title="Highlights" subtitle="What makes this special" className="h-full">
-                    <div className="space-y-3">
-                      {highlightItems.map((item) => (
-                        <div
-                          key={item}
-                          className="flex items-start gap-3 rounded-[1.3rem] border border-emerald-200 bg-[linear-gradient(135deg,rgba(17,185,129,0.10),rgba(255,255,255,0.88))] px-4 py-3"
-                        >
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                          <span className="text-sm font-bold leading-6 text-[color:var(--gh-heading)]">{item}</span>
+                  <div className="flex flex-col space-y-2">
+                    <h3 className="text-sm font-black text-slate-800">Highlights</h3>
+                    <div className="space-y-2">
+                      {highlightItems.slice(0, 5).map((item) => (
+                        <div key={item} className="flex items-start gap-2">
+                          <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                          <span className="text-[10px] font-semibold leading-tight text-slate-600">{item}</span>
                         </div>
                       ))}
                     </div>
-                  </SectionShell>
+                  </div>
                 )}
 
                 {show.whyChooseUs && (
-                  <SectionShell title="Why Choose This" subtitle="Reasons to pick us" className="h-full">
-                    <div className="space-y-3">
-                      {whyChooseUsItems.map((item, idx) => (
-                        <div
-                          key={`${idx}-${item}`}
-                          className="flex items-start gap-4 rounded-[1.3rem] border border-[color:var(--gh-border)] bg-white px-4 py-4"
-                        >
-                          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-sm font-black text-white">
-                            {idx + 1}
-                          </span>
-                          <span className="text-sm font-bold leading-6 text-[color:var(--gh-heading)]">{item}</span>
+                  <div className="flex flex-col space-y-2 border-l border-black/5 pl-4">
+                    <h3 className="text-sm font-black text-slate-800">Why Choose Us</h3>
+                    <div className="space-y-2">
+                      {whyChooseUsItems.slice(0, 5).map((item, idx) => (
+                        <div key={`${idx}-${item}`} className="flex items-start gap-2">
+                          <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gh-rose" />
+                          <span className="text-[10px] font-semibold leading-tight text-slate-600">{item}</span>
                         </div>
                       ))}
                     </div>
-                  </SectionShell>
+                  </div>
                 )}
               </div>
             )}
 
             {show.itinerary && (
-              <SectionShell title="Inclusions" subtitle="Your day-by-day journey">
-                <div className="relative space-y-4 pl-5 before:absolute before:left-2 before:top-2 before:h-[calc(100%-1rem)] before:w-px before:bg-[linear-gradient(var(--gh-accent),rgba(255,185,94,0.3))]">
+              <div className="flex flex-col">
+                <div className="mb-4">
+                  <h2 className="text-lg font-black tracking-tight text-slate-800">Itinerary Overview</h2>
+                  <p className="text-xs font-semibold text-slate-500">6 Days / 5 Nights</p>
+                </div>
+                <div className="space-y-2">
                   {pkg.itinerary.map((dayItem, index) => (
-                    <div key={dayItem.day ?? dayItem.title} className="relative">
-                      <span className="absolute -left-[1.1rem] top-7 inline-flex h-4 w-4 rounded-full border-4 border-white bg-[color:var(--gh-accent)] shadow-sm" />
-                      <div className="rounded-[1.5rem] border border-[color:var(--gh-border)] bg-white p-5 shadow-[0_10px_25px_rgba(121,68,44,0.05)]">
-                        <div className="flex flex-wrap items-start justify-between gap-4">
-                          <div className="max-w-2xl">
-                            <div className="inline-flex rounded-full bg-[color:var(--gh-accent-soft)] px-3 py-1 text-xs font-black text-[color:var(--gh-accent)]">
-                              Day {dayItem.day ?? index + 1}
-                            </div>
-                            <h3 className="mt-3 text-xl font-black text-[color:var(--gh-heading)]">
-                              {dayItem.title}
-                            </h3>
-                            {dayItem.description ? (
-                              <p className="mt-3 text-sm font-medium leading-7 text-[color:var(--gh-text-soft)]">
-                                {normalizeValue(dayItem.description)}
-                              </p>
-                            ) : null}
-                          </div>
-
-                          <div className="grid gap-3 text-sm font-semibold text-[color:var(--gh-text-soft)] sm:min-w-[240px]">
-                            {dayItem.meals ? (
-                              <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3">
-                                <span className="font-black text-[color:var(--gh-heading)]">Meals:</span>{" "}
-                                {normalizeValue(dayItem.meals)}
-                              </div>
-                            ) : null}
-                            {dayItem.stay ? (
-                              <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3">
-                                <span className="font-black text-[color:var(--gh-heading)]">Stay:</span>{" "}
-                                {normalizeValue(dayItem.stay)}
-                              </div>
-                            ) : null}
-                          </div>
+                    <details key={dayItem.day ?? dayItem.title} className="group rounded-xl border border-black/5 bg-white px-4 py-3 shadow-sm">
+                      <summary className="flex cursor-pointer list-none items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[11px] font-black text-gh-rose">Day {dayItem.day ?? index + 1}</span>
+                          <span className="text-xs font-bold text-slate-800">{dayItem.title}</span>
                         </div>
-                      </div>
-                    </div>
+                        <ChevronRight className="h-4 w-4 text-slate-400 transition-transform group-open:rotate-90" />
+                      </summary>
+                      {dayItem.description ? (
+                        <p className="mt-3 text-[11px] font-medium leading-relaxed text-slate-600 pl-11">
+                          {normalizeValue(dayItem.description)}
+                        </p>
+                      ) : null}
+                    </details>
                   ))}
                 </div>
-              </SectionShell>
+                <button className="mt-4 w-full rounded-xl bg-rose-50 py-3 text-xs font-bold text-gh-rose transition hover:bg-rose-100">
+                  View Full Itinerary
+                </button>
+              </div>
             )}
 
             {show.inclusions && (
