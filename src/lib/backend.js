@@ -1,4 +1,4 @@
-const API_BASE ="http://13.206.107.203/api";
+const API_BASE ="https://api.goldenhiveholidays.in/api"; 
 
 export const BACKEND_API_BASE = API_BASE;
 
