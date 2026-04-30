@@ -46,11 +46,11 @@ const paymentTone = (value) => {
 };
 
 const shellClass =
-  "rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] shadow-[0_18px_45px_rgba(121,68,44,0.12)]";
+  "rounded-2xl border border-[color:var(--gh-border)] bg-white shadow-gh-soft";
 
 function PageIntro() {
   return (
-    <section className="relative overflow-hidden rounded-[36px] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(31,41,64,0.96),rgba(72,45,104,0.94)_52%,rgba(255,79,138,0.9))] px-7 py-8 text-white shadow-[0_26px_80px_rgba(74,39,80,0.28)] sm:px-10 sm:py-10">
+    <section className="relative overflow-hidden rounded-2xl border border-gh-navy/10 bg-gh-navy px-7 py-8 text-white shadow-gh-medium sm:px-10 sm:py-10">
       <div className="pointer-events-none absolute inset-y-0 right-0 w-64 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
       <div className="pointer-events-none absolute -left-16 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -89,7 +89,7 @@ function PageIntro() {
 function EmptyStateCard({ title, description, primaryHref, primaryLabel, onPrimaryClick, secondaryHref, secondaryLabel }) {
   return (
     <div className={`${shellClass} p-8 text-center sm:p-10`}>
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[24px] bg-[linear-gradient(135deg,rgba(255,79,138,0.12),rgba(255,185,94,0.22))] text-[color:var(--gh-accent)] shadow-[0_18px_35px_rgba(255,79,138,0.14)]">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)] text-[color:var(--gh-accent)] shadow-md">
         <BriefcaseBusiness className="h-7 w-7" />
       </div>
       <h2 className="mt-5 text-2xl font-black text-[color:var(--gh-heading)]">{title}</h2>
@@ -126,7 +126,7 @@ function EmptyStateCard({ title, description, primaryHref, primaryLabel, onPrima
 
 function StatItem({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-[24px] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] px-4 py-4">
+    <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white px-4 py-4 shadow-gh-soft">
       <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
         <Icon className="h-4 w-4 text-[color:var(--gh-accent)]" />
         {label}
@@ -310,7 +310,7 @@ export default function BookingsPage() {
                   </div>
 
                   {booking.packageId && booking.packageId.length > 0 ? (
-                    <div className="mt-5 rounded-[28px] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-4 sm:p-5">
+                    <div className="mt-5 rounded-2xl border border-[color:var(--gh-border)] bg-white p-4 shadow-gh-soft sm:p-5">
                       <div className="text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
                         Included Packages
                       </div>
@@ -321,7 +321,7 @@ export default function BookingsPage() {
                           return (
                             <div
                               key={idx}
-                              className="rounded-[24px] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.94),rgba(255,242,231,0.88))] px-4 py-4"
+                              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4 shadow-sm"
                             >
                               <div className="text-sm font-black text-[color:var(--gh-heading)]">{name}</div>
                               {pkg.packageCode ? (
@@ -337,7 +337,7 @@ export default function BookingsPage() {
                   ) : null}
 
                   {booking.note ? (
-                    <div className="mt-5 rounded-[28px] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-4 sm:p-5">
+                    <div className="mt-5 rounded-2xl border border-[color:var(--gh-border)] bg-white p-4 shadow-gh-soft sm:p-5">
                       <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
                         <MessageCircle className="h-4 w-4 text-[color:var(--gh-accent)]" />
                         Special Requests
@@ -348,7 +348,7 @@ export default function BookingsPage() {
                 </div>
 
                 <aside className="w-full xl:max-w-[19rem]">
-                  <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+                  <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
                     <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--gh-accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-accent)]">
                       <CreditCard className="h-3.5 w-3.5" />
                       Total Amount

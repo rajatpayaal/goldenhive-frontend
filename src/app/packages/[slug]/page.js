@@ -165,7 +165,7 @@ function SectionShell({ title, subtitle, children, className = "" }) {
   return (
     <section
       className={[
-        "rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:p-8",
+        "rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-4 sm:p-8 shadow-[0_18px_45px_rgba(121,68,44,0.10)]",
         className,
       ].join(" ")}
     >
@@ -263,7 +263,7 @@ export default async function PackagesSlugPage({ params }) {
         </p>
         <Link
           href="/"
-          className="mt-6 inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-4 text-sm font-black text-white"
+          className="mt-6 gh-secondary-btn px-6 py-4 text-sm"
         >
           Return to Home
         </Link>
@@ -316,7 +316,7 @@ export default async function PackagesSlugPage({ params }) {
 
   return (
     <div className="pb-20 pt-0 sm:pt-6">
-      <div className="mx-auto sm:px-5 lg:px-6">
+      <div className="mx-auto px-4 sm:px-5 lg:px-6">
         <div className="hidden sm:block rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.72)] px-4 py-3 backdrop-blur sm:px-5">
           <Breadcrumbs
             items={[
@@ -379,7 +379,7 @@ export default async function PackagesSlugPage({ params }) {
             </div>
           </section>
 
-          <aside className="relative z-10 -mt-12 mx-4 sm:mx-0 sm:mt-0 lg:sticky lg:top-24 lg:self-start">
+          <aside className="relative z-10 -mt-12 sm:mt-0 lg:sticky lg:top-24 lg:self-start">
             <PricingSidebarSync
               packageId={pkg._id}
               packageName={pkg.basic?.name}
@@ -396,11 +396,11 @@ export default async function PackagesSlugPage({ params }) {
           </aside>
         </div>
 
-        <div className="mt-7 grid items-start gap-6 mx-4 sm:mx-0 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-6">
+        <div className="mt-7 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-6 min-w-0 w-full">
             {show.overview && (
               <SectionShell title="Overview" subtitle="A warm look at the journey ahead">
-                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-5">
+                <div className="rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,242,231,0.78))] p-4 sm:p-5">
                   <div className="flex gap-4">
                     <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white sm:inline-flex">
                       <Mountain className="h-5 w-5" />
@@ -412,19 +412,19 @@ export default async function PackagesSlugPage({ params }) {
             )}
 
             {show.quickInfo && (
-              <SectionShell title="Quick Info" subtitle="Everything at a glance">
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <SectionShell title="Quick Info" className="bg-rose-50/30">
+                <div className="grid gap-3 sm:gap-4 grid-cols-2 xl:grid-cols-4">
                   {quickInfoEntries.map(([key, value]) => (
                     <div
                       key={key}
-                      className="flex items-center gap-3 rounded-2xl border border-[color:var(--gh-border)] bg-white p-3 shadow-sm"
+                      className="flex items-center gap-2 sm:gap-3 rounded-2xl bg-white p-2.5 sm:p-3 shadow-sm border border-rose-100 overflow-hidden"
                     >
                       {getInfoIcon(key)}
-                      <div className="flex flex-col">
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                      <div className="flex min-w-0 flex-col">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 truncate">
                           {toLabel(key)}
                         </span>
-                        <div className="text-[11px] font-black leading-tight text-slate-800">{value}</div>
+                        <div className="text-[10px] sm:text-[11px] font-black leading-tight text-slate-800 break-words">{value}</div>
                       </div>
                     </div>
                   ))}
@@ -474,7 +474,7 @@ export default async function PackagesSlugPage({ params }) {
             )}
 
             {show.itinerary && (
-              <div className="flex flex-col">
+              <div id="itinerary-section" className="flex flex-col scroll-mt-24">
                 <div className="mb-4">
                   <h2 className="text-lg font-black tracking-tight text-slate-800">Itinerary Overview</h2>
                   <p className="text-xs font-semibold text-slate-500">6 Days / 5 Nights</p>
@@ -497,7 +497,7 @@ export default async function PackagesSlugPage({ params }) {
                     </details>
                   ))}
                 </div>
-                <button className="mt-4 w-full rounded-xl bg-rose-50 py-3 text-xs font-bold text-gh-rose transition hover:bg-rose-100">
+                <button className="mt-4 w-full rounded-full bg-rose-50 py-3 text-xs font-bold text-gh-rose transition hover:bg-rose-100">
                   View Full Itinerary
                 </button>
               </div>
@@ -543,11 +543,11 @@ export default async function PackagesSlugPage({ params }) {
 
             {show.gallery && (
               <SectionShell title="Gallery" subtitle="Your day-by-day journey">
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 no-scrollbar sm:grid sm:grid-cols-2 xl:grid-cols-5">
                   {gallery.map((img, i) => (
                     <div
                       key={img.url || i}
-                      className="group relative aspect-[1.15/1] overflow-hidden rounded-[1.4rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)]"
+                      className="group relative shrink-0 snap-center w-[85vw] sm:w-auto aspect-[4/3] sm:aspect-[1.15/1] overflow-hidden rounded-[1.4rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)]"
                     >
                       <Image
                         src={img.url}
@@ -647,7 +647,7 @@ export default async function PackagesSlugPage({ params }) {
                         href={pkg.location.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)]"
+                        className="mt-4 gh-secondary-btn w-full items-center justify-center gap-2 px-5 py-4 text-sm shadow-md"
                       >
                         Open in Google Maps
                         <ChevronRight className="h-4 w-4" />
@@ -679,13 +679,13 @@ export default async function PackagesSlugPage({ params }) {
                   href={`https://wa.me/${whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#16a34a] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(22,163,74,0.22)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#16a34a] px-5 py-4 text-sm font-black text-white shadow-md"
                 >
                   Chat on WhatsApp
                 </a>
                 <a
                   href={`tel:${pkg.cta?.call}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-4 text-sm font-black text-[color:var(--gh-heading)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--gh-border)] bg-white px-5 py-4 text-sm font-black text-[color:var(--gh-heading)]"
                 >
                   Call {pkg.cta?.call || "our support team"}
                 </a>

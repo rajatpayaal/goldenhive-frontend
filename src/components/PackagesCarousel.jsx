@@ -173,17 +173,27 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
               )}
             </div>
 
-            <div className="flex flex-col justify-between p-3 h-[100px] sm:h-auto sm:p-4">
-              <h3 className="line-clamp-2 text-xs font-bold leading-tight text-slate-800 sm:text-sm">
-                {pkg.basic?.name || "Untitled journey"}
-              </h3>
-
-              <div className="mt-2">
-                <div className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
-                  From
+            <div className="flex flex-col justify-between p-3 h-[110px] sm:h-[130px] sm:p-4">
+              <div>
+                <div className="mb-0.5 text-[9px] font-semibold text-slate-400 line-clamp-1">
+                  {pkg.basic?.destination || "Destination TBA"}
                 </div>
-                <div className="text-sm font-bold text-gh-rose">
-                  Rs.{formatInr(pkg.pricing?.finalPrice ?? pkg.basic?.finalPrice)}
+                <h3 className="line-clamp-2 text-xs font-bold leading-tight text-slate-800 sm:text-sm">
+                  {pkg.basic?.name || "Untitled journey"}
+                </h3>
+              </div>
+
+              <div className="mt-2 flex items-end justify-between">
+                <div>
+                  <div className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
+                    From
+                  </div>
+                  <div className="text-sm font-bold text-gh-rose">
+                    Rs.{formatInr(pkg.pricing?.finalPrice ?? pkg.basic?.finalPrice)}
+                  </div>
+                </div>
+                <div className="gh-secondary-btn px-4 py-1.5 text-[10px]">
+                  Explore
                 </div>
               </div>
             </div>

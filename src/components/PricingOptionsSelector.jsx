@@ -54,7 +54,7 @@ export function PricingOptionsSelector({
   }
 
   return (
-    <section>
+    <section className="w-full min-w-0">
       <div className="mb-4">
         <h2 className="text-lg font-black tracking-tight text-slate-800">
           Vehicle Options

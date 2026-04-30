@@ -26,9 +26,10 @@ export function HomeHeroSearch({ className = "" }) {
       <div className="shrink-0 p-1.5">
         <button
           type="button"
-          className="rounded-full bg-gh-gold px-7 py-3 text-sm font-black text-gh-plum transition-colors hover:bg-gh-gold2 active:scale-[0.97]"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-gh-primary text-slate-900 transition-colors hover:bg-yellow-500 active:scale-[0.97]"
+          aria-label="Search"
         >
-          Search
+          <Search className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
     </div>

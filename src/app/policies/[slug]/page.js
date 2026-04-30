@@ -51,8 +51,8 @@ export default async function PolicyDetailPage({ params }) {
   }
 
   return (
-    <main className="bg-slate-50 pb-20">
-      <div className="mx-auto max-w-4xl px-5 py-12">
+    <main className="pb-20">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-5 sm:py-12">
         <Breadcrumbs
           items={[
             { href: "/policies", label: "Policies" },
@@ -61,132 +61,134 @@ export default async function PolicyDetailPage({ params }) {
         />
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             href="/policies"
-            className="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-slate-900 mb-4"
+            className="inline-flex items-center gap-2 rounded-full border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-4 py-2 text-sm font-bold text-[color:var(--gh-heading)] hover:bg-[color:var(--gh-bg-soft)] transition-colors mb-5"
           >
             ← Back to Policies
           </Link>
-          <h1 className="text-3xl font-black text-slate-900 sm:text-4xl">
-            {policy.title}
-          </h1>
-          <p className="mt-2 text-sm font-semibold text-slate-600 uppercase tracking-wide">
-            {policy.type.replace(/_/g, " ")}
-          </p>
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-6 py-7 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:px-8">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+              {policy.type.replace(/_/g, " ")}
+            </p>
+            <h1 className="mt-3 text-2xl font-black text-[color:var(--gh-heading)] sm:text-4xl">
+              {policy.title}
+            </h1>
+          </div>
         </div>
 
         {/* Main Content */}
-        <div className="prose prose-slate max-w-none">
-          <div className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-            <div className="prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-relaxed prose-strong:text-slate-900 prose-strong:font-bold">
+        <div className="space-y-6">
+          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-6 py-8 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:px-10">
+            <div className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-[color:var(--gh-heading)] prose-p:text-[color:var(--gh-text)] prose-p:leading-relaxed prose-strong:text-[color:var(--gh-heading)] prose-a:text-[color:var(--gh-accent)]">
               <div dangerouslySetInnerHTML={{ __html: policy.content }} />
             </div>
           </div>
-        </div>
 
-        {/* Sections */}
-        {policy.sections && policy.sections.length > 0 && (
-          <div className="mt-12 space-y-8">
-            {policy.sections.map((section, index) => (
-              <div key={index} className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-                <h2 className="text-2xl font-black text-slate-900 mb-4">
-                  {section.title}
-                </h2>
+          {/* Sections */}
+          {policy.sections && policy.sections.length > 0 && (
+            <div className="space-y-6">
+              {policy.sections.map((section, index) => (
+                <div key={index} className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:p-8">
+                  <h2 className="text-2xl font-black text-[color:var(--gh-heading)] mb-4">
+                    {section.title}
+                  </h2>
 
-                {section.description && (
-                  <p className="text-slate-700 mb-6 leading-relaxed">
-                    {section.description}
-                  </p>
-                )}
+                  {section.description && (
+                    <p className="text-[color:var(--gh-text)] mb-6 leading-relaxed font-medium">
+                      {section.description}
+                    </p>
+                  )}
 
-                {section.imageUrl && (
-                  <div className="mb-6">
-                    <Image
-                      src={section.imageUrl}
-                      alt={section.title}
-                      width={800}
-                      height={400}
-                      className="w-full rounded-2xl object-cover"
-                    />
+                  {section.imageUrl && (
+                    <div className="mb-6">
+                      <Image
+                        src={section.imageUrl}
+                        alt={section.title}
+                        width={800}
+                        height={400}
+                        className="w-full rounded-2xl object-cover shadow-[0_8px_24px_rgba(121,68,44,0.10)]"
+                      />
+                    </div>
+                  )}
+
+                  {section.points && section.points.length > 0 && (
+                    <ul className="space-y-2 mb-6">
+                      {section.points.map((point, pointIndex) => (
+                        <li key={pointIndex} className="flex items-start gap-3">
+                          <span className="mt-1.5 h-2 w-2 rounded-full bg-[color:var(--gh-accent)] flex-shrink-0" />
+                          <span className="text-[color:var(--gh-text)] font-medium">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {section.subSections && section.subSections.length > 0 && (
+                    <div className="space-y-4">
+                      {section.subSections.map((subSection, subIndex) => (
+                        <div key={subIndex} className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4">
+                          <h3 className="text-base font-black text-[color:var(--gh-heading)] mb-2">
+                            {subSection.title}
+                          </h3>
+                          {subSection.description && (
+                            <p className="text-[color:var(--gh-text-soft)] mb-3 text-sm font-medium">{subSection.description}</p>
+                          )}
+                          {subSection.points && subSection.points.length > 0 && (
+                            <ul className="space-y-1">
+                              {subSection.points.map((point, pointIndex) => (
+                                <li key={pointIndex} className="flex items-start gap-2 text-sm">
+                                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[color:var(--gh-accent-strong)] flex-shrink-0" />
+                                  <span className="text-[color:var(--gh-text-soft)] font-medium">{point}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Footer Contact Info */}
+          {policy.footer && (policy.footer.email || policy.footer.phone || policy.footer.address) && (
+            <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:p-8">
+              <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-5">Contact Information</h2>
+              <div className="grid gap-4 md:grid-cols-3">
+                {policy.footer.email && (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-accent)]">Email</p>
+                    <p className="mt-1 text-[color:var(--gh-heading)] font-semibold">{policy.footer.email}</p>
                   </div>
                 )}
-
-                {section.points && section.points.length > 0 && (
-                  <ul className="space-y-2 mb-6">
-                    {section.points.map((point, pointIndex) => (
-                      <li key={pointIndex} className="flex items-start gap-3">
-                        <span className="mt-1 h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                        <span className="text-slate-700">{point}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {policy.footer.phone && (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-accent)]">Phone</p>
+                    <p className="mt-1 text-[color:var(--gh-heading)] font-semibold">{policy.footer.phone}</p>
+                  </div>
                 )}
-
-                {section.subSections && section.subSections.length > 0 && (
-                  <div className="space-y-4">
-                    {section.subSections.map((subSection, subIndex) => (
-                      <div key={subIndex} className="rounded-2xl border border-black/5 bg-slate-50 p-4">
-                        <h3 className="text-lg font-bold text-slate-900 mb-2">
-                          {subSection.title}
-                        </h3>
-                        {subSection.description && (
-                          <p className="text-slate-700 mb-3">{subSection.description}</p>
-                        )}
-                        {subSection.points && subSection.points.length > 0 && (
-                          <ul className="space-y-1">
-                            {subSection.points.map((point, pointIndex) => (
-                              <li key={pointIndex} className="flex items-start gap-2 text-sm">
-                                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-slate-400 flex-shrink-0" />
-                                <span className="text-slate-600">{point}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    ))}
+                {policy.footer.address && (
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-accent)]">Address</p>
+                    <p className="mt-1 text-[color:var(--gh-heading)] font-semibold">{policy.footer.address}</p>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* Footer Contact Info */}
-        {policy.footer && (policy.footer.email || policy.footer.phone || policy.footer.address) && (
-          <div className="mt-12 rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-black text-slate-900 mb-6">Contact Information</h2>
-            <div className="grid gap-4 md:grid-cols-3">
-              {policy.footer.email && (
-                <div>
-                  <p className="text-sm font-bold text-slate-600">Email</p>
-                  <p className="text-slate-900">{policy.footer.email}</p>
-                </div>
-              )}
-              {policy.footer.phone && (
-                <div>
-                  <p className="text-sm font-bold text-slate-600">Phone</p>
-                  <p className="text-slate-900">{policy.footer.phone}</p>
-                </div>
-              )}
-              {policy.footer.address && (
-                <div>
-                  <p className="text-sm font-bold text-slate-600">Address</p>
-                  <p className="text-slate-900">{policy.footer.address}</p>
-                </div>
-              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Back to Policies */}
-        <div className="mt-12 text-center">
-          <Link
-            href="/policies"
-            className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600"
-          >
-            View All Policies
-          </Link>
+          {/* Back to Policies */}
+          <div className="mt-4 text-center">
+            <Link
+              href="/policies"
+              className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-7 py-3.5 text-sm font-black"
+            >
+              ← View All Policies
+            </Link>
+          </div>
         </div>
       </div>
     </main>

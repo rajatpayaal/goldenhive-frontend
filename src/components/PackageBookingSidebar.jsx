@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { CalendarDays, MessageCircle, Phone, ShieldCheck, Star, Users } from "lucide-react";
+import { CalendarDays, MessageCircle, Phone, ShieldCheck, Star, Users, FileText, Heart, CalendarCheck } from "lucide-react";
+import Link from "next/link";
 
 import { PackageAddToCart } from "./PackageAddToCart";
 
@@ -54,7 +55,7 @@ export function PackageBookingSidebar({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_22px_60px_rgba(121,68,44,0.14)]">
+    <div className="relative overflow-hidden rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-medium">
       <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,79,138,0.16),transparent_68%)]" />
       <div className="absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(255,185,94,0.18),transparent_70%)]" />
 
@@ -128,18 +129,13 @@ export function PackageBookingSidebar({
           </div>
         ) : null}
 
-        <div className="mt-4 flex gap-3">
-          <button className="flex-1 rounded-xl border-2 border-slate-200 bg-slate-100 py-3 text-[11px] font-black text-slate-700 transition hover:bg-slate-200">
-            View Itinerary
-          </button>
-          <a
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 rounded-xl bg-emerald-600 py-3 text-center text-[11px] font-black text-white shadow-md transition hover:bg-emerald-700"
-          >
-            Enquire Now
-          </a>
+        <div className="mt-4">
+          <PackageAddToCart
+            packageId={packageId}
+            packageName={packageName}
+            packageData={packageData}
+            selectedPricingOption={selectedOption}
+          />
         </div>
 
         <div className="mt-4 flex items-start gap-3 rounded-2xl bg-orange-50/50 px-4 py-3 border border-orange-100">

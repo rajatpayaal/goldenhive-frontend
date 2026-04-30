@@ -364,7 +364,7 @@ export default function BookingPage() {
         <div className="mt-10 rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-8 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
           <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
           <p className="mt-2 text-sm text-[color:var(--gh-text-soft)]">Add packages to your cart before booking.</p>
-          <Link href="/" className="mt-6 inline-flex rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)] hover:opacity-90">
+          <Link href="/" className="mt-6 gh-secondary-btn inline-flex rounded-full px-6 py-3 shadow-md">
             Browse Packages
           </Link>
         </div>
@@ -414,7 +414,7 @@ export default function BookingPage() {
       <form onSubmit={handleSubmitBooking} className="grid gap-8 lg:grid-cols-3">
         {/* Package Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
             <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Selected Packages</h2>
             <div className="space-y-4">
               {cartItems.map((item) => {
@@ -484,7 +484,7 @@ export default function BookingPage() {
           </div>
 
           {/* Traveler Details */}
-          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
             <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Traveler Details</h2>
             <div className="space-y-6">
               {travelerDetails.map((traveler, index) => (
@@ -546,7 +546,7 @@ export default function BookingPage() {
 
         {/* Booking Summary */}
         <div className="space-y-6">
-          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)] lg:sticky lg:top-28">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft lg:sticky lg:top-28">
             <h2 className="text-xl font-black text-[color:var(--gh-heading)] mb-4">Booking Details</h2>
 
             <div className="space-y-4">

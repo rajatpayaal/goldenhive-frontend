@@ -1,4 +1,4 @@
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "../styles/globals.css";
 import { ReduxProvider } from "../providers/ReduxProvider";
 import { ToastProvider } from "../components/ToastProvider";
@@ -8,15 +8,20 @@ import { apiService } from "../services/api.service";
 import { ChatbotWidget } from "../components/ChatbotWidget";
 import { MobileBottomNav } from "../components/MobileBottomNav";
 
-const bodyFont = Plus_Jakarta_Sans({
+const bodyFont = Poppins({
   variable: "--font-body",
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
-const displayFont = Cormorant_Garamond({
+const displayFont = Poppins({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata = {

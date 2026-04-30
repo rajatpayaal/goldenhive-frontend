@@ -20,7 +20,7 @@ export default function CustomRequestsPage() {
         </p>
       </div>
 
-      <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-4 shadow-[0_18px_45px_rgba(121,68,44,0.12)] sm:p-8">
+      <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-4 shadow-gh-soft sm:p-8">
         <CustomRequestFlow />
       </div>
     </div>

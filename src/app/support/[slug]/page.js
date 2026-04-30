@@ -91,13 +91,14 @@ export default function SupportTicketPage() {
     return <Loader message="Loading support..." />;
   }
 
+
   if (!user) {
     return (
       <div className="mx-auto max-w-3xl px-5 py-20 text-center">
         <h1 className="text-3xl font-black text-slate-900">Support Ticket</h1>
         <p className="mt-4 text-slate-600">Please log in to raise a support ticket.</p>
         <div className="mt-6 flex justify-center gap-4">
-          <Link href="/" className="inline-flex rounded-2xl bg-emerald-500 px-6 py-3 text-white font-bold hover:bg-emerald-600">
+          <Link href="/" className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-black shadow-md">
             Go Home
           </Link>
         </div>
@@ -170,12 +171,12 @@ export default function SupportTicketPage() {
       />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900">Raise a Support Ticket</h1>
-        <p className="mt-3 text-slate-600">Submit your issue for {title} and our team will respond soon.</p>
+        <h1 className="text-3xl font-black text-[color:var(--gh-heading)]">Raise a Support Ticket</h1>
+        <p className="mt-3 text-sm font-semibold text-[color:var(--gh-text-soft)]">Submit your issue for {title} and our team will respond soon.</p>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[1.6fr_0.9fr]">
-        <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
+        <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-8 shadow-gh-soft">
         {successMessage ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
             {successMessage}
@@ -197,7 +198,7 @@ export default function SupportTicketPage() {
               value={form.subject}
               onChange={handleChange}
               placeholder="Enter ticket subject"
-              className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm text-[color:var(--gh-heading)] outline-none transition focus:border-[color:var(--gh-accent)] focus:bg-white"
               required
             />
           </div>
@@ -208,7 +209,7 @@ export default function SupportTicketPage() {
               name="priority"
               value={form.priority}
               onChange={handleChange}
-              className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm text-[color:var(--gh-heading)] outline-none transition focus:border-[color:var(--gh-accent)] focus:bg-white"
             >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
@@ -224,7 +225,7 @@ export default function SupportTicketPage() {
               onChange={handleChange}
               rows="6"
               placeholder="Describe your issue in detail"
-              className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:bg-white"
+              className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm text-[color:var(--gh-heading)] outline-none transition focus:border-[color:var(--gh-accent)] focus:bg-white"
               required
             />
           </div>
@@ -237,7 +238,7 @@ export default function SupportTicketPage() {
                 name="name"
                 value={`${user.firstName || user.name || ""} ${user.lastName || ""}`.trim()}
                 disabled
-                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-900 outline-none"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] px-4 py-3 text-sm text-[color:var(--gh-text-soft)] outline-none"
               />
             </div>
             <div>
@@ -248,19 +249,19 @@ export default function SupportTicketPage() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Your phone number"
-                className="mt-2 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:bg-white"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm text-[color:var(--gh-heading)] outline-none transition focus:border-[color:var(--gh-accent)] focus:bg-white"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Link href="/" className="inline-flex rounded-2xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50">
+            <Link href="/" className="inline-flex rounded-2xl border border-[color:var(--gh-border)] px-6 py-3 text-sm font-bold text-[color:var(--gh-heading)] hover:bg-[color:var(--gh-bg-soft)]">
               Back to Home
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center justify-center rounded-2xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+              className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? "Raising ticket..." : "Raise Ticket"}
             </button>
@@ -268,14 +269,14 @@ export default function SupportTicketPage() {
         </form>
       </div>
 
-      <aside className="rounded-3xl border border-black/10 bg-slate-50 p-6 shadow-sm">
+      <aside className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
         <div className="mb-5">
           <div className="text-xs font-extrabold uppercase tracking-[0.32em] text-slate-500">My Tickets</div>
           <p className="mt-2 text-sm text-slate-600">Your raised support tickets appear here.</p>
         </div>
 
         {ticketsLoading ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4 text-sm text-[color:var(--gh-text-soft)]">
             Loading your tickets...
           </div>
         ) : ticketsError ? (
@@ -283,13 +284,13 @@ export default function SupportTicketPage() {
             {ticketsError}
           </div>
         ) : tickets.length === 0 ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4 text-sm text-[color:var(--gh-text-soft)]">
             No tickets found yet. Raise one using the form on the left.
           </div>
         ) : (
           <div className="space-y-4">
             {tickets.map((ticket) => (
-              <div key={ticket._id || ticket.id || ticket.subject} className="rounded-3xl border border-slate-200 bg-white p-4">
+              <div key={ticket._id || ticket.id || ticket.subject} className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-black text-slate-900">{ticket.subject || "Support Ticket"}</p>

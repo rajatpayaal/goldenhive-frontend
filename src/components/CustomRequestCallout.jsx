@@ -18,7 +18,7 @@ export function CustomRequestCallout() {
             </p>
             <Link
               href="/custom-requests"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gh-rose to-rose-400 px-4 py-2.5 text-[11px] font-bold text-white shadow-md transition hover:-translate-y-0.5 w-fit"
+              className="gh-secondary-btn inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[11px] shadow-md hover:-translate-y-0.5 w-fit"
             >
               <span>Create Custom Request</span>
               <span aria-hidden="true">&rarr;</span>

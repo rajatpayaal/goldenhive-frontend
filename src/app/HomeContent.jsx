@@ -26,7 +26,7 @@ export default async function HomeContent({ initialSection }) {
   );
 
   return (
-    <main className="bg-slate-50">
+    <main>
       {initialSection ? <ScrollToSection sectionId={initialSection} /> : null}
       <BannerSlider banners={banners} />
       <CustomRequestCallout />

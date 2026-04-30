@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, User } from "lucide-react";
 
 import { LoginModal } from "./LoginModal";
 import { UserMenu } from "./UserMenu";
@@ -207,15 +208,15 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
               </SheetContent>
             </Sheet>
 
-            <Link href="/" className="flex items-center gap-1.5">
-              <div className="leading-none">
-                <div className="text-xl font-black tracking-tight text-gh-gold">
-                  GoldenHive
-                </div>
-                <div className="mt-[2px] text-[8px] font-extrabold tracking-[0.45em] text-slate-500">
-                  HOLIDAYS
-                </div>
-              </div>
+            <Link href="/" className="flex items-center shrink-0">
+              <Image
+                src="/logo-full.svg"
+                alt="GoldenHive Holidays"
+                width={300}
+                height={80}
+                priority
+                className="h-8 w-auto sm:h-11"
+              />
             </Link>
           </div>
 
@@ -228,7 +229,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                 {visibleCategories.map((category) => (
                   <Link
                     key={category._id}
-                    className="inline-flex whitespace-nowrap items-center justify-center rounded-xl px-3 py-2 text-sm font-extrabold transition text-slate-700 hover:text-gh-plum"
+                    className="inline-flex whitespace-nowrap items-center justify-center rounded-xl px-3 py-2 text-sm font-bold transition text-slate-700 hover:text-gh-primary"
                     href={`/${resolveAnchorId(category.slug)}`}
                   >
                     {category.name}
@@ -240,7 +241,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <button
                       type="button"
                       onClick={() => setMoreOpen((prev) => !prev)}
-                      className="inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold transition text-slate-700 hover:text-gh-plum"
+                      className="inline-flex whitespace-nowrap items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition text-slate-700 hover:text-gh-primary"
                       aria-expanded={moreOpen}
                       aria-haspopup="menu"
                     >
@@ -281,23 +282,23 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
             <CartDropdown cartCount={cartCount} variant={headerTone} />
 
             {!isLoading && !user && (
-              <Button
+              <button
                 type="button"
                 onClick={() => setIsLoginOpen(true)}
-                variant="outline"
-                className="hidden rounded-2xl px-4 py-2 text-sm font-black lg:inline-flex"
+                className="hidden items-center gap-2 rounded-full bg-gh-primary px-6 py-2.5 text-sm font-bold text-slate-900 transition hover:bg-yellow-500 lg:inline-flex"
               >
+                <User className="h-4 w-4" />
                 Log In
-              </Button>
+              </button>
             )}
 
             {!isLoading && !user && (
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gh-gold text-white lg:hidden"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gh-primary text-slate-900 lg:hidden"
                 aria-label="Log In"
               >
-                <div className="h-4 w-4 rounded-full border-2 border-white" />
+                <div className="h-4 w-4 rounded-full border-2 border-slate-900" />
               </button>
             )}
 

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(10, 0)">
+    <path d="M 25 80 L 45 60 L 60 70 L 80 50 L 105 75" fill="none" stroke="url(#greenGradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 80 50 C 95 30 115 35 130 50" fill="none" stroke="#334155" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/>
+    <g transform="translate(130, 48) rotate(-20)">
+      <polygon points="12,0 -6,-6 -2,0 -6,6" fill="#334155"/>
+    </g>
+    <text x="76" y="125" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="70" fill="url(#goldGradient)" text-anchor="end" letter-spacing="-3">G</text>
+    <text x="79" y="125" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="70" fill="url(#redGradient)" text-anchor="start" letter-spacing="-3">H</text>
+    <path d="M 20 120 C 50 145 100 145 140 115" fill="none" stroke="url(#goldGradient)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 115 C 148 100 160 108 148 125 C 138 120 135 110 140 115 Z" fill="url(#greenGradient)"/>
+  </g>
+
+  <g transform="translate(170, 100)">
+    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="76" fill="url(#goldGradient)">Golden</text>
+    <text x="265" y="0" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="76" fill="url(#redGradient)">Hive</text>
+    
+    <g transform="translate(195, 35)">
+      <line x1="-120" y1="-5" x2="-20" y2="-5" stroke="url(#goldGradient)" stroke-width="4" stroke-linecap="round"/>
+      <text x="40" y="0" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" fill="#334155" text-anchor="middle" letter-spacing="8">HOLIDAYS</text>
+      <line x1="110" y1="-5" x2="210" y2="-5" stroke="url(#goldGradient)" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

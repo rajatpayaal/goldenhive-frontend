@@ -33,13 +33,13 @@ export function BannerSlider({ banners }) {
     <>
 
 
-      <div className="px-4 pt-4 md:px-0 md:pt-0">
-        <section className="relative z-10 min-h-[280px] w-full overflow-hidden rounded-[2rem] bg-gh-plum shadow-[0_18px_45px_rgba(2,6,23,0.12)] md:min-h-[420px] md:rounded-none lg:min-h-[480px]">
+      <div className="px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8 pb-8">
+        <section className="relative mx-auto max-w-7xl z-10 min-h-[320px] w-full rounded-[2rem] bg-gh-plum shadow-gh-medium md:min-h-[460px] lg:min-h-[520px]">
           {banners.map((banner, index) => (
             <div
               key={banner._id}
               className={[
-                "absolute inset-0 transition-opacity duration-700 ease-out",
+                "absolute inset-0 overflow-hidden rounded-[2rem] transition-opacity duration-700 ease-out",
                 index === currentIndex ? "opacity-100" : "opacity-0 pointer-events-none",
               ].join(" ")}
             >
@@ -65,14 +65,11 @@ export function BannerSlider({ banners }) {
               />
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/88 via-slate-950/60 to-slate-950/25" />
+            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-slate-950/88 via-slate-950/60 to-slate-950/25" />
 
             <div className="relative">
               <div className="mx-auto max-w-6xl px-5 h-full">
-                {/* Search bar — top of banner, hidden on mobile since it's below */}
-                <div className="hidden pt-20 sm:pt-24 lg:pt-28 md:block">
-                  <HomeHeroSearch />
-                </div>
+
 
                 {/* Hero text + CTAs — bottom of banner */}
                 <div className="flex h-full flex-col justify-end pb-8 text-white sm:pb-12">
@@ -91,16 +88,16 @@ export function BannerSlider({ banners }) {
                     <div className="mt-7 flex flex-wrap gap-3">
                       <Link
                         href={resolveHref(banner)}
-                        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gh-gold px-6 py-4 text-base font-black text-gh-plum shadow-[0_14px_30px_rgba(244,178,41,0.35)] hover:bg-gh-gold2"
+                        className="gh-primary-btn inline-flex items-center justify-center gap-2 px-6 py-3 text-sm"
                       >
-                        {banner.heroCtaText || banner.ctaText || "Explore"}
-                        <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                        {banner.heroCtaText || banner.ctaText || "Explore Packages"}
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
                       </Link>
                       <Link
                         href="/tour-packages"
-                        className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-black text-white backdrop-blur hover:bg-white/15"
+                        className="inline-flex items-center justify-center rounded-full border border-white bg-transparent px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
                       >
-                        View Packages
+                        View All Packages
                       </Link>
                     </div>
                   )}
@@ -125,6 +122,11 @@ export function BannerSlider({ banners }) {
               ))}
             </div>
           )}
+          
+          {/* Search bar overlapping the bottom edge on desktop */}
+          <div className="hidden md:block absolute -bottom-7 left-1/2 w-full max-w-2xl -translate-x-1/2 px-4 z-20">
+            <HomeHeroSearch />
+          </div>
         </section>
       </div>
       <div className="px-4 py-4 md:hidden">

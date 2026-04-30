@@ -11,47 +11,51 @@ export default async function PoliciesPage() {
   const policies = await apiService.getPolicies();
 
   return (
-    <main className="bg-slate-50 pb-20">
-      <div className="mx-auto max-w-6xl px-5 py-12">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+    <main className="pb-20">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-5 sm:py-12">
+        {/* Page Hero */}
+        <div className="mb-10 rounded-2xl border border-[color:var(--gh-border)] bg-white px-6 py-8 shadow-gh-soft sm:px-10 sm:py-10">
+          <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
+            GoldenHive Holidays
+          </p>
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">
             Policies
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-3 max-w-2xl text-base font-medium text-[color:var(--gh-text-soft)]">
             Important information about our policies and guidelines.
           </p>
         </div>
 
         {policies.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-slate-500">No policies available yet.</p>
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white py-16 text-center shadow-gh-soft">
+            <p className="text-base font-semibold text-[color:var(--gh-text-soft)]">No policies available yet.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {policies.map((policy) => (
               <article
                 key={policy._id}
-                className="group overflow-hidden rounded-3xl border border-black/5 bg-white p-6 shadow-sm transition hover:shadow-lg"
+                className="group overflow-hidden rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft transition hover:-translate-y-1 hover:shadow-gh-medium"
               >
                 <div className="mb-4">
-                  <h2 className="text-xl font-black text-slate-900 group-hover:text-emerald-600 transition">
+                  <h2 className="text-xl font-black text-[color:var(--gh-heading)] group-hover:text-[color:var(--gh-accent)] transition-colors">
                     <Link href={`/policies/${policy.slug}`}>
                       {policy.title}
                     </Link>
                   </h2>
-                  <p className="mt-2 text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--gh-text-soft)]">
                     {policy.type.replace(/_/g, " ")}
                   </p>
                 </div>
 
-                <p className="text-slate-600 line-clamp-3">
+                <p className="line-clamp-3 text-sm font-medium text-[color:var(--gh-text-soft)]">
                   {policy.content}
                 </p>
 
-                <div className="mt-4">
+                <div className="mt-5 border-t border-[color:var(--gh-border)] pt-4">
                   <Link
                     href={`/policies/${policy.slug}`}
-                    className="inline-flex items-center text-sm font-bold text-emerald-600 hover:text-emerald-700"
+                    className="text-sm font-black text-[color:var(--gh-accent)] hover:opacity-80 transition-opacity"
                   >
                     Read More →
                   </Link>
