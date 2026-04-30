@@ -36,7 +36,7 @@ export async function PackageSuggestionsSection({
   return (
     <section className="w-full bg-transparent">
       <div className="w-full px-5 pb-10">
-        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-7 shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:p-8">
+        <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-7 shadow-gh-soft sm:p-8">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-3xl font-black tracking-tight text-[color:var(--gh-heading)]">{title}</h2>
@@ -44,65 +44,56 @@ export async function PackageSuggestionsSection({
             </div>
           </div>
 
-          <div className="no-scrollbar mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2">
+          <div className="no-scrollbar mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
             {safe.map((pkg, index) => {
               const href = `/packages/${pkg.basic?.slug || pkg._id}`;
               const imageUrl = getPackageImage(pkg);
               const name = pkg.basic?.name || "Package";
-              const destination = pkg.basic?.destination || "Uttarakhand";
-              const tagline = pkg.basic?.tagline;
+              const destination = pkg.basic?.destination || "Destination TBA";
               const finalPrice = pkg.pricing?.finalPrice ?? pkg.basic?.finalPrice;
 
               return (
                 <div
                   key={pkg._id || pkg.basic?.slug || index}
-                  className="relative w-[285px] shrink-0 snap-start overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] shadow-[0_18px_45px_rgba(121,68,44,0.12)] sm:w-[340px]"
+                  className="relative flex w-[260px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[color:var(--gh-border)] bg-white shadow-sm transition hover:shadow-md sm:w-[280px]"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--gh-bg-soft)]">
+                  <Link href={href} className="group relative aspect-[4/3] w-full overflow-hidden bg-slate-100 block">
                     <div
-                      className="absolute inset-0 bg-cover bg-center"
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                       style={{ backgroundImage: `url(${imageUrl})` }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(31,41,64,0.45)] via-transparent to-transparent" />
-                    <div className="absolute left-4 top-4 inline-flex items-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-xs font-extrabold text-white shadow-[0_10px_25px_rgba(255,79,138,0.25)]">
-                      {destination}
-                    </div>
-                  </div>
+                    {pkg.pricing?.discountPercent > 0 && (
+                      <div className="absolute left-2 top-2 rounded-full bg-gh-rose px-2 py-0.5 text-[9px] font-black text-white shadow-sm">
+                        {pkg.pricing.discountPercent}% OFF
+                      </div>
+                    )}
+                  </Link>
 
-                  <div className="space-y-4 p-5 sm:p-6">
-                    <Link href={href} className="group block">
-                      <h3 className="line-clamp-2 text-[1.6rem] font-black tracking-tight text-[color:var(--gh-heading)] group-hover:text-[color:var(--gh-accent)]">
+                  <div className="flex flex-col flex-1 p-3 sm:p-4">
+                    <Link href={href} className="flex-1 block">
+                      <div className="mb-0.5 text-[9px] font-semibold text-slate-400 line-clamp-1">
+                        {destination}
+                      </div>
+                      <h3 className="line-clamp-2 text-xs font-bold leading-tight text-slate-800 sm:text-sm">
                         {name}
                       </h3>
-                      {tagline ? (
-                        <p className="mt-2 line-clamp-2 text-sm font-medium text-[color:var(--gh-text-soft)]">
-                          {tagline}
-                        </p>
-                      ) : null}
-                    </Link>
-
-                    <div className="flex items-end justify-between gap-4 border-t border-[color:var(--gh-border)] pt-4">
-                      <div>
-                        <div className="text-3xl font-black tracking-tight text-[color:var(--gh-accent)]">
+                      <div className="mt-2">
+                        <div className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
+                          From
+                        </div>
+                        <div className="text-sm font-bold text-gh-rose">
                           Rs.{formatInr(finalPrice)}
                         </div>
-                        <div className="text-xs font-semibold text-[color:var(--gh-text-soft)]">/ person</div>
                       </div>
-                      <Link
-                        href={href}
-                        className="inline-flex items-center justify-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(255,79,138,0.22)]"
-                      >
-                        Explore 
-                      </Link>
-                    </div>
+                    </Link>
 
-                    <div className="mt-4">
+                    <div className="mt-4 border-t border-[color:var(--gh-border)] pt-3">
                       <PackageAddToCart
                         packageId={pkg._id}
                         packageName={name}
-                        showBookNow={false}
+                        packageData={pkg}
+                        showBookNow={true}
                         showMessage={false}
-                        size="sm"
                       />
                     </div>
                   </div>

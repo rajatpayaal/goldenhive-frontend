@@ -11,6 +11,8 @@ import {
 } from "@/actions/notifications.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { LoginModal } from "./LoginModal";
 
 function formatWhen(isoString) {
   if (!isoString) return "";
@@ -35,7 +37,9 @@ export function NotificationsDropdown({
   const [error, setError] = useState("");
   const [items, setItems] = useState([]);
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const rootRef = useRef(null);
+  const { user } = useAuth();
 
   const positionClass = useMemo(() => (align === "left" ? "left-0" : "right-0"), [align]);
   const isDark = variant === "header-dark";
@@ -146,12 +150,17 @@ export function NotificationsDropdown({
   };
 
   const onToggle = () => {
+    if (!user) {
+      setIsLoginOpen(true);
+      return;
+    }
     setOpen((prev) => !prev);
   };
 
   return (
-    <div ref={rootRef} className="relative">
-      <button
+    <>
+      <div ref={rootRef} className="relative">
+        <button
         type="button"
         onClick={onToggle}
         className={[
@@ -174,7 +183,7 @@ export function NotificationsDropdown({
 
       {open && (
         <div
-          className={`absolute ${positionClass} mt-3 w-[23rem] max-w-[92vw] overflow-hidden rounded-3xl border border-black/10 bg-white shadow-gh-soft`}
+          className={`fixed left-4 right-4 top-20 z-50 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-2xl sm:absolute sm:left-auto sm:${positionClass} sm:top-auto sm:mt-3 sm:w-[23rem] sm:max-w-[92vw] sm:origin-top-right sm:shadow-gh-soft`}
           role="dialog"
           aria-label="Notifications panel"
         >
@@ -291,5 +300,7 @@ export function NotificationsDropdown({
         </div>
       )}
     </div>
+    <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+  </>
   );
 }

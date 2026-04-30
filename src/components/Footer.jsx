@@ -129,8 +129,8 @@ export function Footer({ footer }) {
   const columns = (footer?.footerColumns || []).filter((c) => c?.isActive);
 
   return (
-    <footer className="bg-slate-950 text-white">
-      <div className="bg-[linear-gradient(135deg,#111827_0%,#1f2940_42%,#4a2d68_72%,#ff4f8a_130%)]">
+    <footer className="hidden bg-gh-navy text-white md:block">
+      <div>
         <div className="w-full px-4 py-12 sm:px-6 sm:py-14 lg:px-12">
           {tabs.length > 0 && (
             <div className="mb-10">
@@ -138,11 +138,28 @@ export function Footer({ footer }) {
             </div>
           )}
 
-          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-3 lg:grid-cols-6">
+            <div className="space-y-4 lg:col-span-1">
+              <Link href="/" className="inline-flex items-center gap-2 leading-none">
+                <img src="/logo-icon.svg" alt="GoldenHive" className="w-9 h-9 drop-shadow-lg" />
+                <div>
+                  <div className="text-xl font-black tracking-tight text-white">
+                    GoldenHive
+                  </div>
+                  <div className="mt-[2px] text-[8px] font-extrabold tracking-[0.45em] text-white/70">
+                    HOLIDAYS
+                  </div>
+                </div>
+              </Link>
+              <div className="mt-4 text-xs font-medium text-white/60">
+                {"\u00A9"} {new Date().getFullYear()} GoldenHive Holidays.<br/>All rights reserved.
+              </div>
+            </div>
+
             {columns.map((col) => (
               <div
                 key={col.title}
-                className="space-y-4 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-5 backdrop-blur-sm"
+                className="space-y-4"
               >
                 <div className="text-[11px] font-extrabold uppercase tracking-[0.32em] text-white/65">
                   {col.title}
@@ -161,43 +178,26 @@ export function Footer({ footer }) {
             ))}
 
             {footer?.qrCode?.isActive && (
-              <div className="space-y-4 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-5 backdrop-blur-sm md:justify-self-end">
+              <div className="space-y-4 md:justify-self-end">
                 <div className="text-[11px] font-extrabold uppercase tracking-[0.32em] text-white/65">
-                  {footer.qrCode.title || "Download App"}
+                  {footer.qrCode.title || "SCAN TO CHAT"}
                 </div>
                 {footer.qrCode.subtitle && (
-                  <p className="text-sm text-white/70">{footer.qrCode.subtitle}</p>
+                  <p className="text-[10px] font-bold text-white">{footer.qrCode.subtitle}</p>
                 )}
                 {footer.qrCode.imageUrl && (
-                  <div className="w-fit overflow-hidden rounded-[1.5rem] border border-white/10 bg-slate-950/60 p-4">
+                  <div className="w-fit overflow-hidden rounded-xl border border-white/10 bg-white p-2">
                     <Image
                       src={footer.qrCode.imageUrl}
                       alt={footer.qrCode.title || "QR code"}
-                      width={220}
-                      height={220}
-                      sizes="(max-width: 640px) 144px, 176px"
-                      className="h-40 w-40 object-contain sm:h-44 sm:w-44"
+                      width={80}
+                      height={80}
+                      className="h-20 w-20 object-contain"
                     />
                   </div>
                 )}
               </div>
             )}
-          </div>
-
-          <div className="mt-10 flex flex-col gap-5 rounded-[1.8rem] border border-white/10 bg-slate-950/35 px-5 py-6 md:flex-row md:items-center md:justify-between">
-            <div className="min-w-0">
-              <div className="text-xl font-black tracking-tight text-white">GoldenHive</div>
-              <div className="mt-1 text-xs font-semibold text-white/60">
-                {"\u00A9"} {new Date().getFullYear()} GoldenHive. All rights reserved.
-              </div>
-            </div>
-            <div className="max-w-3xl text-xs font-medium leading-6 text-white/60">
-              By accessing this page, you confirm that you have read, understood, and agreed to our{" "}
-              <Link href="/policies" className="font-semibold text-white/85 underline hover:text-white">
-                Policies
-              </Link>
-              , Terms of Service, Cookie Policy, Privacy Policy, and Content Guidelines.
-            </div>
           </div>
         </div>
       </div>

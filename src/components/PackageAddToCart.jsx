@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/useToast";
 import { addToCartAction } from "@/actions/cart.actions";
 import { cartActions, refreshCartCount } from "@/store";
 import { LoginModal } from "./LoginModal";
+import { Heart, CalendarCheck } from "lucide-react";
 
 export function PackageAddToCart({
   packageId,
@@ -94,20 +95,21 @@ export function PackageAddToCart({
     ? "bg-slate-200 text-slate-500"
     : isSuccess
       ? "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)]"
-      : "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white disabled:opacity-60";
+      : "gh-secondary-btn disabled:opacity-60";
   const bookNowClassName = !isLoggedIn
     ? "bg-slate-200 text-slate-500"
     : "bg-[color:var(--gh-heading)] text-white hover:bg-[rgba(31,41,64,0.92)] disabled:opacity-60";
 
   return (
     <>
-      <div className={showBookNow ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-3"}>
+      <div className={showBookNow ? "flex gap-2 sm:gap-3" : "flex gap-3"}>
         <button
           onClick={handleAddToCart}
           disabled={addToCartDisabled}
-          className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${addToCartClassName}`}
+          className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl border-2 border-slate-200 bg-slate-100 py-2 sm:py-3 text-[10px] sm:text-[11px] font-black text-slate-700 transition hover:bg-rose-50 hover:border-rose-200 hover:text-gh-rose disabled:opacity-50`}
         >
-          {loading ? "Adding..." : isSuccess ? "Added" : "Add to Cart"}
+          <Heart className="h-3.5 w-3.5" />
+          <span className="whitespace-nowrap">{loading ? "Wait..." : isSuccess ? "Saved" : "Wishlist"}</span>
         </button>
 
         {showBookNow ? (
@@ -138,10 +140,11 @@ export function PackageAddToCart({
               }
             }}
             disabled={bookNowDisabled}
-            className={`inline-flex items-center justify-center rounded-2xl ${padClasses} font-black shadow-[0_14px_30px_rgba(255,79,138,0.22)] transition ${bookNowClassName}`}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] py-2 sm:py-3 text-[10px] sm:text-[11px] font-black text-white shadow-md shadow-rose-200 transition hover:scale-[1.02] disabled:opacity-50`}
             type="button"
           >
-            {loading ? "Processing..." : "Book Now"}
+            <CalendarCheck className="h-3.5 w-3.5" />
+            <span className="whitespace-nowrap">{loading ? "Wait..." : "Book Now"}</span>
           </button>
         ) : null}
       </div>

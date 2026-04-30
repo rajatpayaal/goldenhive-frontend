@@ -3,18 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --gh-bg: #fffaf2;
-  --gh-bg-soft: #fff2e7;
-  --gh-surface: rgba(255, 253, 249, 0.92);
-  --gh-surface-strong: #fffdf9;
-  --gh-border: rgba(233, 178, 132, 0.24);
-  --gh-text: #513831;
-  --gh-text-soft: #8c7168;
-  --gh-heading: #1f2940;
-  --gh-accent: #ff4f8a;
-  --gh-accent-strong: #ffb95e;
+  --gh-bg: #FFFFFF;
+  --gh-bg-soft: #F9FAFB;
+  --gh-surface: #FFFFFF;
+  --gh-surface-strong: #F3F4F6;
+  --gh-border: #E5E7EB;
+  --gh-text: #111827;
+  --gh-text-soft: #6B7280;
+  --gh-heading: #111827;
+  --gh-accent: #E11D48;
+  --gh-accent-strong: #FF4F8A;
   --gh-accent-soft: rgba(255, 79, 138, 0.12);
-  --gh-shadow: 0 22px 60px rgba(121, 68, 44, 0.12);
+  --gh-primary: #FF4F8A;
+  --gh-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 html,
@@ -28,30 +29,9 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(circle at top left, rgba(255, 206, 223, 0.82), transparent 34%),
-    radial-gradient(circle at top right, rgba(255, 228, 181, 0.7), transparent 30%),
-    linear-gradient(135deg, #fff7f0 0%, #fff2ea 42%, #fffaf3 100%);
-  background-attachment: fixed;
+  background-color: var(--gh-bg);
   color: var(--gh-text);
   text-rendering: optimizeLegibility;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
-    repeating-linear-gradient(
-      115deg,
-      rgba(255, 255, 255, 0.12) 0,
-      rgba(255, 255, 255, 0.12) 2px,
-      transparent 2px,
-      transparent 24px
-    );
-  opacity: 0.48;
 }
 
 main {
@@ -64,7 +44,7 @@ h2,
 h3,
 h4 {
   color: var(--gh-heading);
-  font-family: var(--font-display), serif;
+  font-family: var(--font-display), sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -93,27 +73,44 @@ select {
 }
 
 .gh-glass {
-  background: rgba(255, 255, 255, 0.68);
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 18px 40px rgba(111, 66, 39, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .gh-surface {
   background: var(--gh-surface);
   border: 1px solid var(--gh-border);
   box-shadow: var(--gh-shadow);
-  backdrop-filter: blur(18px);
+  border-radius: 1rem;
 }
 
 .gh-primary-btn {
-  background: linear-gradient(90deg, var(--gh-accent), var(--gh-accent-strong));
+  background: linear-gradient(135deg, var(--gh-accent), var(--gh-accent-strong));
   color: white;
-  box-shadow: 0 18px 40px rgba(255, 79, 138, 0.22);
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s;
 }
 
 .gh-primary-btn:hover {
-  background: linear-gradient(90deg, #f53b7d, #ffab4a);
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 12px_30px_rgba(255,79,138,0.35);
+}
+
+.gh-secondary-btn {
+  background: linear-gradient(to right, var(--gh-accent), var(--gh-accent-strong));
+  color: white;
+  border-radius: 9999px; /* Pill shape */
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.gh-secondary-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 /* Utility: hide scrollbars for horizontal carousels (still scrollable). */

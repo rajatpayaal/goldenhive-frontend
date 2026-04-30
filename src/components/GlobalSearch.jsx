@@ -234,7 +234,8 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const isIconVariant = variant === "icon";
-  const isHeroVariant = variant === "hero";
+  const isHeroVariant = variant === "hero" || variant === "hero-naked";
+  const isHeroNakedVariant = variant === "hero-naked";
   const activeOpen = isIconVariant ? isDialogOpen : isPanelOpen;
   const isDark = tone === "header-dark";
 
@@ -435,7 +436,9 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
       <div
         className={[
           "flex items-center gap-2 rounded-2xl px-3 py-2 transition",
-          isHeroVariant
+          isHeroNakedVariant
+            ? ""
+            : isHeroVariant
             ? "border border-gh-gold/20 bg-white text-slate-900 shadow-sm focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/20"
             : "border border-black/10 bg-white shadow-sm focus-within:border-gh-gold/60 focus-within:ring-2 focus-within:ring-gh-gold/25",
         ].join(" ")}
@@ -458,13 +461,15 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
           aria-expanded={isPanelOpen}
           aria-controls={`${inputId}-panel`}
         />
-        <Search
-          className={[
-            "h-5 w-5 shrink-0",
-            isHeroVariant ? "text-gh-gold" : "text-slate-600",
-          ].join(" ")}
-          aria-hidden="true"
-        />
+        {!isHeroNakedVariant && (
+          <Search
+            className={[
+              "h-5 w-5 shrink-0",
+              isHeroVariant ? "text-gh-gold" : "text-slate-600",
+            ].join(" ")}
+            aria-hidden="true"
+          />
+        )}
         {query.length > 0 && (
           <button
             type="button"

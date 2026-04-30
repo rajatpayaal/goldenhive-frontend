@@ -31,21 +31,18 @@ export function BannerSlider({ banners }) {
 
   return (
     <>
-      <div className="mx-auto w-full max-w-6xl px-5 pb-4 pt-24 md:hidden">
-        <div className="rounded-[1.75rem] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
-          <HomeHeroSearch />
-        </div>
-      </div>
 
-      <section className="relative z-10 min-h-[340px] w-full overflow-hidden bg-gh-plum shadow-[0_18px_45px_rgba(2,6,23,0.12)] sm:min-h-[420px] lg:min-h-[480px]">
-        {banners.map((banner, index) => (
-          <div
-            key={banner._id}
-            className={[
-              "absolute inset-0 transition-opacity duration-700 ease-out",
-              index === currentIndex ? "opacity-100" : "opacity-0 pointer-events-none",
-            ].join(" ")}
-          >
+
+      <div className="px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8 pb-8">
+        <section className="relative mx-auto max-w-7xl z-10 min-h-[320px] w-full rounded-[2rem] bg-gh-plum shadow-gh-medium md:min-h-[460px] lg:min-h-[520px]">
+          {banners.map((banner, index) => (
+            <div
+              key={banner._id}
+              className={[
+                "absolute inset-0 overflow-hidden rounded-[2rem] transition-opacity duration-700 ease-out",
+                index === currentIndex ? "opacity-100" : "opacity-0 pointer-events-none",
+              ].join(" ")}
+            >
             {isVideoUrl(banner.imageUrl) ? (
               <>
                 <div
@@ -68,13 +65,16 @@ export function BannerSlider({ banners }) {
               />
             )}
 
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/88 via-slate-950/60 to-slate-950/25" />
+            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-r from-slate-950/88 via-slate-950/60 to-slate-950/25" />
 
             <div className="relative">
-              <div className="mx-auto max-w-6xl px-5">
-                <div className="flex min-h-[340px] flex-col justify-end pb-10 pt-20 text-white sm:min-h-[420px] sm:pb-12 sm:pt-24 lg:min-h-[480px] lg:pt-32">
-                  <p className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-extrabold uppercase tracking-wider backdrop-blur">
-                    {banner.seoTitle || "GoldenHive"}
+              <div className="mx-auto max-w-6xl px-5 h-full">
+
+
+                {/* Hero text + CTAs — bottom of banner */}
+                <div className="flex h-full flex-col justify-end pb-8 text-white sm:pb-12">
+                  <p className="inline-flex w-fit items-center rounded-full bg-[#5D32D9] px-3 py-1 text-[10px] font-bold text-white shadow-sm">
+                    {banner.seoTitle || "COLLECTION"}
                   </p>
 
                   <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight text-white drop-shadow-[0_8px_24px_rgba(15,23,42,0.55)] sm:text-5xl lg:text-6xl">
@@ -88,16 +88,16 @@ export function BannerSlider({ banners }) {
                     <div className="mt-7 flex flex-wrap gap-3">
                       <Link
                         href={resolveHref(banner)}
-                        className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gh-gold px-6 py-4 text-base font-black text-gh-plum shadow-[0_14px_30px_rgba(244,178,41,0.35)] hover:bg-gh-gold2"
+                        className="gh-primary-btn inline-flex items-center justify-center gap-2 px-6 py-3 text-sm"
                       >
-                        {banner.heroCtaText || banner.ctaText || "Explore"}
-                        <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                        {banner.heroCtaText || banner.ctaText || "Explore Packages"}
+                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
                       </Link>
                       <Link
                         href="/tour-packages"
-                        className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-base font-black text-white backdrop-blur hover:bg-white/15"
+                        className="inline-flex items-center justify-center rounded-full border border-white bg-transparent px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
                       >
-                        View Packages
+                        View All Packages
                       </Link>
                     </div>
                   )}
@@ -108,31 +108,32 @@ export function BannerSlider({ banners }) {
         ))}
 
         {banners.length > 1 && (
-          <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-2 px-5">
-            {banners.map((_, idx) => (
-              <button
-                key={idx}
-                className={[
-                  "h-2.5 rounded-full transition-all",
-                  idx === currentIndex ? "w-10 bg-white" : "w-2.5 bg-white/50 hover:bg-white/70",
-                ].join(" ")}
-                onClick={() => setCurrentIndex(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <div className="relative z-40 hidden md:block">
-        <div className="mx-auto -mt-10 w-full max-w-6xl px-5 lg:-mt-12">
-          <div className="rounded-[1.75rem] bg-gradient-to-r from-[#fff8df] via-[#f7dc8a] to-[#fff3c4] p-[1px] shadow-[0_24px_48px_rgba(180,138,24,0.22)]">
-            <div className="rounded-[calc(1.75rem-1px)] bg-[linear-gradient(180deg,rgba(255,252,244,0.96),rgba(255,248,225,0.92))] backdrop-blur-sm">
-              <HomeHeroSearch />
+            <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 px-5">
+              {banners.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={[
+                    "h-1.5 rounded-full transition-all",
+                    idx === currentIndex ? "w-4 bg-gh-gold" : "w-1.5 bg-white",
+                  ].join(" ")}
+                  onClick={() => setCurrentIndex(idx)}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
+          )}
+          
+          {/* Search bar overlapping the bottom edge on desktop */}
+          <div className="hidden md:block absolute -bottom-7 left-1/2 w-full max-w-2xl -translate-x-1/2 px-4 z-20">
+            <HomeHeroSearch />
           </div>
-        </div>
+        </section>
       </div>
+      <div className="px-4 py-4 md:hidden">
+        <HomeHeroSearch />
+      </div>
+
+
     </>
   );
 }

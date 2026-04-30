@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   loginAction,
   registerUserAction,
@@ -16,10 +17,11 @@ const passwordInputClassName =
   "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 pr-16 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-[color:var(--gh-accent)]";
 
 const primaryButtonClassName =
-  "inline-flex w-full items-center justify-center rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60";
+  "gh-primary-btn flex w-full items-center justify-center px-5 py-4 text-base shadow-md disabled:cursor-not-allowed disabled:opacity-60";
 
 export function LoginModal({ isOpen, onClose }) {
   const { setUser, refreshUser } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState("register");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
@@ -67,14 +69,19 @@ export function LoginModal({ isOpen, onClose }) {
     onClose();
   };
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen) return null;
+  if (!mounted) return null;
+
   const title = (() => {
     if (mode === "login") return "Log In";
     if (step === 3) return "Verify OTP";
     if (step === 2) return "Complete Registration";
     return "Create Account";
   })();
-
-  if (!isOpen) return null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -323,9 +330,9 @@ export function LoginModal({ isOpen, onClose }) {
     }
   };
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-3 backdrop-blur-sm sm:p-5"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/65 p-3 backdrop-blur-sm sm:p-5"
       onClick={closeModal}
       role="dialog"
       aria-modal="true"
@@ -343,9 +350,12 @@ export function LoginModal({ isOpen, onClose }) {
           {"\u00D7"}
         </button>
 
-        <div className="bg-[linear-gradient(135deg,#111827_0%,#1f2940_40%,#4a2d68_70%,#ff4f8a_130%)] px-5 py-6 text-white sm:px-8 sm:py-7">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
-            Premium Access
+        <div className="bg-gh-navy px-5 py-6 text-white sm:px-8 sm:py-7">
+          <div className="flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
+              Premium Access
+            </div>
+            <img src="/logo-icon.svg" alt="GoldenHive" className="w-10 h-10 drop-shadow-lg" />
           </div>
           <div className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">GoldenHive</div>
           <div className="mt-1 text-sm font-semibold text-white/80">Sign in or create your travel account</div>
@@ -393,9 +403,9 @@ export function LoginModal({ isOpen, onClose }) {
                       setShowConfirmPassword(false);
                     }}
                     className={[
-                      "flex-1 rounded-xl px-4 py-2 text-sm font-black transition sm:flex-none",
+                      "flex-1 rounded-full px-4 py-2 text-sm font-black transition sm:flex-none",
                       mode !== "login"
-                        ? "bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-white shadow-[0_10px_24px_rgba(255,79,138,0.18)]"
+                        ? "gh-secondary-btn shadow-md"
                         : "text-slate-600 hover:text-slate-900",
                     ].join(" ")}
                   >
@@ -412,9 +422,9 @@ export function LoginModal({ isOpen, onClose }) {
                       setShowConfirmPassword(false);
                     }}
                     className={[
-                      "flex-1 rounded-xl px-4 py-2 text-sm font-black transition sm:flex-none",
+                      "flex-1 rounded-full px-4 py-2 text-sm font-black transition sm:flex-none",
                       mode === "login"
-                        ? "bg-[color:var(--gh-heading)] text-white shadow-[0_10px_24px_rgba(31,41,64,0.18)]"
+                        ? "bg-[color:var(--gh-heading)] text-white shadow-md"
                         : "text-slate-600 hover:text-slate-900",
                     ].join(" ")}
                   >
@@ -678,7 +688,7 @@ export function LoginModal({ isOpen, onClose }) {
                     </button>
                     <button
                       type="submit"
-                      className="col-span-2 inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-sm font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="col-span-2 gh-secondary-btn flex items-center justify-center px-5 py-4 text-sm disabled:cursor-not-allowed disabled:opacity-60"
                       disabled={loading || !isRegistrationFormValid()}
                     >
                       {loading ? "Registering..." : "Sign Up"}
@@ -745,5 +755,6 @@ export function LoginModal({ isOpen, onClose }) {
       </div>
     </div>
   );
-}
 
+  return createPortal(modalContent, document.body);
+}

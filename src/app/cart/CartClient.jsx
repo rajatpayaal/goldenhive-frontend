@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useCallback, useEffect, useState } from "react";
@@ -136,7 +136,7 @@ export default function CartClient() {
   if (!user && !hasToken) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-16">
-        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-5 py-10 text-center shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:px-8 sm:py-14">
+        <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-10 text-center shadow-gh-soft sm:px-8 sm:py-14">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
             Your Cart
           </p>
@@ -146,7 +146,7 @@ export default function CartClient() {
           <button
             type="button"
             onClick={() => setIsLoginOpen(true)}
-            className="inline-flex rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-7 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)]"
+            className="gh-secondary-btn inline-flex px-7 py-3 shadow-md"
           >
             Log In / Sign Up
           </button>
@@ -163,14 +163,14 @@ export default function CartClient() {
   if (cartItems.length === 0 && !loading) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-5 sm:py-16">
-        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] p-10 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+        <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-10 shadow-gh-soft">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
             Your Cart
           </p>
           <h1 className="mt-3 text-3xl font-black text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">Shopping Cart</h1>
           <div className="mt-8 rounded-[1.5rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] p-8">
             <p className="text-lg font-semibold text-[color:var(--gh-text-soft)]">Your cart is empty.</p>
-          <Link href="/" className="mt-6 inline-flex rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-7 py-3 text-white font-bold shadow-[0_12px_30px_rgba(255,79,138,0.22)]">
+          <Link href="/" className="mt-6 gh-secondary-btn inline-flex px-7 py-3 shadow-md">
             Continue Shopping
           </Link>
           </div>
@@ -226,7 +226,7 @@ export default function CartClient() {
             const destination = pkg?.basic?.destination;
 
             return (
-              <div key={productId} className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-5 shadow-[0_18px_45px_rgba(121,68,44,0.12)] sm:p-6">
+              <div key={productId} className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-5 shadow-gh-soft sm:p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                   <div className="relative h-36 w-full overflow-hidden rounded-[1.5rem] bg-[color:var(--gh-bg-soft)] sm:h-32 sm:w-44">
                     {pkg?.images?.primary?.url ? (
@@ -236,7 +236,7 @@ export default function CartClient() {
                       />
                     ) : null}
                     {(durationDays || durationNights) && (
-                      <div className="absolute left-3 top-3 rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-xs font-black text-white shadow-sm">
+                      <div className="absolute left-3 top-3 gh-secondary-btn rounded-full px-3 py-1.5 text-xs font-black">
                         {durationDays ? `${durationDays}D` : ""}
                         {durationDays && durationNights ? " / " : ""}
                         {durationNights ? `${durationNights}N` : ""}
@@ -332,7 +332,7 @@ export default function CartClient() {
         </div>
 
         <div className="lg:sticky lg:top-24 h-fit">
-          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_20px_55px_rgba(121,68,44,0.12)]">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs font-black uppercase tracking-[0.28em] text-[color:var(--gh-accent)]">
@@ -340,7 +340,7 @@ export default function CartClient() {
                 </div>
                 <h2 className="mt-2 text-3xl font-black text-[color:var(--gh-heading)]">My Cart</h2>
               </div>
-              <div className="rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-xs font-black text-white">
+              <div className="gh-secondary-btn rounded-full px-3 py-1.5 text-xs font-black">
                 {cartItems.length} items
               </div>
             </div>
@@ -403,8 +403,8 @@ export default function CartClient() {
             <div className="space-y-3">
               <Link
                 href="/booking"
-                className="inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-4 text-base font-black text-white shadow-[0_14px_30px_rgba(255,79,138,0.22)]"
-              >
+              className="gh-secondary-btn inline-flex w-full items-center justify-center px-5 py-4 text-base shadow-md"
+            >
                 Proceed to Checkout -&gt;
               </Link>
               <a

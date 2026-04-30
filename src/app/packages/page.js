@@ -15,7 +15,7 @@ export default async function PackagesPage() {
 
   return (
     <main className="px-4 py-8 sm:px-5 sm:py-10">
-      <section className="mx-auto max-w-6xl rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-5 shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:p-8">
+      <section className="mx-auto max-w-6xl rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-4 shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:p-8">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
           GoldenHive Holidays
         </p>
@@ -26,39 +26,44 @@ export default async function PackagesPage() {
           Discover premium trips styled with the same soft cream and sunset accent theme across the site.
         </p>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 lg:gap-6">
           {packages.map((pkg) => (
             <Link
               key={pkg._id}
               href={`/packages/${pkg.basic?.slug || pkg._id}`}
-              className="overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-white shadow-[0_18px_45px_rgba(121,68,44,0.12)] transition hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(255,79,138,0.18)]"
+              className="group overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-white shadow-[0_18px_45px_rgba(121,68,44,0.12)] transition hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(255,79,138,0.18)]"
             >
               <div className="relative aspect-[4/3] bg-[color:var(--gh-bg-soft)]">
                 <div
-                  className="absolute inset-0 bg-cover bg-center"
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                   style={{ backgroundImage: `url(${getPackageImage(pkg)})` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(31,41,64,0.35)] to-transparent" />
+                {pkg.pricing?.discountPercent > 0 && (
+                  <div className="absolute left-2.5 top-2.5 rounded-full bg-[color:var(--gh-accent)] px-2.5 py-0.5 text-[9px] font-black text-white shadow-sm">
+                    {pkg.pricing.discountPercent}% OFF
+                  </div>
+                )}
               </div>
-              <div className="space-y-3 p-5">
-                <div className="text-xs font-extrabold uppercase tracking-[0.2em] text-[color:var(--gh-accent)]">
+              <div className="space-y-2 p-3 sm:space-y-3 sm:p-5">
+                <div className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[color:var(--gh-accent)] sm:text-xs">
                   {pkg.basic?.destination || "Featured"}
                 </div>
-                <h2 className="line-clamp-2 text-2xl font-black text-[color:var(--gh-heading)] sm:text-3xl">
+                <h2 className="line-clamp-2 text-sm font-black leading-snug text-[color:var(--gh-heading)] sm:text-xl">
                   {pkg.basic?.name}
                 </h2>
-                <p className="line-clamp-3 text-sm font-medium text-[color:var(--gh-text-soft)]">
+                <p className="hidden line-clamp-2 text-xs font-medium text-[color:var(--gh-text-soft)] sm:block sm:line-clamp-3 sm:text-sm">
                   {pkg.basic?.tagline || "Curated holiday experience"}
                 </p>
-                <div className="flex flex-col gap-3 border-t border-[color:var(--gh-border)] pt-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="flex flex-col gap-2 border-t border-[color:var(--gh-border)] pt-3 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <div className="text-2xl font-black text-[color:var(--gh-accent)] sm:text-3xl">
+                    <div className="text-base font-black text-[color:var(--gh-accent)] sm:text-2xl">
                       Rs.{Number(pkg.pricing?.finalPrice || 0).toLocaleString("en-IN")}
                     </div>
-                    <div className="text-xs font-semibold text-[color:var(--gh-text-soft)]">/ person</div>
+                    <div className="text-[9px] font-semibold text-[color:var(--gh-text-soft)] sm:text-xs">/ person</div>
                   </div>
-                  <span className="rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-5 py-3 text-sm font-black text-white">
-                    View Package
+                  <span className="rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-3 py-1.5 text-[9px] font-black text-white sm:px-5 sm:py-2.5 sm:text-sm">
+                    View
                   </span>
                 </div>
               </div>

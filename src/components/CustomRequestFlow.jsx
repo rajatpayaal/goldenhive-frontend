@@ -178,7 +178,7 @@ export function CustomRequestFlow() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-      <section className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+      <section className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
         <div className="flex flex-col gap-1">
           <h2 className="text-2xl font-black text-[color:var(--gh-heading)]">Tell us what you need</h2>
           <p className="text-sm text-[color:var(--gh-text-soft)]">
@@ -222,32 +222,41 @@ export function CustomRequestFlow() {
               />
             </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            <input
-              type="number"
-              min="1"
-              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
-              placeholder="Travelers"
-              value={formData.travellers}
-              onChange={handleInputChange("travellers")}
-              required
-            />
-            <input
-              type="number"
-              min="1"
-              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
-              placeholder="Duration (days)"
-              value={formData.durationDays}
-              onChange={handleInputChange("durationDays")}
-            />
-            <input
-              type="number"
-              min="0"
-              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
-              placeholder="Budget (₹)"
-              value={formData.budget}
-              onChange={handleInputChange("budget")}
-            />
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Travelers</label>
+              <input
+                type="number"
+                min="1"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
+                placeholder="Travelers"
+                value={formData.travellers}
+                onChange={handleInputChange("travellers")}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Duration (Days)</label>
+              <input
+                type="number"
+                min="1"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
+                placeholder="Duration (days)"
+                value={formData.durationDays}
+                onChange={handleInputChange("durationDays")}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Budget (₹)</label>
+              <input
+                type="number"
+                min="0"
+                className="mt-2 w-full rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-3 text-sm focus:border-[color:var(--gh-accent)] focus:outline-none"
+                placeholder="Budget (₹)"
+                value={formData.budget}
+                onChange={handleInputChange("budget")}
+              />
+            </div>
           </div>
           <div>
             <label className="text-xs font-black uppercase tracking-[0.2em] text-[color:var(--gh-text-soft)]">Preferences</label>
@@ -283,7 +292,7 @@ export function CustomRequestFlow() {
           <button
             type="submit"
             disabled={submitting || !user}
-            className="w-full rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(255,79,138,0.22)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="gh-secondary-btn w-full px-6 py-3 text-sm shadow-md disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Send Request"}
           </button>
@@ -291,7 +300,7 @@ export function CustomRequestFlow() {
       </section>
 
       <section className="space-y-6">
-        <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+        <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="text-lg font-black text-[color:var(--gh-heading)]">My requests</h3>
@@ -353,7 +362,7 @@ export function CustomRequestFlow() {
         </div>
 
         {isAdmin && (
-          <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.98)] p-6 shadow-[0_18px_45px_rgba(121,68,44,0.12)]">
+          <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
             <h3 className="text-lg font-black text-[color:var(--gh-heading)]">Admin / Agent view</h3>
             <p className="mt-1 text-sm text-[color:var(--gh-text-soft)]">
               Fetch a request by ID to see its status and suggest updates.
@@ -409,7 +418,7 @@ export function CustomRequestFlow() {
                 <button
                   onClick={handleAdminSave}
                   disabled={adminLoading}
-                  className="w-full rounded-2xl bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] px-4 py-3 text-sm font-black text-white hover:opacity-90 disabled:opacity-60"
+                  className="gh-secondary-btn w-full px-4 py-3 text-sm shadow-sm disabled:opacity-60"
                 >
                   Save changes
                 </button>
