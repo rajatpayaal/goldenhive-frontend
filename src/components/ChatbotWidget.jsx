@@ -27,9 +27,16 @@ export function ChatbotWidget({ title = "Help Center", isOpen: controlledOpen, o
   const isControlled = controlledOpen !== undefined;
   const [internalOpen, setInternalOpen] = useState(false);
   const open = isControlled ? controlledOpen : internalOpen;
-  const setOpen = isControlled
-    ? (val) => { if (!val && controlledOnClose) controlledOnClose(); }
-    : setInternalOpen;
+  const setOpen = useCallback(
+    (val) => {
+      if (isControlled) {
+        if (!val && controlledOnClose) controlledOnClose();
+      } else {
+        setInternalOpen(val);
+      }
+    },
+    [isControlled, controlledOnClose]
+  );
 
   const [query, setQuery] = useState("");
   const [faqs, setFaqs] = useState([]);
@@ -51,7 +58,7 @@ export function ChatbotWidget({ title = "Help Center", isOpen: controlledOpen, o
   const closeWidget = useCallback(() => {
     resetState();
     setOpen(false);
-  }, [resetState]);
+  }, [resetState, setOpen]);
 
   useEffect(() => {
     if (!open) return;

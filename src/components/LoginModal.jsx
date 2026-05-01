@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useSyncExternalStore, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import {
   loginAction,
   registerUserAction,
@@ -21,7 +22,7 @@ const primaryButtonClassName =
 
 export function LoginModal({ isOpen, onClose }) {
   const { setUser, refreshUser } = useAuth();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [mode, setMode] = useState("register");
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState("");
@@ -68,10 +69,6 @@ export function LoginModal({ isOpen, onClose }) {
     setSuccess(false);
     onClose();
   };
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!isOpen) return null;
   if (!mounted) return null;
@@ -355,7 +352,7 @@ export function LoginModal({ isOpen, onClose }) {
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
               Premium Access
             </div>
-            <img src="/logo-icon.svg" alt="GoldenHive" className="w-10 h-10 drop-shadow-lg" />
+            <Image src="/logo-icon.svg" alt="GoldenHive" width={40} height={40} className="drop-shadow-lg" />
           </div>
           <div className="mt-4 text-2xl font-black tracking-tight sm:text-3xl">GoldenHive</div>
           <div className="mt-1 text-sm font-semibold text-white/80">Sign in or create your travel account</div>

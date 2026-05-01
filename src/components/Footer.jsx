@@ -141,7 +141,7 @@ export function Footer({ footer }) {
           <div className="grid gap-6 sm:gap-8 md:grid-cols-3 lg:grid-cols-6">
             <div className="space-y-4 lg:col-span-1">
               <Link href="/" className="inline-flex items-center gap-2 leading-none">
-                <img src="/logo-icon.svg" alt="GoldenHive" className="w-9 h-9 drop-shadow-lg" />
+                <Image src="/logo-icon.svg" alt="GoldenHive" width={36} height={36} className="drop-shadow-lg" />
                 <div>
                   <div className="text-xl font-black tracking-tight text-white">
                     GoldenHive
