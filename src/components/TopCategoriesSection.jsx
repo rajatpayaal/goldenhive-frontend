@@ -82,7 +82,7 @@ export function TopCategoriesSection({ categories = [] }) {
   if (activeCategories.length === 0) return null;
 
   return (
-    <section className="w-full py-5 px-4 sm:px-6">
+    <section className="md:hidden w-full py-5 px-4 sm:px-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[17px] font-extrabold tracking-tight text-slate-800">
