@@ -35,6 +35,7 @@ export default async function SectionPage({ params }) {
             categories={activeCategories}
             title={matchedCategory.name}
             subtitle={matchedCategory.description || "Handpicked journeys for a divine experience"}
+            activeCategorySlug={matchedCategory.slug}
           />
         </div>
 

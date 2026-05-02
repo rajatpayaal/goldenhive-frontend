@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Heart,
-  SlidersHorizontal,
   Search,
   Calendar,
   BedDouble,
@@ -109,28 +108,7 @@ export function PackagesListClient({ packages = [], categories = [], title = "Al
             )}
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Wishlist count badge */}
-            <div className="relative">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white">
-                <Heart className="h-4 w-4 text-slate-600" strokeWidth={1.8} />
-              </div>
-              {Object.values(wishlist).filter(Boolean).length > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[color:var(--gh-accent)] text-[8px] font-black text-white">
-                  {Object.values(wishlist).filter(Boolean).length}
-                </span>
-              )}
-            </div>
 
-            {/* Filter button */}
-            <button
-              type="button"
-              className="flex h-9 items-center gap-1.5 rounded-full bg-[color:var(--gh-accent)] px-3 text-[11px] font-black text-white shadow-sm transition active:scale-95"
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={2} />
-              Filter
-            </button>
-          </div>
         </div>
       </div>
 
