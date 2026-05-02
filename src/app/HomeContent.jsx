@@ -1,6 +1,7 @@
 import { BannerSlider } from "../components/BannerSlider";
 import { CustomRequestCallout } from "../components/CustomRequestCallout";
 import { PackagesSection } from "../components/PackagesSection";
+import { TopCategoriesSection } from "../components/TopCategoriesSection";
 import { apiService } from "../services/api.service";
 import ScrollToSection from "../components/ScrollToSection";
 
@@ -30,6 +31,7 @@ export default async function HomeContent({ initialSection }) {
       {initialSection ? <ScrollToSection sectionId={initialSection} /> : null}
       <BannerSlider banners={banners} />
       <CustomRequestCallout />
+      <TopCategoriesSection categories={activeCategories} />
 
       <div className="space-y-8 py-8 sm:space-y-10 sm:py-10">
         {activeCategories.map((category) => (

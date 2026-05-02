@@ -158,11 +158,35 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
   return (
     <>
       <div ref={rootRef} className="relative">
+        {/* Mobile: compact icon-only circle button */}
         <button
           type="button"
           onClick={onToggle}
           className={[
-            "relative inline-flex items-center justify-center gap-2 rounded-2xl border px-4 py-2 text-sm font-black transition",
+            "relative inline-flex items-center justify-center rounded-full transition",
+            "sm:hidden",
+            "h-9 w-9",
+            isDark
+              ? "bg-white/10 text-white hover:bg-white/15"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+          ].join(" ")}
+          aria-label="Wishlist"
+          aria-expanded={open}
+        >
+          <Heart className="h-5 w-5" aria-hidden="true" />
+          {cartCount > 0 && (
+            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[color:var(--gh-accent)] px-1 text-[10px] font-black text-white shadow-sm">
+              {cartCount > 9 ? "9+" : cartCount}
+            </span>
+          )}
+        </button>
+
+        {/* Desktop: pill button with text */}
+        <button
+          type="button"
+          onClick={onToggle}
+          className={[
+            "relative hidden sm:inline-flex items-center justify-center gap-2 rounded-2xl border px-4 py-2 text-sm font-black transition",
             isDark
               ? "border-white/15 bg-white/10 text-white hover:bg-white/15"
               : "border-black/10 bg-white text-slate-900 hover:bg-slate-50",
@@ -171,7 +195,7 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
           aria-expanded={open}
         >
           <Heart className="h-5 w-5" aria-hidden="true" />
-          <span className="hidden sm:inline">Wishlist</span>
+          <span>Wishlist</span>
           {cartCount > 0 && (
             <span className="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gh-rose px-1.5 text-xs font-black text-white shadow-sm">
               {cartCount}

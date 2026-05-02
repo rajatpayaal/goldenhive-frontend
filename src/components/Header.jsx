@@ -272,7 +272,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
             )}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <NotificationsDropdown
               initialUnreadCount={unreadCount}
               onUnreadCountChange={setUnreadCount}
@@ -295,10 +295,10 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
             {!isLoading && !user && (
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gh-primary text-slate-900 lg:hidden"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white shadow-md transition hover:opacity-90 lg:hidden"
                 aria-label="Log In"
               >
-                <div className="h-4 w-4 rounded-full border-2 border-slate-900" />
+                <User className="h-4 w-4" />
               </button>
             )}
 

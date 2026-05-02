@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { PackagesCarousel } from "./PackagesCarousel";
 
 export function PackagesSection({
@@ -15,17 +16,21 @@ export function PackagesSection({
       {aliasIds.map((id) => (
         <div key={id} id={id} aria-hidden="true" />
       ))}
-      <div className="w-full px-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold tracking-tight text-[color:var(--gh-heading)]">
+      <div className="w-full px-4 sm:px-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-[16px] font-extrabold tracking-tight text-slate-800">
             {title}
           </h2>
-          <span className="text-xs font-bold text-gh-rose cursor-pointer">
+          <Link
+            href={sectionId ? `/${sectionId}` : "/packages"}
+            className="text-[11px] font-bold text-[color:var(--gh-accent)] hover:underline"
+          >
             View All
-          </span>
+          </Link>
         </div>
         <PackagesCarousel packages={packages} autoSlide={false} />
       </div>
     </section>
   );
 }
+
