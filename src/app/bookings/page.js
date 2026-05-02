@@ -1,14 +1,31 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useState } from "react";
-import { BriefcaseBusiness, CalendarDays, CircleHelp, CreditCard, MapPinned, MessageCircle, Package, Sparkles, UserRound } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import {
+  CalendarDays,
+  MapPin,
+  Users,
+  Package,
+  MessageCircle,
+  ChevronRight,
+  Download,
+  CalendarClock,
+  UserPlus,
+  XCircle,
+  Gift,
+  HeadphonesIcon,
+  ArrowRight,
+  Briefcase,
+  Wallet,
+} from "lucide-react";
 import { getMyBookingsAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Loader from "@/components/Loader";
 
+/* ─── helpers ─────────────────────────────────────────────────── */
 const formatDate = (value) => {
   if (!value) return "-";
   try {
@@ -26,116 +43,229 @@ const formatCurrency = (value) => {
   const amount = Number(value);
   if (!Number.isFinite(amount) || amount <= 0) return "TBA";
   try {
-    return `Rs. ${new Intl.NumberFormat("en-IN").format(amount)}`;
+    return `₹ ${new Intl.NumberFormat("en-IN").format(amount)}`;
   } catch {
-    return `Rs. ${amount}`;
+    return `₹ ${amount}`;
   }
 };
 
-const statusTone = (value) => {
-  if (value === "CONFIRMED") return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  if (value === "REQUESTED") return "border-amber-200 bg-amber-50 text-amber-700";
-  if (value === "CANCELLED") return "border-rose-200 bg-rose-50 text-rose-700";
-  return "border-[color:var(--gh-border)] bg-white text-[color:var(--gh-text-soft)]";
+const getBookingStatus = (booking) => {
+  const s = booking.status?.toUpperCase();
+  if (s === "CONFIRMED") return "CONFIRMED";
+  if (s === "CANCELLED") return "CANCELLED";
+  if (s === "COMPLETED") return "COMPLETED";
+  return "UPCOMING";
 };
 
-const paymentTone = (value) => {
-  if (value === "PAID") return "border-emerald-200 bg-emerald-50 text-emerald-700";
-  if (value === "UNPAID") return "border-orange-200 bg-orange-50 text-orange-700";
-  return "border-[color:var(--gh-border)] bg-white text-[color:var(--gh-text-soft)]";
+const STATUS_CONFIG = {
+  UPCOMING:  { label: "UPCOMING",  bg: "bg-[color:var(--gh-accent)]", text: "text-white" },
+  CONFIRMED: { label: "CONFIRMED", bg: "bg-emerald-500",               text: "text-white" },
+  COMPLETED: { label: "COMPLETED", bg: "bg-slate-500",                 text: "text-white" },
+  CANCELLED: { label: "CANCELLED", bg: "bg-rose-500",                  text: "text-white" },
 };
 
-const shellClass =
-  "rounded-2xl border border-[color:var(--gh-border)] bg-white shadow-gh-soft";
+const PAYMENT_CONFIG = {
+  PAID:   { label: "PAID",   bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200" },
+  UNPAID: { label: "UNPAID", bg: "bg-orange-100",  text: "text-orange-700",  border: "border-orange-200" },
+};
 
-function PageIntro() {
+const getPackageName = (booking) => {
+  if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
+    const p = booking.packageId[0];
+    return typeof p === "string" ? null : p.basic?.name || null;
+  }
+  return null;
+};
+
+const getPackageImage = (booking) => {
+  if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
+    const p = booking.packageId[0];
+    if (typeof p !== "string") {
+      return p.images?.primary?.url || p.images?.gallery?.[0]?.url || null;
+    }
+  }
+  return null;
+};
+
+const getPackageDestination = (booking) => {
+  if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
+    const p = booking.packageId[0];
+    if (typeof p !== "string") return p.basic?.destination || null;
+  }
+  return null;
+};
+
+const TABS = ["All", "Upcoming", "Confirmed", "Completed", "Cancelled"];
+
+/* ─── Booking Card ────────────────────────────────────────────── */
+function BookingCard({ booking }) {
+  const status = getBookingStatus(booking);
+  const statusCfg = STATUS_CONFIG[status] || STATUS_CONFIG.UPCOMING;
+  const paymentKey = booking.paymentStatus?.toUpperCase() === "PAID" ? "PAID" : "UNPAID";
+  const paymentCfg = PAYMENT_CONFIG[paymentKey];
+  const pkgName = getPackageName(booking) || booking.bookingNo || `Booking #${booking._id?.slice(-6).toUpperCase()}`;
+  const pkgImage = getPackageImage(booking);
+  const destination = getPackageDestination(booking);
+  const bookingNo = booking.bookingNo || booking._id?.slice(-10).toUpperCase();
+  const packageCount = Array.isArray(booking.packageId) ? booking.packageId.length : 1;
+  const waLink = `https://wa.me/7505917525?text=I%20need%20help%20with%20booking%20${encodeURIComponent(bookingNo)}`;
+
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-gh-navy/10 bg-gh-navy px-7 py-8 text-white shadow-gh-medium sm:px-10 sm:py-10">
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-64 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_60%)]" />
-      <div className="pointer-events-none absolute -left-16 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
-            <Sparkles className="h-3.5 w-3.5" />
-            Booking Dashboard
+    <article className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_2px_16px_rgba(17,24,39,0.08)]">
+      {/* Image row */}
+      <div className="flex gap-0">
+        {/* Left: image with status badge */}
+        <div className="relative w-[130px] shrink-0 sm:w-[160px]">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: pkgImage ? `url(${pkgImage})` : "linear-gradient(135deg,#1e3a5f,#2d6a9f)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+          {/* Status badge */}
+          <div className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[9px] font-black tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
+            {statusCfg.label}
           </div>
-          <h1 className="mt-4 max-w-2xl text-3xl font-black tracking-tight text-white sm:text-5xl">
-            My Bookings
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-white/80 sm:text-base">
-            Track your upcoming journeys, booking status, support requests, and payment progress from one clean place.
-          </p>
+
+          {/* Booking ID at bottom */}
+          <div className="absolute bottom-2 left-2 right-2">
+            <p className="text-[8px] font-semibold text-white/70">Booking ID</p>
+            <p className="truncate text-[9px] font-black text-white">{bookingNo}</p>
+          </div>
+
+          {/* Aspect ratio holder */}
+          <div className="h-[140px] sm:h-[160px]" />
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[26rem] lg:max-w-[28rem] lg:flex-1">
-          <div className="rounded-3xl border border-white/15 bg-white/10 px-4 py-4 backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-white/65">Stay Updated</div>
-            <div className="mt-2 text-sm font-semibold text-white">Every booking timeline stays visible here.</div>
+        {/* Right: details */}
+        <div className="flex min-w-0 flex-1 flex-col justify-between p-3">
+          {/* Top */}
+          <div>
+            {destination && (
+              <div className="mb-1 flex items-center gap-1">
+                <MapPin className="h-2.5 w-2.5 shrink-0 text-[color:var(--gh-accent)]" strokeWidth={2} />
+                <span className="truncate text-[9px] font-bold text-slate-500">{destination}</span>
+              </div>
+            )}
+            <h2 className="line-clamp-2 text-[13px] font-extrabold leading-snug text-slate-900">{pkgName}</h2>
+
+            {/* Date + Travellers row */}
+            <div className="mt-2 grid grid-cols-3 gap-1">
+              <div>
+                <p className="text-[8px] font-semibold text-slate-400">Check-in</p>
+                <p className="text-[10px] font-black text-slate-700">{formatDate(booking.startDate)}</p>
+              </div>
+              <div>
+                <p className="text-[8px] font-semibold text-slate-400">Check-out</p>
+                <p className="text-[10px] font-black text-slate-700">{formatDate(booking.endDate)}</p>
+              </div>
+              <div>
+                <p className="text-[8px] font-semibold text-slate-400">Travellers</p>
+                <p className="text-[10px] font-black text-slate-700">{booking.travellers || 1} · {packageCount} pkg</p>
+              </div>
+            </div>
           </div>
-          <div className="rounded-3xl border border-white/15 bg-white/10 px-4 py-4 backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-white/65">Need Support</div>
-            <div className="mt-2 text-sm font-semibold text-white">Reach us on WhatsApp whenever plans change.</div>
-          </div>
-          <div className="rounded-3xl border border-white/15 bg-white/10 px-4 py-4 backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-white/65">Secure Records</div>
-            <div className="mt-2 text-sm font-semibold text-white">Booking details and payments remain organized.</div>
+
+          {/* Payment + Amount */}
+          <div className="mt-2.5 flex items-end justify-between gap-2">
+            <div>
+              <p className="text-[8px] font-semibold text-slate-400">Payment Status</p>
+              <span className={`mt-0.5 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black ${paymentCfg.bg} ${paymentCfg.text} ${paymentCfg.border}`}>
+                {paymentCfg.label}
+              </span>
+            </div>
+            <div className="text-right">
+              <p className="text-[8px] font-semibold text-slate-400">Total Amount</p>
+              <p className="text-[15px] font-black leading-none text-[color:var(--gh-accent)]">{formatCurrency(booking.totalAmount)}</p>
+            </div>
           </div>
         </div>
       </div>
-    </section>
-  );
-}
 
-function EmptyStateCard({ title, description, primaryHref, primaryLabel, onPrimaryClick, secondaryHref, secondaryLabel }) {
-  return (
-    <div className={`${shellClass} p-8 text-center sm:p-10`}>
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)] text-[color:var(--gh-accent)] shadow-md">
-        <BriefcaseBusiness className="h-7 w-7" />
-      </div>
-      <h2 className="mt-5 text-2xl font-black text-[color:var(--gh-heading)]">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-7 text-[color:var(--gh-text-soft)] sm:text-base">
-        {description}
-      </p>
-      <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        {onPrimaryClick ? (
-          <button
-            type="button"
-            onClick={onPrimaryClick}
-            className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-black"
-          >
-            {primaryLabel}
-          </button>
-        ) : (
-          <Link
-            href={primaryHref}
-            className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-black"
-          >
-            {primaryLabel}
-          </Link>
-        )}
+      {/* Bottom actions */}
+      <div className="flex items-center border-t border-slate-100">
         <Link
-          href={secondaryHref}
-          className="inline-flex items-center justify-center rounded-2xl border border-[color:var(--gh-border)] bg-white px-6 py-3 text-sm font-black text-[color:var(--gh-heading)] hover:bg-[color:var(--gh-bg-soft)]"
+          href={`/bookings/${booking._id}`}
+          className="flex flex-1 items-center justify-center gap-1.5 py-3 text-[11px] font-black text-[color:var(--gh-accent)] transition hover:bg-slate-50"
         >
-          {secondaryLabel}
+          View Details
+          <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
         </Link>
+        <div className="h-4 w-px bg-slate-100" />
+        <a
+          href={waLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-1 items-center justify-center gap-1.5 py-3 text-[11px] font-black text-slate-600 transition hover:bg-slate-50"
+        >
+          <MessageCircle className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2} />
+          Contact Support
+        </a>
       </div>
-    </div>
+    </article>
   );
 }
 
-function StatItem({ icon: Icon, label, value }) {
+/* ─── Quick Actions ───────────────────────────────────────────── */
+function QuickActions() {
+  const actions = [
+    { icon: Download,     label: "Download Invoice" },
+    { icon: CalendarClock, label: "Change Dates" },
+    { icon: UserPlus,     label: "Add Travellers" },
+    { icon: XCircle,      label: "Cancel Booking" },
+  ];
   return (
-    <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white px-4 py-4 shadow-gh-soft">
-      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
-        <Icon className="h-4 w-4 text-[color:var(--gh-accent)]" />
-        {label}
-      </div>
-      <div className="mt-2 text-sm font-black text-[color:var(--gh-heading)] sm:text-base">{value}</div>
+    <div className="grid grid-cols-4 gap-1 rounded-3xl border border-slate-100 bg-white p-4 shadow-[0_2px_12px_rgba(17,24,39,0.06)]">
+      {actions.map(({ icon: Icon, label }) => (
+        <button
+          key={label}
+          type="button"
+          className="flex flex-col items-center gap-2 rounded-2xl p-2 transition hover:bg-slate-50 active:scale-95"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)]">
+            <Icon className="h-4.5 w-4.5 text-[color:var(--gh-accent)]" strokeWidth={1.8} />
+          </div>
+          <span className="text-center text-[9px] font-bold leading-tight text-slate-600">{label}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
+/* ─── Refer & Earn Banner ─────────────────────────────────────── */
+function ReferBanner() {
+  return (
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[color:var(--gh-accent)] to-[color:var(--gh-accent-strong)] px-5 py-5">
+      {/* Decorative circles */}
+      <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/10" />
+      <div className="pointer-events-none absolute -bottom-6 right-8 h-16 w-16 rounded-full bg-white/10" />
+      {/* Gift icon */}
+      <div className="absolute right-16 top-1/2 -translate-y-1/2 opacity-20">
+        <Gift className="h-16 w-16 text-white" />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/20">
+            <Gift className="h-5 w-5 text-white" strokeWidth={1.8} />
+          </div>
+          <div>
+            <p className="text-[13px] font-extrabold text-white">Refer &amp; Earn</p>
+            <p className="text-[10px] font-semibold text-white/80">Refer your friends and earn exciting rewards</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[11px] font-black text-[color:var(--gh-accent)] shadow-sm transition active:scale-95"
+        >
+          Refer Now
+          <ArrowRight className="h-3 w-3" strokeWidth={2.5} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Page ───────────────────────────────────────────────── */
 export default function BookingsPage() {
   const { user, isLoading: authLoading } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -143,6 +273,7 @@ export default function BookingsPage() {
   const [error, setError] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [hasToken, setHasToken] = useState(null);
+  const [activeTab, setActiveTab] = useState("All");
 
   useEffect(() => {
     let active = true;
@@ -154,21 +285,14 @@ export default function BookingsPage() {
         if (active) setHasToken(false);
       }
     };
-
     checkToken();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
     if (authLoading) return;
     if (!user && hasToken === null) return;
-
-    if (!user && hasToken === false) {
-      // User not logged in and no token - don't load bookings
-      return;
-    }
+    if (!user && hasToken === false) return;
 
     const fetchBookings = async () => {
       setLoading(true);
@@ -178,11 +302,7 @@ export default function BookingsPage() {
           setBookings(response.data?.data || []);
           setError("");
         } else {
-          if (response.status === 401) {
-            setError("Session expired. Please log in again.");
-          } else {
-            setError(response.data?.message || response.data?.error || "Failed to load bookings.");
-          }
+          setError(response.data?.message || response.data?.error || "Failed to load bookings.");
           setBookings([]);
         }
       } catch {
@@ -192,199 +312,341 @@ export default function BookingsPage() {
         setLoading(false);
       }
     };
-
     fetchBookings();
   }, [authLoading, user, hasToken]);
 
+  /* Stats */
+  const totalSpent = bookings.reduce((s, b) => s + (Number(b.totalAmount) || 0), 0);
+  const upcoming = bookings.filter((b) => {
+    const s = b.status?.toUpperCase();
+    return s !== "CANCELLED" && s !== "COMPLETED";
+  }).length;
+
+  /* Filtered bookings */
+  const filtered = useMemo(() => {
+    if (activeTab === "All") return bookings;
+    if (activeTab === "Upcoming") return bookings.filter((b) => {
+      const s = b.status?.toUpperCase();
+      return s !== "CANCELLED" && s !== "COMPLETED" && s !== "CONFIRMED";
+    });
+    if (activeTab === "Confirmed") return bookings.filter((b) => b.status?.toUpperCase() === "CONFIRMED");
+    if (activeTab === "Completed") return bookings.filter((b) => b.status?.toUpperCase() === "COMPLETED");
+    if (activeTab === "Cancelled") return bookings.filter((b) => b.status?.toUpperCase() === "CANCELLED");
+    return bookings;
+  }, [bookings, activeTab]);
+
   if (authLoading || hasToken === null || (loading && (user || hasToken))) {
-    return <Loader message="Loading your bookings..." />;
+    return <Loader message="Loading your trips..." />;
   }
 
+  /* ── Not logged in ── */
   if (!user && hasToken === false) {
     return (
-      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
-        <PageIntro />
-        <div className="mt-6">
-          <EmptyStateCard
-            title="Log in to see your journeys"
-            description="Your confirmed tours, pending requests, and payment updates will appear here once you sign in to your GoldenHive account."
-            primaryLabel="Log In / Sign Up"
-            onPrimaryClick={() => setIsLoginOpen(true)}
-            secondaryHref="/"
-            secondaryLabel="Go Home"
+      <>
+        {/* Hero */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-5 pb-8 pt-12 text-white md:hidden">
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay"
+            style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }}
           />
+          <div className="relative">
+            <p className="text-[13px] font-semibold text-white/70">Welcome 👋</p>
+            <h1 className="mt-1 text-[28px] font-black leading-tight">My Trips</h1>
+            <p className="mt-1.5 text-[12px] font-semibold text-white/70">Track your bookings, manage travellers and view payment status.</p>
+          </div>
+        </div>
+
+        <div className="px-4 py-8 md:hidden">
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-[0_2px_16px_rgba(17,24,39,0.08)]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)]">
+              <Briefcase className="h-7 w-7 text-[color:var(--gh-accent)]" strokeWidth={1.8} />
+            </div>
+            <h2 className="mt-4 text-[17px] font-extrabold text-slate-900">Log in to see your journeys</h2>
+            <p className="mx-auto mt-2 max-w-xs text-[12px] font-semibold text-slate-500">
+              Your confirmed tours, pending requests, and payment updates will appear here once you sign in.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsLoginOpen(true)}
+              className="mt-6 w-full rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] py-3 text-[13px] font-black text-white shadow-sm transition active:scale-95"
+            >
+              Log In / Sign Up
+            </button>
+            <Link href="/" className="mt-3 block text-[12px] font-semibold text-slate-500 underline">Go Home</Link>
+          </div>
         </div>
         <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-      </div>
+
+        {/* Desktop fallback */}
+        <div className="hidden md:block mx-auto max-w-3xl px-6 py-16 text-center">
+          <h1 className="text-3xl font-black text-slate-900">My Trips</h1>
+          <p className="mt-3 text-slate-500">Please log in to view your bookings.</p>
+          <button type="button" onClick={() => setIsLoginOpen(true)} className="mt-6 rounded-2xl bg-[color:var(--gh-accent)] px-8 py-3 font-black text-white">
+            Log In
+          </button>
+          <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+        </div>
+      </>
     );
   }
 
-  if (error) {
-    return (
-      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
-        <PageIntro />
-        <div className="mt-6 space-y-6">
-          <div className={`${shellClass} p-6 sm:p-8`}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-rose-700">
-                  <CircleHelp className="h-3.5 w-3.5" />
-                  Something went wrong
+  const firstName = user?.name?.split(" ")[0] || "there";
+
+  return (
+    <>
+      {/* ══ MOBILE LAYOUT ══════════════════════════════════════ */}
+      <div className="flex min-h-screen flex-col bg-[#F8F9FB] pb-32 md:hidden">
+
+        {/* ── Hero Banner ── */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-5 pb-6 pt-10 text-white">
+          {/* Mountain bg */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
+            style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1040]/80" />
+
+          <div className="relative">
+            <p className="text-[13px] font-semibold text-white/75">Hello, {firstName} 👋</p>
+            <h1 className="mt-0.5 text-[26px] font-black leading-tight">My Trips</h1>
+            <p className="mt-1 text-[11px] font-semibold text-white/70">
+              Track your bookings, manage travellers and view payment status.
+            </p>
+
+            {/* Stats row */}
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              {[
+                { icon: Briefcase, label: "Total Bookings", value: bookings.length },
+                { icon: CalendarDays, label: "Upcoming Trip", value: upcoming },
+                { icon: Wallet, label: "Total Spent", value: totalSpent > 0 ? `₹ ${new Intl.NumberFormat("en-IN").format(totalSpent)}` : "—" },
+              ].map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex flex-col gap-1.5 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm">
+                  <div className="flex items-center gap-1.5">
+                    <Icon className="h-3.5 w-3.5 text-white/70" strokeWidth={1.8} />
+                  </div>
+                  <p className="text-[15px] font-black leading-none text-white">{value}</p>
+                  <p className="text-[9px] font-semibold leading-tight text-white/65">{label}</p>
                 </div>
-                <p className="mt-4 text-sm font-semibold leading-7 text-[color:var(--gh-text-soft)] sm:text-base">
-                  {error}
-                </p>
-              </div>
-              <Link
-                href="/"
-                className="gh-primary-btn inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-black"
+              ))}
+            </div>
+
+            {/* CTA buttons */}
+            <div className="mt-4 flex items-center gap-3">
+              <a
+                href="https://wa.me/7505917525"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-[11px] font-black text-white backdrop-blur-sm transition active:scale-95"
               >
-                Go Home
-              </Link>
+                <HeadphonesIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                Need Help?
+              </a>
+              <button
+                type="button"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[11px] font-black text-[color:var(--gh-accent)] shadow-sm transition active:scale-95"
+              >
+                Track All Bookings
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
 
-  if (bookings.length === 0) {
-    return (
-      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
-        <PageIntro />
-        <div className="mt-6">
-          <EmptyStateCard
-            title="No bookings yet"
-            description="Once you reserve a package, your travel dates, status updates, and support actions will show up here in a much cleaner view."
-            primaryHref="/"
-            primaryLabel="Browse Packages"
-            secondaryHref="/contact"
-            secondaryLabel="Need Help?"
-          />
+        {/* ── Filter Tabs ── */}
+        <div className="no-scrollbar flex gap-2 overflow-x-auto bg-white px-4 py-3 shadow-[0_1px_4px_rgba(17,24,39,0.05)]">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[11px] font-bold transition ${
+                activeTab === tab
+                  ? "bg-[color:var(--gh-accent)] text-white shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-600"
+              }`}
+            >
+              {tab === "All" && "⊞ "}
+              {tab === "Upcoming" && "🗓 "}
+              {tab === "Confirmed" && "✅ "}
+              {tab === "Completed" && "🏆 "}
+              {tab === "Cancelled" && "✕ "}
+              {tab === "All" ? "All Bookings" : tab}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Content ── */}
+        <div className="flex-1 space-y-4 px-4 pt-4">
+
+          {/* Error */}
+          {error && (
+            <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-semibold text-rose-700">
+              {error}
+            </div>
+          )}
+
+          {/* Empty */}
+          {!error && filtered.length === 0 && (
+            <div className="flex flex-col items-center rounded-3xl border border-slate-100 bg-white p-10 text-center shadow-[0_2px_12px_rgba(17,24,39,0.06)]">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)]">
+                <Package className="h-7 w-7 text-[color:var(--gh-accent)]" strokeWidth={1.8} />
+              </div>
+              <p className="mt-4 text-[15px] font-extrabold text-slate-900">
+                {activeTab === "All" ? "No trips yet" : `No ${activeTab} trips`}
+              </p>
+              <p className="mt-2 text-[12px] font-semibold text-slate-500">
+                {activeTab === "All"
+                  ? "Book a package to start your journey!"
+                  : `You have no ${activeTab.toLowerCase()} bookings.`}
+              </p>
+              {activeTab === "All" && (
+                <Link
+                  href="/"
+                  className="mt-5 rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] px-6 py-3 text-[12px] font-black text-white shadow-sm transition active:scale-95"
+                >
+                  Browse Packages
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Booking cards */}
+          {!error && filtered.map((booking) => (
+            <BookingCard key={booking._id} booking={booking} />
+          ))}
+
+          {/* Quick Actions */}
+          {!error && filtered.length > 0 && <QuickActions />}
+
+          {/* Refer & Earn */}
+          <ReferBanner />
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
-      <PageIntro />
+      {/* ══ DESKTOP LAYOUT ══════════════════════════════════════ */}
+      <div className="hidden min-h-screen flex-col bg-[#F8F9FB] md:flex">
 
-      <div className="mt-6 space-y-6">
-        {bookings.map((booking) => {
-          const packageCount = Array.isArray(booking.packageId) ? booking.packageId.length : booking.packageId ? 1 : 0;
+        {/* ── Hero Banner ── */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-8 pb-8 pt-12 text-white lg:px-12">
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
+            style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80)" }}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1040]/80" />
 
-          return (
-            <article key={booking._id} className={`${shellClass} p-6 sm:p-8`}>
-              <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-col gap-4 border-b border-[color:var(--gh-border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--gh-accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-accent)]">
-                        <Package className="h-3.5 w-3.5" />
-                        Booking Record
-                      </div>
-                      <h2 className="mt-3 text-2xl font-black text-[color:var(--gh-heading)]">
-                        {booking.bookingNo || `Booking #${booking._id?.slice(-6).toUpperCase()}`}
-                      </h2>
-                      <p className="mt-2 text-sm font-semibold text-[color:var(--gh-text-soft)]">
-                        Created on {formatDate(booking.createdAt)}
-                      </p>
-                    </div>
+          <div className="relative w-full">
+            <p className="text-[15px] font-semibold text-white/75">Hello, {firstName} 👋</p>
+            <h1 className="mt-1 text-[38px] font-black leading-tight">My Trips</h1>
+            <p className="mt-2 text-[13px] font-semibold text-white/70">
+              Track your bookings, manage travellers and view payment status.
+            </p>
 
-                    <div className="flex flex-wrap gap-2">
-                      <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusTone(booking.status)}`}>
-                        {booking.status || "REQUESTED"}
-                      </span>
-                      <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${paymentTone(booking.paymentStatus)}`}>
-                        {booking.paymentStatus || "UNPAID"} Payment
-                      </span>
-                    </div>
+            {/* Stats row */}
+            <div className="mt-6 flex gap-4">
+              {[
+                { icon: Briefcase,    label: "Total Bookings", value: bookings.length },
+                { icon: CalendarDays, label: "Upcoming Trip",  value: upcoming },
+                { icon: Wallet,       label: "Total Spent",    value: totalSpent > 0 ? `₹ ${new Intl.NumberFormat("en-IN").format(totalSpent)}` : "—" },
+              ].map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15">
+                    <Icon className="h-5 w-5 text-white" strokeWidth={1.8} />
                   </div>
-
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <StatItem icon={CalendarDays} label="Check-in" value={formatDate(booking.startDate)} />
-                    <StatItem icon={CalendarDays} label="Check-out" value={formatDate(booking.endDate)} />
-                    <StatItem icon={UserRound} label="Travellers" value={String(booking.travellers || 1)} />
-                    <StatItem icon={MapPinned} label="Packages" value={String(packageCount || 1)} />
+                  <div>
+                    <p className="text-[20px] font-black leading-none text-white">{value}</p>
+                    <p className="mt-1 text-[11px] font-semibold text-white/65">{label}</p>
                   </div>
-
-                  {booking.packageId && booking.packageId.length > 0 ? (
-                    <div className="mt-5 rounded-2xl border border-[color:var(--gh-border)] bg-white p-4 shadow-gh-soft sm:p-5">
-                      <div className="text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
-                        Included Packages
-                      </div>
-                      <div className="mt-4 grid gap-3">
-                        {booking.packageId.map((pkg, idx) => {
-                          const name = typeof pkg === "string" ? `Package ${idx + 1}` : pkg.basic?.name || `Package ${idx + 1}`;
-
-                          return (
-                            <div
-                              key={idx}
-                              className="rounded-2xl border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)] px-4 py-4 shadow-sm"
-                            >
-                              <div className="text-sm font-black text-[color:var(--gh-heading)]">{name}</div>
-                              {pkg.packageCode ? (
-                                <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">
-                                  Code: {pkg.packageCode}
-                                </div>
-                              ) : null}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {booking.note ? (
-                    <div className="mt-5 rounded-2xl border border-[color:var(--gh-border)] bg-white p-4 shadow-gh-soft sm:p-5">
-                      <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-text-soft)]">
-                        <MessageCircle className="h-4 w-4 text-[color:var(--gh-accent)]" />
-                        Special Requests
-                      </div>
-                      <p className="mt-3 text-sm font-semibold leading-7 text-[color:var(--gh-text)]">{booking.note}</p>
-                    </div>
-                  ) : null}
                 </div>
+              ))}
 
-                <aside className="w-full xl:max-w-[19rem]">
-                  <div className="rounded-2xl border border-[color:var(--gh-border)] bg-white p-6 shadow-gh-soft">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-[color:var(--gh-accent-soft)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[color:var(--gh-accent)]">
-                      <CreditCard className="h-3.5 w-3.5" />
-                      Total Amount
-                    </div>
-                    <div className="mt-4 text-3xl font-black text-[color:var(--gh-heading)]">
-                      {formatCurrency(booking.totalAmount)}
-                    </div>
-                    <p className="mt-2 text-xs font-semibold text-[color:var(--gh-text-soft)]">
-                      Payment and support actions for this booking.
-                    </p>
-
-                    <div className="mt-5 space-y-3">
-                      {booking.status === "REQUESTED" ? (
-                        <a
-                          href={`https://wa.me/7505917525?text=I%20have%20a%20booking%20request%20${encodeURIComponent(booking.bookingNo || booking._id)}`}
-                          className="gh-primary-btn inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-sm font-black"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Contact Support
-                        </a>
-                      ) : null}
-                      <Link
-                        href="/"
-                        className="inline-flex w-full items-center justify-center rounded-2xl border border-[color:var(--gh-border)] bg-white px-5 py-3 text-sm font-black text-[color:var(--gh-heading)] hover:bg-[color:var(--gh-bg-soft)]"
-                      >
-                        Continue Browsing
-                      </Link>
-                    </div>
-                  </div>
-                </aside>
+              {/* CTA buttons */}
+              <div className="ml-auto flex items-center gap-3 self-center">
+                <a
+                  href="https://wa.me/7505917525"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-[12px] font-black text-white backdrop-blur-sm transition hover:bg-white/20 active:scale-95"
+                >
+                  <HeadphonesIcon className="h-4 w-4" strokeWidth={2} />
+                  Need Help?
+                </a>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[12px] font-black text-[color:var(--gh-accent)] shadow-sm transition hover:shadow-md active:scale-95"
+                >
+                  Track All Bookings
+                  <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                </button>
               </div>
-            </article>
-          );
-        })}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Filter Tabs ── */}
+        <div className="border-b border-slate-200 bg-white px-8 py-3 shadow-[0_1px_4px_rgba(17,24,39,0.05)] lg:px-12">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+              {TABS.map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2 text-[12px] font-bold transition ${
+                    activeTab === tab
+                      ? "bg-[color:var(--gh-accent)] text-white shadow-sm"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                  }`}
+                >
+                  {tab === "All" && "⊞ "}
+                  {tab === "Upcoming" && "🗓 "}
+                  {tab === "Confirmed" && "✅ "}
+                  {tab === "Completed" && "🏆 "}
+                  {tab === "Cancelled" && "✕ "}
+                  {tab === "All" ? "All Bookings" : tab}
+                </button>
+              ))}
+          </div>
+        </div>
+
+        {/* ── Content ── */}
+        <div className="w-full flex-1 space-y-4 px-8 py-6 lg:px-12">
+
+          {/* Error */}
+          {error && (
+            <div className="rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-semibold text-rose-700">{error}</div>
+          )}
+
+          {/* Empty */}
+          {!error && filtered.length === 0 && (
+            <div className="flex flex-col items-center rounded-3xl border border-slate-100 bg-white p-16 text-center shadow-[0_2px_12px_rgba(17,24,39,0.06)]">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)]">
+                <Package className="h-9 w-9 text-[color:var(--gh-accent)]" strokeWidth={1.8} />
+              </div>
+              <p className="mt-5 text-[18px] font-extrabold text-slate-900">
+                {activeTab === "All" ? "No trips yet" : `No ${activeTab} trips`}
+              </p>
+              <p className="mt-2 text-[13px] font-semibold text-slate-500">
+                {activeTab === "All" ? "Book a package to start your journey!" : `You have no ${activeTab.toLowerCase()} bookings.`}
+              </p>
+              {activeTab === "All" && (
+                <Link href="/" className="mt-6 rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] px-8 py-3 text-[13px] font-black text-white shadow-sm transition hover:shadow-md active:scale-95">
+                  Browse Packages
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Booking cards */}
+          {!error && filtered.map((booking) => (
+            <BookingCard key={booking._id} booking={booking} />
+          ))}
+
+          {/* Quick Actions */}
+          {!error && filtered.length > 0 && <QuickActions />}
+
+          {/* Refer & Earn */}
+          <ReferBanner />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
