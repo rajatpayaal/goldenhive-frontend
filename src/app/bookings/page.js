@@ -18,6 +18,7 @@ import {
   ArrowRight,
   Briefcase,
   Wallet,
+  CheckCircle2,
 } from "lucide-react";
 import { getMyBookingsAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
@@ -102,7 +103,7 @@ function BookingCard({ booking }) {
   const status = getBookingStatus(booking);
   const statusCfg = STATUS_CONFIG[status] || STATUS_CONFIG.UPCOMING;
   const paymentKey = booking.paymentStatus?.toUpperCase() === "PAID" ? "PAID" : "UNPAID";
-  const paymentCfg = PAYMENT_CONFIG[paymentKey];
+  const isPaid = paymentKey === "PAID";
   const pkgName = getPackageName(booking) || booking.bookingNo || `Booking #${booking._id?.slice(-6).toUpperCase()}`;
   const pkgImage = getPackageImage(booking);
   const destination = getPackageDestination(booking);
@@ -111,94 +112,99 @@ function BookingCard({ booking }) {
   const waLink = `https://wa.me/7505917525?text=I%20need%20help%20with%20booking%20${encodeURIComponent(bookingNo)}`;
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_2px_16px_rgba(17,24,39,0.08)]">
-      {/* Image row */}
-      <div className="flex gap-0">
-        {/* Left: image with status badge */}
-        <div className="relative w-[130px] shrink-0 sm:w-[160px]">
+    <article className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_4px_20px_rgba(17,24,39,0.05)]">
+      <div className="flex gap-4 p-3 pb-4">
+        {/* Left Image */}
+        <div className="relative w-[140px] shrink-0 overflow-hidden rounded-2xl">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: pkgImage ? `url(${pkgImage})` : "linear-gradient(135deg,#1e3a5f,#2d6a9f)" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-          {/* Status badge */}
-          <div className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[9px] font-black tracking-wide ${statusCfg.bg} ${statusCfg.text}`}>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20" />
+          
+          <div className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[8px] font-black tracking-wider ${statusCfg.bg} ${statusCfg.text}`}>
             {statusCfg.label}
           </div>
 
-          {/* Booking ID at bottom */}
-          <div className="absolute bottom-2 left-2 right-2">
-            <p className="text-[8px] font-semibold text-white/70">Booking ID</p>
+          <div className="absolute bottom-2 left-2 right-2 rounded-xl bg-black/60 p-2 backdrop-blur-md">
+            <p className="text-[7px] font-bold text-white/70">Booking ID</p>
             <p className="truncate text-[9px] font-black text-white">{bookingNo}</p>
           </div>
-
-          {/* Aspect ratio holder */}
-          <div className="h-[140px] sm:h-[160px]" />
+          {/* Force aspect ratio */}
+          <div className="h-[180px]" />
         </div>
 
-        {/* Right: details */}
-        <div className="flex min-w-0 flex-1 flex-col justify-between p-3">
-          {/* Top */}
+        {/* Right Content */}
+        <div className="flex flex-1 flex-col justify-between py-1 pr-1">
           <div>
+            <h2 className="line-clamp-2 text-[14px] font-black leading-tight text-slate-900">{pkgName}</h2>
             {destination && (
-              <div className="mb-1 flex items-center gap-1">
-                <MapPin className="h-2.5 w-2.5 shrink-0 text-[color:var(--gh-accent)]" strokeWidth={2} />
-                <span className="truncate text-[9px] font-bold text-slate-500">{destination}</span>
+              <div className="mt-1 flex items-center gap-1">
+                <MapPin className="h-3 w-3 shrink-0 text-rose-500" strokeWidth={2.5} />
+                <span className="truncate text-[10px] font-bold text-slate-500">{destination}</span>
               </div>
             )}
-            <h2 className="line-clamp-2 text-[13px] font-extrabold leading-snug text-slate-900">{pkgName}</h2>
 
-            {/* Date + Travellers row */}
-            <div className="mt-2 grid grid-cols-3 gap-1">
-              <div>
-                <p className="text-[8px] font-semibold text-slate-400">Check-in</p>
-                <p className="text-[10px] font-black text-slate-700">{formatDate(booking.startDate)}</p>
+            <div className="mt-4 grid grid-cols-2 gap-y-3 gap-x-2">
+              <div className="flex items-start gap-1.5">
+                <CalendarDays className="mt-0.5 h-3.5 w-3.5 text-rose-500" strokeWidth={2} />
+                <div>
+                  <p className="text-[10px] font-black text-slate-900">{formatDate(booking.startDate)}</p>
+                  <p className="text-[9px] font-semibold text-slate-400">Check-in</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[8px] font-semibold text-slate-400">Check-out</p>
-                <p className="text-[10px] font-black text-slate-700">{formatDate(booking.endDate)}</p>
+              <div className="flex items-start gap-1.5">
+                <CalendarClock className="mt-0.5 h-3.5 w-3.5 text-rose-500" strokeWidth={2} />
+                <div>
+                  <p className="text-[10px] font-black text-slate-900">{formatDate(booking.endDate)}</p>
+                  <p className="text-[9px] font-semibold text-slate-400">Check-out</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[8px] font-semibold text-slate-400">Travellers</p>
-                <p className="text-[10px] font-black text-slate-700">{booking.travellers || 1} · {packageCount} pkg</p>
+              <div className="col-span-2 flex items-start gap-1.5 pt-1">
+                <Users className="mt-0.5 h-3.5 w-3.5 text-rose-500" strokeWidth={2} />
+                <div>
+                  <p className="text-[10px] font-black text-slate-900">{booking.travellers || 1} Traveller</p>
+                  <p className="text-[9px] font-semibold text-slate-400">{packageCount} Package</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Payment + Amount */}
-          <div className="mt-2.5 flex items-end justify-between gap-2">
+          <div className="mt-3 flex items-end justify-between border-t border-slate-100 pt-3">
             <div>
-              <p className="text-[8px] font-semibold text-slate-400">Payment Status</p>
-              <span className={`mt-0.5 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black ${paymentCfg.bg} ${paymentCfg.text} ${paymentCfg.border}`}>
-                {paymentCfg.label}
+              <p className="text-[9px] font-semibold text-slate-400">Payment Status</p>
+              <span className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[9px] font-black uppercase ${
+                isPaid ? "border-emerald-200 bg-emerald-50 text-emerald-600" : "border-orange-200 bg-orange-50 text-orange-500"
+              }`}>
+                {paymentKey}
               </span>
             </div>
             <div className="text-right">
-              <p className="text-[8px] font-semibold text-slate-400">Total Amount</p>
-              <p className="text-[15px] font-black leading-none text-[color:var(--gh-accent)]">{formatCurrency(booking.totalAmount)}</p>
+              <p className="text-[9px] font-semibold text-slate-400">Total Amount</p>
+              <p className="text-[16px] font-black leading-none text-rose-500">{formatCurrency(booking.totalAmount)}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Bottom actions */}
-      <div className="flex items-center border-t border-slate-100">
+      {/* Footer Actions */}
+      <div className="flex border-t border-slate-100 bg-rose-50/30">
         <Link
           href={`/bookings/${booking._id}`}
-          className="flex flex-1 items-center justify-center gap-1.5 py-3 text-[11px] font-black text-[color:var(--gh-accent)] transition hover:bg-slate-50"
+          className="flex flex-1 items-center justify-center gap-1.5 py-3.5 text-[11px] font-black text-rose-500 transition hover:bg-rose-50/50"
         >
           View Details
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
         </Link>
-        <div className="h-4 w-px bg-slate-100" />
+        <div className="w-px bg-slate-100" />
         <a
           href={waLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-1.5 py-3 text-[11px] font-black text-slate-600 transition hover:bg-slate-50"
+          className="flex flex-1 items-center justify-center gap-1.5 py-3.5 text-[11px] font-black text-slate-700 transition hover:bg-slate-50"
         >
-          <MessageCircle className="h-3.5 w-3.5 text-emerald-500" strokeWidth={2} />
+          <MessageCircle className="h-3.5 w-3.5 text-rose-500" strokeWidth={2} />
           Contact Support
         </a>
       </div>
@@ -215,17 +221,15 @@ function QuickActions() {
     { icon: XCircle,      label: "Cancel Booking" },
   ];
   return (
-    <div className="grid grid-cols-4 gap-1 rounded-3xl border border-slate-100 bg-white p-4 shadow-[0_2px_12px_rgba(17,24,39,0.06)]">
-      {actions.map(({ icon: Icon, label }) => (
+    <div className="flex rounded-3xl border border-rose-100 bg-rose-50/30 p-2 shadow-sm">
+      {actions.map(({ icon: Icon, label }, idx) => (
         <button
           key={label}
           type="button"
-          className="flex flex-col items-center gap-2 rounded-2xl p-2 transition hover:bg-slate-50 active:scale-95"
+          className={`flex flex-1 flex-col items-center justify-center gap-2 p-2 transition hover:bg-white/50 active:scale-95 ${idx !== actions.length - 1 ? 'border-r border-rose-100/50' : ''}`}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--gh-accent-soft)]">
-            <Icon className="h-4.5 w-4.5 text-[color:var(--gh-accent)]" strokeWidth={1.8} />
-          </div>
-          <span className="text-center text-[9px] font-bold leading-tight text-slate-600">{label}</span>
+          <Icon className="h-5 w-5 text-rose-500" strokeWidth={1.5} />
+          <span className="text-center text-[8px] font-bold leading-tight text-slate-700">{label}</span>
         </button>
       ))}
     </div>
@@ -235,30 +239,25 @@ function QuickActions() {
 /* ─── Refer & Earn Banner ─────────────────────────────────────── */
 function ReferBanner() {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[color:var(--gh-accent)] to-[color:var(--gh-accent-strong)] px-5 py-5">
-      {/* Decorative circles */}
-      <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/10" />
-      <div className="pointer-events-none absolute -bottom-6 right-8 h-16 w-16 rounded-full bg-white/10" />
-      {/* Gift icon */}
-      <div className="absolute right-16 top-1/2 -translate-y-1/2 opacity-20">
-        <Gift className="h-16 w-16 text-white" />
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-400 to-rose-500 px-5 py-6 shadow-md mt-2">
+      <div className="absolute -left-4 -top-4 h-16 w-16 text-rose-300 opacity-50">
+        <Gift className="h-full w-full" />
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/20">
-            <Gift className="h-5 w-5 text-white" strokeWidth={1.8} />
-          </div>
-          <div>
-            <p className="text-[13px] font-extrabold text-white">Refer &amp; Earn</p>
-            <p className="text-[10px] font-semibold text-white/80">Refer your friends and earn exciting rewards</p>
-          </div>
+      <div className="absolute -bottom-4 -right-2 h-20 w-20 text-rose-300 opacity-50">
+        <Gift className="h-full w-full" />
+      </div>
+      
+      <div className="relative z-10 flex items-center justify-between gap-4">
+        <div className="pl-6">
+          <p className="text-[16px] font-black text-white">Refer &amp; Earn</p>
+          <p className="mt-1 text-[10px] font-semibold text-white/90">Refer your friends and earn exciting rewards</p>
         </div>
         <button
           type="button"
-          className="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[11px] font-black text-[color:var(--gh-accent)] shadow-sm transition active:scale-95"
+          className="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[11px] font-black text-rose-500 shadow-sm transition active:scale-95"
         >
           Refer Now
-          <ArrowRight className="h-3 w-3" strokeWidth={2.5} />
+          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
         </button>
       </div>
     </div>
@@ -344,9 +343,9 @@ export default function BookingsPage() {
     return (
       <>
         {/* Hero */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-5 pb-8 pt-12 text-white md:hidden">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#4a0d22] via-[#5c1331] to-[#2b0814] px-5 pb-8 pt-12 text-white md:hidden">
           <div
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay"
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
             style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }}
           />
           <div className="relative">
@@ -395,84 +394,89 @@ export default function BookingsPage() {
   return (
     <>
       {/* ══ MOBILE LAYOUT ══════════════════════════════════════ */}
-      <div className="flex min-h-screen flex-col bg-[#F8F9FB] pb-32 md:hidden">
+      <div className="flex min-h-screen flex-col bg-[#fff5f7] pb-32 md:hidden">
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-5 pb-6 pt-10 text-white">
+        <div className="relative mx-4 mt-4 overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#3b0b1c] via-[#4d0f25] to-[#240611] px-5 pb-6 pt-6 text-white shadow-xl">
           {/* Mountain bg */}
           <div
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
             style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }}
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1040]/80" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#3b0b1c]/30 to-[#240611]/95" />
 
           <div className="relative">
-            <p className="text-[13px] font-semibold text-white/75">Hello, {firstName} 👋</p>
-            <h1 className="mt-0.5 text-[26px] font-black leading-tight">My Trips</h1>
-            <p className="mt-1 text-[11px] font-semibold text-white/70">
+            <p className="text-[13px] font-semibold text-white/90">Hello, {firstName} 👋</p>
+            <h1 className="mt-0.5 text-[32px] font-black leading-tight">My Trips</h1>
+            <p className="mt-1 text-[11px] font-semibold text-white/80">
               Track your bookings, manage travellers and view payment status.
             </p>
 
             {/* Stats row */}
-            <div className="mt-5 grid grid-cols-3 gap-2">
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
               {[
                 { icon: Briefcase, label: "Total Bookings", value: bookings.length },
                 { icon: CalendarDays, label: "Upcoming Trip", value: upcoming },
                 { icon: Wallet, label: "Total Spent", value: totalSpent > 0 ? `₹ ${new Intl.NumberFormat("en-IN").format(totalSpent)}` : "—" },
-              ].map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex flex-col gap-1.5 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm">
-                  <div className="flex items-center gap-1.5">
-                    <Icon className="h-3.5 w-3.5 text-white/70" strokeWidth={1.8} />
+              ].map(({ icon: Icon, label, value }, idx) => (
+                <div key={label} className={`flex flex-1 items-center gap-2 ${idx !== 2 ? 'border-r border-white/10' : ''} px-2`}>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                    <Icon className="h-4 w-4 text-white" strokeWidth={2.5} />
                   </div>
-                  <p className="text-[15px] font-black leading-none text-white">{value}</p>
-                  <p className="text-[9px] font-semibold leading-tight text-white/65">{label}</p>
+                  <div>
+                    <p className="text-[13px] font-black leading-none text-white">{value}</p>
+                    <p className="mt-0.5 text-[8px] font-semibold text-white/70">{label}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* CTA buttons */}
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-3">
               <a
                 href="https://wa.me/7505917525"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-[11px] font-black text-white backdrop-blur-sm transition active:scale-95"
+                className="flex items-center justify-center gap-1.5 rounded-full bg-rose-500 px-4 py-2.5 text-[11px] font-black text-white shadow-sm transition active:scale-95"
               >
                 <HeadphonesIcon className="h-3.5 w-3.5" strokeWidth={2} />
                 Need Help?
               </a>
               <button
                 type="button"
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[11px] font-black text-[color:var(--gh-accent)] shadow-sm transition active:scale-95"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[11px] font-black text-slate-900 shadow-sm transition active:scale-95"
               >
                 Track All Bookings
-                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+                <ArrowRight className="h-3.5 w-3.5 text-slate-500" strokeWidth={2.5} />
               </button>
             </div>
           </div>
         </div>
 
         {/* ── Filter Tabs ── */}
-        <div className="no-scrollbar flex gap-2 overflow-x-auto bg-white px-4 py-3 shadow-[0_1px_4px_rgba(17,24,39,0.05)]">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[11px] font-bold transition ${
-                activeTab === tab
-                  ? "bg-[color:var(--gh-accent)] text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-600"
-              }`}
-            >
-              {tab === "All" && "⊞ "}
-              {tab === "Upcoming" && "🗓 "}
-              {tab === "Confirmed" && "✅ "}
-              {tab === "Completed" && "🏆 "}
-              {tab === "Cancelled" && "✕ "}
-              {tab === "All" ? "All Bookings" : tab}
-            </button>
-          ))}
+        <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 py-4">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`flex shrink-0 items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-bold transition ${
+                  isActive
+                    ? "bg-rose-50 text-rose-600 border border-rose-100"
+                    : "bg-white text-slate-700 border border-slate-100"
+                }`}
+              >
+                {tab === "All" && <Package className="h-3.5 w-3.5" strokeWidth={2.5} />}
+                {tab === "Upcoming" && <CalendarDays className="h-3.5 w-3.5" strokeWidth={2.5} />}
+                {tab === "Confirmed" && <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.5} />}
+                {tab === "Completed" && <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.5} />}
+                {tab === "Cancelled" && <XCircle className="h-3.5 w-3.5" strokeWidth={2.5} />}
+                {tab === "All" ? "All Bookings" : tab}
+              </button>
+            );
+          })}
         </div>
 
         {/* ── Content ── */}
@@ -527,12 +531,12 @@ export default function BookingsPage() {
       <div className="hidden min-h-screen flex-col bg-[#F8F9FB] md:flex">
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#1a1040] via-[#2d1b69] to-[#4a0e2e] px-8 pb-8 pt-12 text-white lg:px-12">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#3b0b1c] via-[#4d0f25] to-[#240611] px-8 pb-8 pt-12 text-white lg:px-12">
           <div
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
             style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80)" }}
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#1a1040]/80" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#240611]/80" />
 
           <div className="relative w-full">
             <p className="text-[15px] font-semibold text-white/75">Hello, {firstName} 👋</p>

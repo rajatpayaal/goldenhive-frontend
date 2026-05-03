@@ -129,7 +129,7 @@ export function BannerSlider({ banners }) {
           </div>
         </section>
       </div>
-      <div className="px-4 py-4 md:hidden">
+      <div className="relative z-50 px-4 py-4 md:hidden">
         <HomeHeroSearch />
       </div>
 

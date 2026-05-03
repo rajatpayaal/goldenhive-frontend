@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { CalendarRange, ChevronRight, LogOut, User2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { logoutAction } from "../actions/auth.actions";
@@ -30,6 +31,8 @@ export function UserMenu() {
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
     : (user.userName?.[0] || "?").toUpperCase();
 
+  const avatarUrl = user.profilePicture || user.avatar;
+
   const handleLogout = async () => {
     await logoutAction();
     clearUser();
@@ -41,19 +44,34 @@ export function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gh-gold text-gh-plum font-black text-sm transition hover:bg-gh-gold2"
+        className="relative overflow-hidden flex h-10 w-10 items-center justify-center rounded-full bg-gh-gold text-gh-plum font-black text-sm transition hover:scale-105 active:scale-95"
         title={`${user.firstName} ${user.lastName}`}
       >
-        {initials}
+        {avatarUrl ? (
+          <Image src={avatarUrl} alt="" width={40} height={40} className="h-full w-full object-cover" />
+        ) : (
+          initials
+        )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-3xl border border-[color:var(--gh-border)] bg-[color:var(--gh-surface-strong)] shadow-gh-soft">
-          <div className="border-b border-[color:var(--gh-border)] bg-[linear-gradient(135deg,rgba(255,79,138,0.08),rgba(255,185,94,0.14))] px-4 py-4">
-            <div className="text-sm font-bold text-[color:var(--gh-heading)]">
-              {user.firstName} {user.lastName}
+        <div className="absolute right-0 mt-3 w-72 overflow-hidden rounded-[32px] border border-slate-100 bg-white shadow-[0_8px_32px_rgba(17,24,39,0.12)]">
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-6 border-b border-slate-100">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-black text-white shadow-md">
+                {avatarUrl ? (
+                  <Image src={avatarUrl} alt="" width={56} height={56} className="h-full w-full object-cover" />
+                ) : (
+                  initials
+                )}
+              </div>
+              <div className="min-w-0">
+                <div className="truncate text-base font-black text-slate-900">
+                  {user.firstName} {user.lastName}
+                </div>
+                <div className="truncate mt-0.5 text-xs font-semibold text-slate-500">{user.email}</div>
+              </div>
             </div>
-            <div className="mt-1 text-xs font-semibold text-[color:var(--gh-text-soft)]">{user.email}</div>
           </div>
 
           <div className="px-3 py-3">

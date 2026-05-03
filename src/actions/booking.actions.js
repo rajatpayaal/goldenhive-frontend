@@ -43,3 +43,9 @@ export async function getMyBookingsAction() {
     method: "GET",
   });
 }
+
+export async function getBookingByIdAction(id) {
+  return fetchWithToken(`/bookings/${id}`, {
+    method: "GET",
+  });
+}

@@ -211,6 +211,19 @@ export const apiService = {
     }
   },
 
+  async getBlogCategories({ isActive = true } = {}) {
+    try {
+      const url = buildUrl("/blog-categories", { isActive });
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (error) {
+      console.error("Error fetching blog categories:", error);
+      return [];
+    }
+  },
+
   async getPolicies({ isActive = true } = {}) {
     try {
       const url = buildUrl("/policies", { isActive });

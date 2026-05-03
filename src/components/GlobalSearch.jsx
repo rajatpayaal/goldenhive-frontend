@@ -426,7 +426,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
     <div
       ref={containerRef}
       className={[
-        "relative z-50 w-full",
+        isHeroNakedVariant ? "w-full" : "relative z-50 w-full",
         isHeroVariant ? "max-w-none" : "max-w-[24rem] lg:max-w-[22rem]",
       ].join(" ")}
     >
@@ -496,7 +496,8 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
         <div
           id={`${inputId}-panel`}
           className={[
-            "absolute left-0 right-0 top-full z-[70] mt-2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]",
+            "absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-3xl border border-black/10 bg-white shadow-[0_18px_45px_rgba(2,6,23,0.18)]",
+            isHeroNakedVariant ? "z-[100]" : "z-[70]",
             isHeroVariant ? "w-full max-w-full" : "w-[22rem] max-w-[92vw]",
           ].join(" ")}
         >

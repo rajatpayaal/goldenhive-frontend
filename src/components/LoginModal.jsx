@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useSyncExternalStore, useState } from "react";
+import React, { useSyncExternalStore, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
@@ -10,6 +10,7 @@ import {
   verifyOtpAction,
 } from "../actions/auth.actions";
 import { useAuth } from "../hooks/useAuth";
+import { countries } from "../utils/countries";
 
 const inputClassName =
   "w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400 focus:border-[color:var(--gh-accent)]";
@@ -28,12 +29,15 @@ export function LoginModal({ isOpen, onClose }) {
   const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const countryDropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     userName: "",
     email: "",
     phone: "",
+    dialCode: "+91",
     password: "",
     confirmPassword: "",
     termsAccepted: false,
@@ -43,6 +47,16 @@ export function LoginModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
+        setIsCountryDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const resetState = () => {
     setMode("register");
@@ -58,6 +72,7 @@ export function LoginModal({ isOpen, onClose }) {
       userName: "",
       email: "",
       phone: "",
+      dialCode: "+91",
       password: "",
       confirmPassword: "",
       termsAccepted: false,
@@ -114,18 +129,16 @@ export function LoginModal({ isOpen, onClose }) {
   };
 
   const validatePhone = (phone) => {
-    const phoneRegex = /^[6-9]\d{9}$/;
     const cleanPhone = String(phone || "").replace(/\s+/g, "");
-    if (!phoneRegex.test(cleanPhone)) {
-      return "Please enter a valid 10-digit mobile number starting with 6-9.";
+    if (cleanPhone.length < 6 || cleanPhone.length > 15 || !/^\d+$/.test(cleanPhone)) {
+      return "Please enter a valid mobile number.";
     }
     return null;
   };
 
   const isPhoneValid = (phone) => {
-    const phoneRegex = /^[6-9]\d{9}$/;
     const cleanPhone = String(phone || "").replace(/\s+/g, "");
-    return phoneRegex.test(cleanPhone);
+    return /^\d{6,15}$/.test(cleanPhone);
   };
 
   const validatePassword = (password) => {
@@ -214,7 +227,7 @@ export function LoginModal({ isOpen, onClose }) {
       return;
     }
 
-    const mobile = String(formData.phone || "").trim();
+    const mobile = `${formData.dialCode}${String(formData.phone || "").trim()}`;
     const payload = {
       mobile,
       password: formData.password,
@@ -480,8 +493,44 @@ export function LoginModal({ isOpen, onClose }) {
                       Enter your mobile number <span className="text-rose-500">*</span>
                     </label>
                     <div className="mt-2 flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3">
-                      <div className="shrink-0 rounded-xl bg-slate-50 px-3 py-2 text-sm font-extrabold text-slate-700">
-                        IN +91
+                      <div className="relative shrink-0" ref={countryDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                          className="flex h-[42px] items-center gap-1.5 rounded-xl bg-slate-50 px-3 text-sm font-extrabold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[color:var(--gh-accent)]"
+                        >
+                          <img 
+                            src={`https://flagcdn.com/w20/${(countries.find(c => c.dial_code === formData.dialCode) || countries[0]).code.toLowerCase()}.png`}
+                            alt="flag"
+                            className="w-5 h-auto object-contain"
+                          />
+                          {formData.dialCode}
+                          <svg className={`h-4 w-4 text-slate-400 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        
+                        {isCountryDropdownOpen && (
+                          <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-y-auto rounded-xl border border-black/10 bg-white p-1 shadow-lg">
+                            {countries.map((c) => (
+                              <button
+                                key={c.code}
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({ ...prev, dialCode: c.dial_code }));
+                                  setIsCountryDropdownOpen(false);
+                                }}
+                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              >
+                                <img 
+                                  src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
+                                  alt={c.code}
+                                  className="w-5 h-auto object-contain"
+                                />
+                                <span className="font-semibold text-slate-700">{c.name}</span>
+                                <span className="ml-auto font-bold text-slate-500">{c.dial_code}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <input
                         id="phone"

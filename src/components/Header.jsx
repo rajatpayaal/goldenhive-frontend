@@ -210,7 +210,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
 
             <Link href="/" className="flex items-center shrink-0">
               <Image
-                src="/logo-full.svg"
+                src="/desktoplogo.svg"
                 alt="GoldenHive Holidays"
                 width={300}
                 height={80}
