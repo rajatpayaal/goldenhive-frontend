@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, Headset, Map, User } from "lucide-react";
+import { Home, ShoppingBag, Headset, Map, Newspaper, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginModal } from "./LoginModal";
 import { ChatbotWidget } from "./ChatbotWidget";
@@ -17,6 +17,7 @@ export function MobileBottomNav() {
   const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Packages", href: "/packages", icon: ShoppingBag },
+    { name: "Blogs", href: "/blogs", icon: Newspaper },
     { name: "Help", href: null, icon: Headset, isCentral: true },
     { name: "Trips", href: "/bookings", icon: Map },
     { name: "Profile", href: "/profile", icon: User },

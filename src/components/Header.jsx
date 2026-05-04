@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, Menu, User } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, Newspaper, User } from "lucide-react";
 
 import { LoginModal } from "./LoginModal";
 import { UserMenu } from "./UserMenu";
@@ -141,8 +141,9 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <SheetClose asChild>
                       <Link
                         href="/blogs"
-                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
                       >
+                        <Newspaper className="h-4 w-4 text-gh-primary" />
                         Blogs
                       </Link>
                     </SheetClose>
