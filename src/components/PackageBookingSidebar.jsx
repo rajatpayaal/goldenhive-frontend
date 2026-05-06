@@ -135,6 +135,7 @@ export function PackageBookingSidebar({
             packageName={packageName}
             packageData={packageData}
             selectedPricingOption={selectedOption}
+            pricingRequired={packageData?.pricingRequired}
           />
         </div>
 

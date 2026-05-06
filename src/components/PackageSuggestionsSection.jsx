@@ -92,6 +92,7 @@ export async function PackageSuggestionsSection({
                         packageId={pkg._id}
                         packageName={name}
                         packageData={pkg}
+                        pricingRequired={pkg?.pricingRequired}
                         showBookNow={true}
                         showMessage={false}
                       />

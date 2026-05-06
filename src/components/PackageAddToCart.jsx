@@ -14,6 +14,7 @@ export function PackageAddToCart({
   packageName,
   packageData,
   selectedPricingOption = null,
+  pricingRequired = false,
   showBookNow = true,
   showMessage = true,
   size = "md",
@@ -51,6 +52,11 @@ export function PackageAddToCart({
   const handleAddToCart = async () => {
     if (!user) {
       setIsLoginOpen(true);
+      return;
+    }
+
+    if (pricingRequired && !selectedPricingOption) {
+      showToast({ type: "error", message: "Please select a pricing option before adding to wishlist." });
       return;
     }
 
@@ -117,6 +123,11 @@ export function PackageAddToCart({
             onClick={async () => {
               if (!user) {
                 setIsLoginOpen(true);
+                return;
+              }
+
+              if (pricingRequired && !selectedPricingOption) {
+                showToast({ type: "error", message: "Please select a pricing option to proceed with booking." });
                 return;
               }
 

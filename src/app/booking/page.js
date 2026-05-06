@@ -8,10 +8,12 @@ import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { createBookingAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
 import { cartActions } from "@/store";
+import { refreshCartCount } from "@/store/cartSlice";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/components/Loader";
+import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export default function BookingPage() {
@@ -196,6 +198,19 @@ export default function BookingPage() {
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
+  };
+
+  const handleRemoveItem = (pkgId) => {
+    setCartItems((prev) => prev.filter((item) => {
+      const entry = normalizeEntry(item);
+      return getEntryPackageId(entry) !== pkgId;
+    }));
+    setPackageTravellers((prev) => {
+      const next = { ...prev };
+      delete next[pkgId];
+      return next;
+    });
+    showToast({ type: "success", message: "Package removed from booking." });
   };
 
   const validateForm = () => {
@@ -441,7 +456,17 @@ export default function BookingPage() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-bold text-[color:var(--gh-heading)]">{pkg?.basic?.name}</h3>
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-bold text-[color:var(--gh-heading)]">{pkg?.basic?.name}</h3>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(itemId)}
+                          className="flex-shrink-0 rounded-xl border border-rose-200 bg-rose-50 p-1.5 text-rose-500 transition hover:bg-rose-100 hover:text-rose-700"
+                          aria-label={`Remove ${pkg?.basic?.name || "package"} from booking`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                       <p className="text-sm text-[color:var(--gh-text-soft)]">
                         ₹{pricePerPerson?.toLocaleString("en-IN")} per traveller
                       </p>
