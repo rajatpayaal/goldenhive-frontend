@@ -348,7 +348,7 @@ export function LoginModal({ isOpen, onClose }) {
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(135deg,rgba(255,250,245,0.98),rgba(255,255,255,0.96))] shadow-[0_28px_70px_rgba(2,6,23,0.3)]"
+        className="relative w-full max-w-2xl max-h-[92vh] overflow-hidden rounded-3xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(135deg,rgba(255,250,245,0.98),rgba(255,255,255,0.96))] shadow-[0_28px_70px_rgba(2,6,23,0.3)] sm:rounded-[2rem]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -360,7 +360,7 @@ export function LoginModal({ isOpen, onClose }) {
           {"\u00D7"}
         </button>
 
-        <div className="bg-gh-navy px-5 py-6 text-white sm:px-8 sm:py-7">
+        <div className="bg-gh-navy px-4 py-5 text-white sm:px-8 sm:py-7">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.28em] text-white/80">
               Premium Access
@@ -371,7 +371,7 @@ export function LoginModal({ isOpen, onClose }) {
           <div className="mt-1 text-sm font-semibold text-white/80">Sign in or create your travel account</div>
         </div>
 
-        <div className="max-h-[calc(100vh-8.5rem)] overflow-y-auto px-4 py-5 sm:px-8 sm:py-7">
+        <div className="max-h-[calc(92vh-8.5rem)] overflow-y-auto px-4 py-5 sm:px-8 sm:py-7">
           {success ? (
             <div className="py-10 text-center">
               <div className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(90deg,var(--gh-accent),var(--gh-accent-strong))] text-3xl font-black text-white shadow-[0_18px_35px_rgba(255,79,138,0.22)]">
@@ -450,7 +450,7 @@ export function LoginModal({ isOpen, onClose }) {
               )}
 
               {mode === "login" ? (
-                <form className="mt-6 space-y-3" onSubmit={handleLogin}>
+                <form className="mt-6 space-y-3" onSubmit={handleLogin} autoComplete="off">
                   <input
                     type="email"
                     name="email"
@@ -459,6 +459,7 @@ export function LoginModal({ isOpen, onClose }) {
                     value={formData.email}
                     onChange={handleInputChange}
                     autoFocus
+                    autoComplete="off"
                     required
                   />
 
@@ -470,6 +471,7 @@ export function LoginModal({ isOpen, onClose }) {
                       placeholder="Password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      autoComplete="off"
                       required
                     />
                     <button
@@ -541,6 +543,7 @@ export function LoginModal({ isOpen, onClose }) {
                         value={formData.phone}
                         onChange={handleInputChange}
                         autoFocus
+                        autoComplete="off"
                         required
                       />
                     </div>
@@ -555,7 +558,7 @@ export function LoginModal({ isOpen, onClose }) {
                   </button>
                 </div>
               ) : step === 2 ? (
-                <form className="mt-6 space-y-4" onSubmit={handleRegister}>
+                <form className="mt-6 space-y-4" onSubmit={handleRegister} autoComplete="off">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label htmlFor="firstName" className="mb-2 block text-sm font-bold text-slate-900">
@@ -570,6 +573,7 @@ export function LoginModal({ isOpen, onClose }) {
                         value={formData.firstName}
                         onChange={handleInputChange}
                         autoFocus
+                        autoComplete="off"
                         required
                       />
                       {fieldErrors.firstName && (
@@ -589,6 +593,7 @@ export function LoginModal({ isOpen, onClose }) {
                         placeholder="Enter last name"
                         value={formData.lastName}
                         onChange={handleInputChange}
+                        autoComplete="off"
                         required
                       />
                       {fieldErrors.lastName && (
@@ -608,6 +613,7 @@ export function LoginModal({ isOpen, onClose }) {
                         placeholder="Choose a username"
                         value={formData.userName}
                         onChange={handleInputChange}
+                        autoComplete="off"
                         required
                       />
                       {fieldErrors.userName && (
@@ -627,6 +633,7 @@ export function LoginModal({ isOpen, onClose }) {
                         placeholder="Enter your email"
                         value={formData.email}
                         onChange={handleInputChange}
+                        autoComplete="off"
                         required
                       />
                       {fieldErrors.email && (
@@ -649,6 +656,7 @@ export function LoginModal({ isOpen, onClose }) {
                           placeholder="Create a password"
                           value={formData.password}
                           onChange={handleInputChange}
+                          autoComplete="off"
                           required
                         />
                         <button
@@ -678,6 +686,7 @@ export function LoginModal({ isOpen, onClose }) {
                           placeholder="Re-enter your password"
                           value={formData.confirmPassword}
                           onChange={handleInputChange}
+                          autoComplete="off"
                           required
                         />
                         <button
@@ -742,7 +751,7 @@ export function LoginModal({ isOpen, onClose }) {
                   </div>
                 </form>
               ) : (
-                <form className="mt-6 space-y-3" onSubmit={handleVerifyOtp}>
+                <form className="mt-6 space-y-3" onSubmit={handleVerifyOtp} autoComplete="off">
                   <input
                     type="text"
                     inputMode="numeric"
@@ -752,6 +761,7 @@ export function LoginModal({ isOpen, onClose }) {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     autoFocus
+                    autoComplete="off"
                     required
                   />
 

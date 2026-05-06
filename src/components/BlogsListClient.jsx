@@ -3,6 +3,9 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { LoginModal } from "@/components/LoginModal";
 import { 
   Search, 
   Clock, 
@@ -23,6 +26,9 @@ import {
 export default function BlogsListClient({ initialBlogs = [], initialCategories = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Blogs");
+    const { user } = useAuth();
+    const router = useRouter();
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const categories = useMemo(() => {
     const cats = [{ name: "All Blogs", icon: LayoutGrid }];
@@ -83,14 +89,21 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
               <h1 className="text-[28px] font-black tracking-tight text-slate-900 md:text-5xl">
                 Blogs & Stories
               </h1>
-              <Link
-                href="/profile/blogs/create"
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (!user) {
+                                        setIsLoginOpen(true);
+                                        return;
+                                    }
+                                    router.push("/profile/blogs/create");
+                                }}
                 className="flex items-center gap-1.5 rounded-full px-4 py-2.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(225,29,72,0.35)] transition-all hover:opacity-90 active:scale-95 md:px-5 md:py-3 md:text-sm"
                 style={{ background: "linear-gradient(135deg, var(--gh-accent), var(--gh-accent-strong))" }}
               >
                 <PenLine className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
                 Create Blog
-              </Link>
+                            </button>
             </div>
             <p className="mt-2 text-xs font-medium text-slate-500 max-w-[250px] md:max-w-md md:text-base">
               Travel tips, guides and real experiences from fellow travelers.
@@ -267,6 +280,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
             </div>
         )}
       </div>
-    </div>
+            <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+        </div>
   );
 }
