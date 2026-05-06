@@ -500,10 +500,12 @@ export function LoginModal({ isOpen, onClose }) {
                           onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
                           className="flex h-[42px] items-center gap-1.5 rounded-xl bg-slate-50 px-3 text-sm font-extrabold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[color:var(--gh-accent)]"
                         >
-                          <img 
+                          <Image 
                             src={`https://flagcdn.com/w20/${(countries.find(c => c.dial_code === formData.dialCode) || countries[0]).code.toLowerCase()}.png`}
                             alt="flag"
-                            className="w-5 h-auto object-contain"
+                            width={20}
+                            height={15}
+                            className="object-contain"
                           />
                           {formData.dialCode}
                           <svg className={`h-4 w-4 text-slate-400 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -521,10 +523,12 @@ export function LoginModal({ isOpen, onClose }) {
                                 }}
                                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-50"
                               >
-                                <img 
+                                <Image 
                                   src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
                                   alt={c.code}
-                                  className="w-5 h-auto object-contain"
+                                  width={20}
+                                  height={15}
+                                  className="object-contain"
                                 />
                                 <span className="font-semibold text-slate-700">{c.name}</span>
                                 <span className="ml-auto font-bold text-slate-500">{c.dial_code}</span>

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, Headset, Map, Newspaper, User } from "lucide-react";
+import { Home, ShoppingBag, Headset, Map, Newspaper, User, Ticket } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginModal } from "./LoginModal";
 import { ChatbotWidget } from "./ChatbotWidget";
@@ -17,8 +17,7 @@ export function MobileBottomNav() {
   const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Packages", href: "/packages", icon: ShoppingBag },
-    { name: "Blogs", href: "/blogs", icon: Newspaper },
-    { name: "Help", href: null, icon: Headset, isCentral: true },
+    { name: "Bookings", href: "/bookings", icon: Ticket, isCentral: true }, // Using Ticket icon
     { name: "Trips", href: "/bookings", icon: Map },
     { name: "Profile", href: "/profile", icon: User },
   ];
@@ -43,25 +42,25 @@ export function MobileBottomNav() {
                 }
               };
 
-              /* ── Central "Help" button ── */
+              /* ── Central "Bookings" button ── */
               if (item.isCentral) {
                 return (
-                  <button
+                  <Link
                     key={item.name}
-                    type="button"
-                    onClick={() => setHelpOpen(true)}
+                    href={item.href}
+                    onClick={handleClick}
                     className="group relative -mt-6 flex flex-col items-center gap-1"
-                    aria-label="Help Center"
+                    aria-label="Bookings"
                   >
                     {/* Outer ring glow */}
                     <div className="absolute inset-0 -m-1 rounded-full bg-[color:var(--gh-accent-soft)] blur-md opacity-80 group-hover:opacity-100 transition-opacity" />
                     <div className="relative flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] shadow-[0_8px_28px_rgba(225,29,72,0.45)] transition-transform active:scale-95 group-hover:scale-105">
                       <item.icon className="h-6 w-6 text-white" strokeWidth={1.8} />
                     </div>
-                    <span className="text-[9px] font-bold tracking-wide text-[color:var(--gh-text-soft)]">
+                    <span className="text-[9px] font-bold tracking-wide text-[color:var(--gh-accent)]">
                       {item.name}
                     </span>
-                  </button>
+                  </Link>
                 );
               }
 

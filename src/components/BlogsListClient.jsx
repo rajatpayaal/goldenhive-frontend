@@ -68,7 +68,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
         return matchesSearch && matchesCategory;
       })
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-  }, [initialBlogs, searchQuery, activeCategory]);
+  }, [initialBlogs, searchQuery, activeCategory, categories]);
 
   const featuredBlog = filteredBlogs[0];
   const remainingBlogs = filteredBlogs.slice(1);

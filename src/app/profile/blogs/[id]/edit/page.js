@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 import { updateBlogAction, getBlogByIdAction, getActiveBlogCategoriesAction } from "@/actions/blog.actions";
 import { ArrowLeft, Save, Image as ImageIcon, CheckCircle2, ChevronDown } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/Loader";
@@ -272,9 +273,9 @@ export default function EditBlogPage({ params }) {
             <div className="space-y-6">
               <div>
                 <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Banner Image</label>
-                <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 overflow-hidden transition hover:bg-slate-100 min-h-[160px]">
+                <label className="relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 overflow-hidden transition hover:bg-slate-100 min-h-[160px]">
                   {existingBannerUrl && !bannerImageFile ? (
-                    <img src={existingBannerUrl} alt="Banner" className="h-40 w-full object-cover opacity-80" />
+                    <Image src={existingBannerUrl} alt="Banner" fill className="object-cover opacity-80" />
                   ) : (
                     <div className="flex flex-col items-center py-8">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
