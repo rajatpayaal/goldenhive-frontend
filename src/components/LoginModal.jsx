@@ -458,7 +458,6 @@ export function LoginModal({ isOpen, onClose }) {
                     placeholder="Email Address"
                     value={formData.email}
                     onChange={handleInputChange}
-                    autoFocus
                     autoComplete="off"
                     required
                   />
@@ -542,7 +541,6 @@ export function LoginModal({ isOpen, onClose }) {
                         placeholder="Mobile number"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        autoFocus
                         autoComplete="off"
                         required
                       />
@@ -572,7 +570,6 @@ export function LoginModal({ isOpen, onClose }) {
                         placeholder="Enter first name"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        autoFocus
                         autoComplete="off"
                         required
                       />
@@ -760,7 +757,6 @@ export function LoginModal({ isOpen, onClose }) {
                     placeholder="Enter OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    autoFocus
                     autoComplete="off"
                     required
                   />
