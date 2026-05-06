@@ -16,7 +16,8 @@ import {
   Lightbulb,
   MoreHorizontal,
   SlidersHorizontal,
-  Calendar
+  Calendar,
+  PenLine
 } from "lucide-react";
 
 export default function BlogsListClient({ initialBlogs = [], initialCategories = [] }) {
@@ -78,9 +79,19 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
         </div>
         
         <div className="relative z-10 mx-auto max-w-6xl">
-            <h1 className="text-[28px] font-black tracking-tight text-slate-900 md:text-5xl">
-              Blogs & Stories
-            </h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-[28px] font-black tracking-tight text-slate-900 md:text-5xl">
+                Blogs & Stories
+              </h1>
+              <Link
+                href="/profile/blogs/create"
+                className="flex items-center gap-1.5 rounded-full px-4 py-2.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(225,29,72,0.35)] transition-all hover:opacity-90 active:scale-95 md:px-5 md:py-3 md:text-sm"
+                style={{ background: "linear-gradient(135deg, var(--gh-accent), var(--gh-accent-strong))" }}
+              >
+                <PenLine className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
+                Create Blog
+              </Link>
+            </div>
             <p className="mt-2 text-xs font-medium text-slate-500 max-w-[250px] md:max-w-md md:text-base">
               Travel tips, guides and real experiences from fellow travelers.
             </p>
