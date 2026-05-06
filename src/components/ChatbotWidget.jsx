@@ -25,6 +25,7 @@ async function fetchFaqList({ query } = {}) {
 
 export function ChatbotWidget({ title = "Help Center", isOpen: controlledOpen, onClose: controlledOnClose }) {
   const isControlled = controlledOpen !== undefined;
+  const isControlledRef = useRef(isControlled);
   const [internalOpen, setInternalOpen] = useState(false);
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = useCallback(
@@ -94,6 +95,7 @@ export function ChatbotWidget({ title = "Help Center", isOpen: controlledOpen, o
 
   useEffect(() => {
     if (!open) return;
+    if (isControlledRef.current) return; // mobile sheet me auto-focus nahi
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }, [open]);
 

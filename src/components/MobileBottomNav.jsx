@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, Headset, Map, Newspaper, User, Ticket } from "lucide-react";
+import { Home, ShoppingBag, Headset, Newspaper, User, Ticket } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginModal } from "./LoginModal";
 import { ChatbotWidget } from "./ChatbotWidget";
@@ -17,8 +17,9 @@ export function MobileBottomNav() {
   const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Packages", href: "/packages", icon: ShoppingBag },
-    { name: "Bookings", href: "/bookings", icon: Ticket, isCentral: true }, // Using Ticket icon
-    { name: "Trips", href: "/bookings", icon: Map },
+    { name: "Trips", href: "/bookings", icon: Ticket },
+    { name: "Help", href: null, icon: Headset, isCentral: true },
+    { name: "Blogs", href: "/blogs", icon: Newspaper },
     { name: "Profile", href: "/profile", icon: User },
   ];
 
@@ -42,15 +43,15 @@ export function MobileBottomNav() {
                 }
               };
 
-              /* ── Central "Bookings" button ── */
+              /* ── Central "Help" button ── */
               if (item.isCentral) {
                 return (
-                  <Link
+                  <button
                     key={item.name}
-                    href={item.href}
-                    onClick={handleClick}
+                    type="button"
+                    onClick={() => setHelpOpen(true)}
                     className="group relative -mt-6 flex flex-col items-center gap-1"
-                    aria-label="Bookings"
+                    aria-label="Help Center"
                   >
                     {/* Outer ring glow */}
                     <div className="absolute inset-0 -m-1 rounded-full bg-[color:var(--gh-accent-soft)] blur-md opacity-80 group-hover:opacity-100 transition-opacity" />
@@ -60,7 +61,7 @@ export function MobileBottomNav() {
                     <span className="text-[9px] font-bold tracking-wide text-[color:var(--gh-accent)]">
                       {item.name}
                     </span>
-                  </Link>
+                  </button>
                 );
               }
 
