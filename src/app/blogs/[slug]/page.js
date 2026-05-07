@@ -37,22 +37,37 @@ function getYouTubeEmbedId(url) {
   return null;
 }
 
-async function resolveBlog(slug) {
-  // 1. Try dedicated slug endpoint
-  const bySlugEndpoint = await apiService.getBlogBySlug(slug);
-  if (bySlugEndpoint) return bySlugEndpoint;
-
-  // 2. Try matching slug field in blog list
-  const blogs = await apiService.getBlogs();
-  const blogData = blogs.find((b) => b.slug === slug);
-  if (blogData) {
-    const byId = await apiService.getBlogById(blogData._id);
+async function resolveBlog(param) {
+  // Extract 24-char MongoDB ObjectId from start of param (e.g. "abc123...-some-slug")
+  const idMatch = param.match(/^([a-f0-9]{24})/i);
+  if (idMatch) {
+    const byId = await apiService.getBlogById(idMatch[1]);
     if (byId) return byId;
   }
 
-  // 3. Fallback: treat slug param as a direct ID
-  const byId = await apiService.getBlogById(slug);
-  return byId || null;
+  // Fallback: try as raw ID
+  const byId = await apiService.getBlogById(param);
+  if (byId) return byId;
+
+  // Fallback: try dedicated slug endpoint
+  const bySlug = await apiService.getBlogBySlug(param);
+  if (bySlug) return bySlug;
+
+  // Fallback: match against blog list by slug or decoded title
+  const blogs = await apiService.getBlogs();
+  const decodedParam = decodeURIComponent(param).toLowerCase();
+  const blogData = blogs.find(
+    (b) =>
+      b.slug === param ||
+      b.slug?.toLowerCase() === decodedParam ||
+      b.title?.toLowerCase() === decodedParam
+  );
+  if (blogData) {
+    const found = await apiService.getBlogById(blogData._id);
+    if (found) return found;
+  }
+
+  return null;
 }
 
 export async function generateMetadata({ params }) {

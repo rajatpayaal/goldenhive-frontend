@@ -166,7 +166,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                     </Link>
                 </div>
 
-                <Link href={`/blogs/${featuredBlog.slug}`} className="block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm md:rounded-3xl">
+                <Link href={`/blogs/${featuredBlog._id}-${featuredBlog.slug || featuredBlog._id}`} className="block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm md:rounded-3xl">
                     <div className="relative aspect-[16/9] w-full">
                         <Image
                             src={featuredBlog.bannerImage?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"}
@@ -232,7 +232,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                 {(featuredBlog && !searchQuery && activeCategory === "All Blogs" ? remainingBlogs : filteredBlogs).map((blog) => (
                     <article key={blog._id} className="flex gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm md:p-4 md:gap-6">
                         {/* Left Image */}
-                        <Link href={`/blogs/${blog.slug}`} className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl md:h-32 md:w-40">
+                        <Link href={`/blogs/${blog._id}-${blog.slug || blog._id}`} className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl md:h-32 md:w-40">
                             <Image
                                 src={blog.bannerImage?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80"}
                                 alt={blog.title}
@@ -256,7 +256,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                             </div>
                             
                             <h3 className="mt-1.5 line-clamp-2 text-sm font-black leading-tight text-slate-900 md:text-lg">
-                                <Link href={`/blogs/${blog.slug}`}>
+                                <Link href={`/blogs/${blog._id}-${blog.slug || blog._id}`}>
                                     {blog.title}
                                 </Link>
                             </h3>
