@@ -37,14 +37,28 @@ function getYouTubeEmbedId(url) {
   return null;
 }
 
+async function resolveBlog(slug) {
+  // 1. Try dedicated slug endpoint
+  const bySlugEndpoint = await apiService.getBlogBySlug(slug);
+  if (bySlugEndpoint) return bySlugEndpoint;
+
+  // 2. Try matching slug field in blog list
+  const blogs = await apiService.getBlogs();
+  const blogData = blogs.find((b) => b.slug === slug);
+  if (blogData) {
+    const byId = await apiService.getBlogById(blogData._id);
+    if (byId) return byId;
+  }
+
+  // 3. Fallback: treat slug param as a direct ID
+  const byId = await apiService.getBlogById(slug);
+  return byId || null;
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const blogs = await apiService.getBlogs();
-  const blogData = blogs.find(blog => blog.slug === slug);
+  const blog = await resolveBlog(slug);
 
-  if (!blogData) return { title: "Blog Not Found" };
-
-  const blog = await apiService.getBlogById(blogData._id);
   if (!blog) return { title: "Blog Not Found" };
 
   return {
@@ -56,12 +70,8 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogDetailPage({ params }) {
   const { slug } = await params;
-  const blogs = await apiService.getBlogs();
-  const blogData = blogs.find(blog => blog.slug === slug);
+  const blog = await resolveBlog(slug);
 
-  if (!blogData) notFound();
-
-  const blog = await apiService.getBlogById(blogData._id);
   if (!blog) notFound();
 
   const videoId = getYouTubeEmbedId(blog.seo?.youtubeUrl);

@@ -16,7 +16,6 @@ export default function CreateBlogPage() {
 
   // Form states
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("");
   const [readTime, setReadTime] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -69,7 +68,6 @@ export default function CreateBlogPage() {
     try {
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("slug", slug);
       formData.append("category", category);
       formData.append("author", `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "GoldenHive User");
       formData.append("readTime", readTime);
@@ -87,10 +85,11 @@ export default function CreateBlogPage() {
         formData.append("sections", JSON.stringify(sectionsArray));
       }
 
-      // Append default visibility/SEO strings if required by API
-      formData.append("visibility", "public");
-      formData.append("visibilitySections", "public");
-      formData.append("visibilityBanner", "public");
+      // Visibility fields — not shown in UI, sent as true silently
+      formData.append("visibilityBanner", "true");
+      formData.append("visibilitySections", "true");
+      formData.append("visibilityFaq", "true");
+      formData.append("visibilitySeo", "true");
       formData.append("bannerImageIsVisible", "true");
       
       const res = await createBlogAction(formData);
@@ -154,24 +153,9 @@ export default function CreateBlogPage() {
                   type="text"
                   required
                   value={title}
-                  onChange={(e) => {
-                    setTitle(e.target.value);
-                    if (!slug) setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
-                  }}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 focus:border-rose-500 focus:bg-white focus:outline-none"
                   placeholder="e.g. My Trip to Kedarnath"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">Slug / URL</label>
-                <input
-                  type="text"
-                  required
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900 focus:border-rose-500 focus:bg-white focus:outline-none"
-                  placeholder="e.g. my-trip-to-kedarnath"
                 />
               </div>
 

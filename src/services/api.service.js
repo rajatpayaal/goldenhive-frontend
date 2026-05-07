@@ -211,6 +211,18 @@ export const apiService = {
     }
   },
 
+  async getBlogBySlug(slug) {
+    try {
+      const res = await fetch(`${API_BASE}/blogs/slug/${slug}`, { next: { revalidate: 3600 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error(`Error fetching blog by slug ${slug}:`, error);
+      return null;
+    }
+  },
+
   async getBlogCategories({ isActive = true } = {}) {
     try {
       const url = buildUrl("/blog-categories", { isActive });
