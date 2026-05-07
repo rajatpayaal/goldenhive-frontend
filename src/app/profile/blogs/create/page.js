@@ -96,8 +96,12 @@ export default function CreateBlogPage() {
       
       if (res.ok) {
         setSuccess(true);
+        const created = res.data?.data;
+        const blogUrl = created?._id
+          ? `/blogs/${created._id}-${created.slug || created._id}`
+          : "/profile/blogs";
         setTimeout(() => {
-          router.push("/profile/blogs");
+          router.push(blogUrl);
         }, 1500);
       } else {
         setError(res.data?.message || res.data?.error || "Failed to create blog");
