@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { decodeS3Url } from "@/lib/s3url";
 import {
+  ArrowLeft,
   Heart,
   Search,
   Calendar,
