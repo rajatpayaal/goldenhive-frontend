@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import { decodeS3Url } from "@/lib/s3url";
 
 import type { TravelPackageImage } from "@/components/travel-package/types";
 import { Button } from "@/components/ui/button";
@@ -49,11 +50,12 @@ export function GallerySection({ images }: { images: TravelPackageImage[] }) {
               aria-label={`Open image ${i + 1}`}
             >
               <Image
-                src={img.url}
+                src={decodeS3Url(img.url)}
                 alt={`Gallery image ${i + 1}`}
                 fill
                 className="object-cover"
                 sizes="144px"
+                loading="lazy"
               />
             </button>
           </DialogTrigger>
@@ -74,7 +76,7 @@ export function GallerySection({ images }: { images: TravelPackageImage[] }) {
 
         <div className="relative aspect-[16/10] w-full">
           <Image
-            src={images[index].url}
+            src={decodeS3Url(images[index].url)}
             alt={`Gallery image ${index + 1}`}
             fill
             className="object-contain"

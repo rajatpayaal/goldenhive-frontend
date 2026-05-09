@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { decodeS3Url } from "@/lib/s3url";
 
 const formatInr = (value) => {
   const numeric = typeof value === "string" && value.trim() === "" ? NaN : Number(value);
@@ -88,10 +89,12 @@ export function PricingOptionsSelector({
                 {vehicle?.image?.url && (
                   <div className="relative mt-2 h-20 w-full overflow-hidden">
                     <Image
-                      src={vehicle.image.url}
+                      src={decodeS3Url(vehicle.image.url)}
                       alt={vehicle.image.alt || vehicle.name}
                       fill
                       className="object-contain mix-blend-multiply"
+                      sizes="(max-width: 640px) 100vw, 200px"
+                      loading="lazy"
                     />
                   </div>
                 )}

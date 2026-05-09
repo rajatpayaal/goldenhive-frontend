@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { decodeS3Url } from "@/lib/s3url";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginModal } from "@/components/LoginModal";
@@ -169,7 +170,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                 <Link href={`/blogs/${featuredBlog._id}-${featuredBlog.slug || featuredBlog._id}`} className="block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm md:rounded-3xl">
                     <div className="relative aspect-[16/9] w-full">
                         <Image
-                            src={featuredBlog.bannerImage?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"}
+                            src={decodeS3Url(featuredBlog.bannerImage?.url) || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80"}
                             alt={featuredBlog.title}
                             fill
                             className="object-cover"
@@ -234,7 +235,7 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                         {/* Left Image */}
                         <Link href={`/blogs/${blog._id}-${blog.slug || blog._id}`} className="relative h-24 w-28 shrink-0 overflow-hidden rounded-xl md:h-32 md:w-40">
                             <Image
-                                src={blog.bannerImage?.url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80"}
+                                src={decodeS3Url(blog.bannerImage?.url) || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80"}
                                 alt={blog.title}
                                 fill
                                 className="object-cover"

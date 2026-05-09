@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apiService } from "../../../services/api.service";
 import { getCategoryBySlug } from "../../../lib/package-data";
+import { decodeS3Url } from "../../../lib/s3url";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -22,7 +24,11 @@ export async function generateMetadata({ params }) {
 }
 
 const getPackageImage = (pkg) =>
-  pkg?.images?.primary?.url || pkg?.images?.gallery?.[0]?.url || "/placeholder.jpg";
+  pkg?.images?.primary?.url ||
+  pkg?.images?.gallery?.[0]?.url ||
+  pkg?.hero?.image ||
+  pkg?.hero?.primaryImage ||
+  "/placeholder.svg";
 
 export default async function CategoryPage({ params }) {
   const { slug } = await params;
@@ -58,10 +64,14 @@ export default async function CategoryPage({ params }) {
               href={`/packages/${pkg.basic?.slug || pkg._id}`}
               className="overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-white shadow-[0_18px_45px_rgba(121,68,44,0.12)] transition hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(255,79,138,0.18)]"
             >
-              <div className="relative aspect-[4/3] bg-[color:var(--gh-bg-soft)]">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${getPackageImage(pkg)})` }}
+              <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--gh-bg-soft)]">
+                <Image
+                  src={decodeS3Url(getPackageImage(pkg))}
+                  alt={pkg.basic?.name || "Package"}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  loading="lazy"
                 />
               </div>
               <div className="space-y-3 p-5">

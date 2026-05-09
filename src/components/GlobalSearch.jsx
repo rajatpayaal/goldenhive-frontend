@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Search, X } from "lucide-react";
+import { decodeS3Url } from "@/lib/s3url";
 
 const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 350;
@@ -98,11 +99,12 @@ function SearchResults({ query, status, results, onPick }) {
             <div className="h-11 w-11 overflow-hidden rounded-xl border border-black/5 bg-slate-50">
               {imageUrl ? (
                 <Image
-                  src={imageUrl}
+                  src={decodeS3Url(imageUrl)}
                   alt={imageAlt}
                   width={44}
                   height={44}
                   className="h-full w-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs font-black text-slate-400">
@@ -140,11 +142,12 @@ function SearchResults({ query, status, results, onPick }) {
             <div className="h-11 w-11 overflow-hidden rounded-xl border border-black/5 bg-slate-50">
               {imageUrl ? (
                 <Image
-                  src={imageUrl}
+                  src={decodeS3Url(imageUrl)}
                   alt={imageAlt}
                   width={44}
                   height={44}
                   className="h-full w-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs font-black text-slate-400">

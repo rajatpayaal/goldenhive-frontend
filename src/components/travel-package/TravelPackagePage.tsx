@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { decodeS3Url } from "@/lib/s3url";
 import {
   BadgeCheck,
   Bus,
@@ -294,7 +295,7 @@ export function TravelPackagePage({ data }: { data: TravelPackage }) {
     <div className="relative">
       <div className={cn("absolute inset-x-0 top-0", heroHeight)}>
         <Image
-          src={data.images.primary.url}
+          src={decodeS3Url(data.images.primary.url)}
           alt={data.hero.title}
           fill
           priority

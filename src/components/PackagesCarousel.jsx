@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { decodeS3Url } from "@/lib/s3url";
 
 const getPackageImage = (pkg) => {
   return (
@@ -10,7 +12,7 @@ const getPackageImage = (pkg) => {
     pkg.images?.gallery?.[0]?.url ||
     pkg.hero?.image ||
     pkg.hero?.primaryImage ||
-    "/placeholder.jpg"
+    "/placeholder.svg"
   );
 };
 
@@ -101,9 +103,13 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
           >
             {/* ── Image ── */}
             <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                style={{ backgroundImage: `url(${imageUrl})` }}
+              <Image
+                src={decodeS3Url(imageUrl)}
+                alt={title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 42vw, 200px"
+                loading="lazy"
               />
               {/* Dark gradient overlay at bottom */}
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />

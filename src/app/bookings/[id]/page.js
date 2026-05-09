@@ -35,7 +35,6 @@ import {
   ChevronDown,
   Navigation
 } from "lucide-react";
-import Image from "next/image";
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -217,7 +216,7 @@ export default function BookingDetailsPage() {
                   return (
                     <div key={i} className="relative overflow-hidden bg-slate-100">
                       {imgUrl ? (
-                        <Image src={imgUrl} alt={item.pkg?.basic?.name || ''} fill className="object-cover" />
+                        <img src={imgUrl} alt={item.pkg?.basic?.name || ''} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-slate-100">
                           <span className="text-xs font-black text-slate-400">{i + 1}</span>
@@ -229,7 +228,7 @@ export default function BookingDetailsPage() {
               </div>
             ) : (
               <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-[2rem] sm:h-44 sm:w-44">
-                <Image src={pkgImage} alt={pkgName} fill className="object-cover" />
+                <img src={pkgImage} alt={pkgName} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
               </div>
             )}
             <div className="flex flex-1 flex-col justify-between py-1">
@@ -461,7 +460,7 @@ export default function BookingDetailsPage() {
                   <div className="flex items-center gap-4">
                     <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
                       {itemImage ? (
-                        <Image src={itemImage} alt="" fill className="rounded-2xl object-cover" />
+                        <img src={itemImage} alt="" className="absolute inset-0 h-full w-full rounded-2xl object-cover" loading="lazy" />
                       ) : (
                         <Navigation className="h-6 w-6" />
                       )}

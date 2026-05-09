@@ -141,7 +141,7 @@ export function Footer({ footer }) {
           <div className="grid gap-6 sm:gap-8 md:grid-cols-3 lg:grid-cols-6">
             <div className="space-y-4 lg:col-span-1">
               <Link href="/" className="inline-flex items-center gap-2 leading-none">
-                <Image src="/applogo.svg" alt="GoldenHive" width={44} height={44} className="drop-shadow-lg" />
+                <Image src="/applogo.svg" alt="GoldenHive" width={44} height={44} className="drop-shadow-lg" style={{ width: 44, height: "auto" }} />
                 <div>
                   <div className="text-xl font-black tracking-tight text-white">
                     GoldenHive

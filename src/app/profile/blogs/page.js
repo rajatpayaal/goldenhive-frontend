@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Plus, Edit3, Trash2, Calendar, FileText, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Loader from "@/components/Loader";
+import { decodeS3Url } from "@/lib/s3url";
 
 export default function MyBlogsPage() {
   const [blogs, setBlogs] = useState([]);
@@ -85,7 +86,7 @@ export default function MyBlogsPage() {
               <div key={blog._id} className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md">
                 <div className="relative h-48 w-full bg-slate-100">
                   {blog.bannerImage?.url ? (
-                    <Image src={blog.bannerImage.url} alt={blog.title} fill className="object-cover" />
+                    <Image src={decodeS3Url(blog.bannerImage.url)} alt={blog.title} fill className="object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-slate-100">
                       <ImageIcon className="h-10 w-10 text-slate-300" />

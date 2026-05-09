@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { decodeS3Url } from "@/lib/s3url";
 import {
-  ArrowLeft,
   Heart,
   Search,
   Calendar,
@@ -19,7 +20,9 @@ import {
 const getImage = (pkg) =>
   pkg?.images?.primary?.url ||
   pkg?.images?.gallery?.[0]?.url ||
-  "/placeholder.jpg";
+  pkg?.hero?.image ||
+  pkg?.hero?.primaryImage ||
+  "/placeholder.svg";
 
 const galleryCount = (pkg) =>
   (pkg?.images?.gallery?.length ?? 0) + (pkg?.images?.primary ? 1 : 0);
@@ -240,10 +243,14 @@ export function PackagesListClient({ packages = [], categories = [], title = "Al
                 className="group flex overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(17,24,39,0.08)] transition-shadow hover:shadow-[0_6px_20px_rgba(17,24,39,0.12)]"
               >
                 {/* Left: Image */}
-                <div className="relative w-[140px] shrink-0 sm:w-[180px]">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${img})` }}
+                <div className="relative w-[140px] shrink-0 sm:w-[180px] overflow-hidden">
+                  <Image
+                    src={decodeS3Url(img)}
+                    alt={title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 140px, 180px"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 

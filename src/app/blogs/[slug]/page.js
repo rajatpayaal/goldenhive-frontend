@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { decodeS3Url } from "../../../lib/s3url";
 import { apiService } from "../../../services/api.service";
 import { 
   Clock, 
@@ -118,7 +119,7 @@ export default async function BlogDetailPage({ params }) {
         <div className="relative aspect-[16/10] w-full bg-slate-100 md:aspect-video md:rounded-3xl md:overflow-hidden md:mt-4">
             {(blog.bannerImage?.url && blog.visibility?.banner !== false) ? (
                 <Image
-                    src={blog.bannerImage.url}
+                    src={decodeS3Url(blog.bannerImage.url)}
                     alt={blog.bannerImage.altText || blog.title}
                     fill
                     className="object-cover"
@@ -191,7 +192,7 @@ export default async function BlogDetailPage({ params }) {
                                         {media.type === "image" && (
                                             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
                                                 <Image
-                                                    src={media.url}
+                                                    src={decodeS3Url(media.url)}
                                                     alt={media.altText || ""}
                                                     fill
                                                     className="object-cover"

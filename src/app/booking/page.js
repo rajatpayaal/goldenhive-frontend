@@ -13,6 +13,7 @@ import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/components/Loader";
+import { decodeS3Url } from "@/lib/s3url";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
@@ -447,7 +448,7 @@ export default function BookingPage() {
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-[color:var(--gh-bg-soft)]">
                       {pkg?.images?.primary?.url && (
                         <Image
-                          src={pkg.images.primary.url}
+                          src={decodeS3Url(pkg.images.primary.url)}
                           alt={pkg?.basic?.name}
                           width={64}
                           height={64}

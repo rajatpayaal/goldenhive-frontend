@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { decodeS3Url } from "../../../lib/s3url";
 import {
   CalendarDays,
   CarFront,
@@ -272,6 +273,7 @@ export default async function PackagesSlugPage({ params }) {
   }
 
   const heroImage = getHeroImage(pkg);
+  const heroImageDecoded = (() => { try { return decodeURIComponent(heroImage); } catch { return heroImage; } })();
   const gallery = (pkg.images?.gallery || []).filter((item) => item?.url);
   const whatsapp = (pkg.cta?.whatsapp || "").replace("+", "");
   const backHref = pkg.categoryId?.slug ? `/${pkg.categoryId.slug}` : "/tour-packages";
@@ -328,13 +330,11 @@ export default async function PackagesSlugPage({ params }) {
 
         <div className="mt-0 sm:mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="relative overflow-hidden sm:rounded-[2.2rem] border-b sm:border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)] -mx-4 sm:mx-0">
-            <div className="relative">
-              <Image
-                src={heroImage}
+            <div className="relative min-h-[400px] sm:min-h-[560px]">
+              <img
+                src={heroImageDecoded}
                 alt={pkg.images?.primary?.alt || pkg.basic?.name || "Package image"}
-                fill
-                priority
-                className="object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
@@ -550,7 +550,7 @@ export default async function PackagesSlugPage({ params }) {
                       className="group relative shrink-0 snap-center w-[85vw] sm:w-auto aspect-[4/3] sm:aspect-[1.15/1] overflow-hidden rounded-[1.4rem] border border-[color:var(--gh-border)] bg-[color:var(--gh-bg-soft)]"
                     >
                       <Image
-                        src={img.url}
+                        src={decodeS3Url(img.url)}
                         alt={img.alt || `Package image ${i + 1}`}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"

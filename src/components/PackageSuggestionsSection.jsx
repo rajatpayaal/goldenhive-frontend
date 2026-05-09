@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { apiService } from "../services/api.service";
 import { PackageAddToCart } from "./PackageAddToCart";
+import { decodeS3Url } from "@/lib/s3url";
 
 const getPackageImage = (pkg) => {
   return (
@@ -8,7 +10,7 @@ const getPackageImage = (pkg) => {
     pkg.images?.gallery?.[0]?.url ||
     pkg.hero?.image ||
     pkg.hero?.primaryImage ||
-    "/placeholder.jpg"
+    "/placeholder.svg"
   );
 };
 
@@ -58,9 +60,13 @@ export async function PackageSuggestionsSection({
                   className="relative flex w-[260px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[color:var(--gh-border)] bg-white shadow-sm transition hover:shadow-md sm:w-[280px]"
                 >
                   <Link href={href} className="group relative aspect-[4/3] w-full overflow-hidden bg-slate-100 block">
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                      style={{ backgroundImage: `url(${imageUrl})` }}
+                    <Image
+                      src={decodeS3Url(imageUrl)}
+                      alt={name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 280px"
+                      loading="lazy"
                     />
                     {pkg.pricing?.discountPercent > 0 && (
                       <div className="absolute left-2 top-2 rounded-full bg-gh-rose px-2 py-0.5 text-[9px] font-black text-white shadow-sm">

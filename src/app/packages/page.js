@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { apiService } from "../../services/api.service";
 import { PackagesListClient } from "../../components/PackagesListClient";
+import { decodeS3Url } from "../../lib/s3url";
 
 export const metadata = {
   title: "All Packages | GoldenHive Holidays",
@@ -9,7 +11,11 @@ export const metadata = {
 };
 
 const getPackageImage = (pkg) =>
-  pkg?.images?.primary?.url || pkg?.images?.gallery?.[0]?.url || "/placeholder.jpg";
+  pkg?.images?.primary?.url ||
+  pkg?.images?.gallery?.[0]?.url ||
+  pkg?.hero?.image ||
+  pkg?.hero?.primaryImage ||
+  "/placeholder.svg";
 
 export default async function PackagesPage() {
   const [packages, categories] = await Promise.all([
@@ -51,10 +57,14 @@ export default async function PackagesPage() {
                 href={`/packages/${pkg.basic?.slug || pkg._id}`}
                 className="group overflow-hidden rounded-[2rem] border border-[color:var(--gh-border)] bg-white shadow-[0_18px_45px_rgba(121,68,44,0.12)] transition hover:-translate-y-1 hover:shadow-[0_24px_55px_rgba(255,79,138,0.18)]"
               >
-                <div className="relative aspect-[4/3] bg-[color:var(--gh-bg-soft)]">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${getPackageImage(pkg)})` }}
+                <div className="relative aspect-[4/3] bg-[color:var(--gh-bg-soft)] overflow-hidden">
+                  <Image
+                    src={decodeS3Url(getPackageImage(pkg))}
+                    alt={pkg.basic?.name || "Package"}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[rgba(31,41,64,0.35)] to-transparent" />
                   {pkg.pricing?.discountPercent > 0 && (

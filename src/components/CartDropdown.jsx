@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Heart, X } from "lucide-react";
+import { decodeS3Url } from "@/lib/s3url";
 
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
@@ -278,11 +279,12 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
                       >
                         {imageUrl ? (
                           <Image
-                            src={imageUrl}
+                            src={decodeS3Url(imageUrl)}
                             alt={pkg?.images?.primary?.alt || name}
                             width={64}
                             height={64}
                             className="h-full w-full object-cover"
+                            loading="lazy"
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-xs font-black text-slate-400">

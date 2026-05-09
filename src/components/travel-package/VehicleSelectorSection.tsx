@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Check, Users2 } from "lucide-react";
+import { decodeS3Url } from "@/lib/s3url";
 
 import type { VehicleOption } from "@/components/travel-package/types";
 import { Badge } from "@/components/ui/badge";
@@ -34,11 +35,12 @@ export function VehicleSelectorSection({
               <div className="relative h-12 w-16 overflow-hidden rounded-xl border border-emerald-200 bg-white">
                 {selected?.imageUrl ? (
                   <Image
-                    src={selected.imageUrl}
+                    src={decodeS3Url(selected.imageUrl)}
                     alt={selected.name}
                     fill
                     className="object-cover"
                     sizes="64px"
+                    loading="lazy"
                   />
                 ) : null}
               </div>
@@ -95,11 +97,12 @@ export function VehicleSelectorSection({
                 >
                   <div className="relative h-32 w-full overflow-hidden rounded-xl border border-slate-200">
                     <Image
-                      src={v.imageUrl}
+                      src={decodeS3Url(v.imageUrl)}
                       alt={v.name}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 33vw"
+                      loading="lazy"
                     />
                   </div>
                   <div className="mt-3 flex items-start justify-between gap-3">
