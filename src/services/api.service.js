@@ -47,6 +47,8 @@ export const apiService = {
     }
   },
 
+
+
   async getFooter({ isActive = true } = {}) {
     try {
       const url = buildUrl("/footer", { isActive });
