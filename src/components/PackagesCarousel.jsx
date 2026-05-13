@@ -75,7 +75,7 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
   return (
     <div
       ref={scrollerRef}
-      className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2"
+      className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 touch-pan-y"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onPointerDown={() => setPaused(true)}

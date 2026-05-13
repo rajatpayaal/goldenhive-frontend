@@ -138,7 +138,7 @@ export function BannerSlider({ banners }) {
                     {/* Background Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1a0b16] via-[#2a1025]/80 to-transparent lg:bg-gradient-to-r lg:from-[#1a0b16]/90 lg:via-[#1a0b16]/60 lg:to-transparent z-0" />
 
-                    <div className="relative z-10 flex h-full w-full flex-col justify-start lg:justify-center px-4 sm:px-10 lg:px-14 pb-8 pt-6 lg:pt-0 lg:pb-0 overflow-y-auto no-scrollbar lg:overflow-visible pt-safe">
+                    <div className="relative z-10 flex h-full w-full flex-col justify-start lg:justify-center px-4 sm:px-10 lg:px-14 pb-8 pt-6 lg:pt-0 lg:pb-0 overflow-visible pt-safe">
 
                       <div className="max-w-3xl w-full mx-auto lg:mx-0 mt-2 lg:mt-0">
 
@@ -240,7 +240,7 @@ export function BannerSlider({ banners }) {
                                 Explore Our Top Packages
                               </h3>
                             </div>
-                            <div className="flex items-stretch gap-4 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4">
+                            <div className="flex items-stretch gap-4 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 touch-pan-y">
                               {banner.campaignId.linkedPackages.map((pkg, i) => {
                                 const tags = ["BEST SELLER", "DELUXE", "HILL RETREAT", "ADVENTURE"];
                                 return (
