@@ -18,7 +18,7 @@ export default async function HomeContent({ initialSection }) {
       activeCategories.map(async (category) => {
         const { items } = await apiService.getPackages({
           categoryId: category._id,
-          limit: 60,
+          limit: 8,
           sort: "-createdAt",
         });
         return [category.slug, items];
