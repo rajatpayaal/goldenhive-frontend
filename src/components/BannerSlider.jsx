@@ -87,7 +87,7 @@ export function BannerSlider({ banners }) {
 
   const hasCampaign = items.some(b => b.campaignId);
   const containerHeightClass = hasCampaign
-    ? "min-h-[720px] md:min-h-[500px] lg:min-h-[640px]"
+    ? "min-h-[880px] sm:min-h-[800px] md:min-h-[500px] lg:min-h-[640px]"
     : "min-h-[500px] md:min-h-[500px] lg:min-h-[600px]";
 
   return (
@@ -240,7 +240,7 @@ export function BannerSlider({ banners }) {
                                 Explore Our Top Packages
                               </h3>
                             </div>
-                            <div className="flex items-stretch gap-4 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 touch-pan-y">
+                            <div className="flex items-stretch gap-4 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4">
                               {banner.campaignId.linkedPackages.map((pkg, i) => {
                                 const tags = ["BEST SELLER", "DELUXE", "HILL RETREAT", "ADVENTURE"];
                                 return (
