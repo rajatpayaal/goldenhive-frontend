@@ -36,7 +36,7 @@ export const apiService = {
 
   async getHomeBanners() {
     try {
-      const res = await fetch(`${API_BASE}/banners/active`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/banners/active`, { next: { revalidate: 60 } });
       if (!res.ok) return [];
       const json = await res.json();
       const banners = json.data || [];
@@ -91,7 +91,7 @@ export const apiService = {
   async getPackages({ categoryId, categoryName, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
     try {
       const url = buildUrl("/packages", { categoryId, categoryName, destination, status, search, page, limit, sort });
-      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const res = await fetch(url, { next: { revalidate: 60 } });
       if (!res.ok) return { items: [], total: 0, page, limit, totalPages: 0 };
       const json = await res.json();
       const data = json?.data || {};
@@ -138,7 +138,7 @@ export const apiService = {
   async getPackageSuggestions({ excludeId, limit = 6, sort = "-createdAt" } = {}) {
     try {
       const url = buildUrl("/suggestions/packages", { excludeId, limit, sort });
-      const res = await fetch(url, { next: { revalidate: 300 } });
+      const res = await fetch(url, { next: { revalidate: 30 } });
       if (!res.ok) return [];
       const json = await res.json();
       return Array.isArray(json?.data) ? json.data : [];
@@ -147,11 +147,11 @@ export const apiService = {
       return [];
     }
   },
-  
+
 
   async getPackageById(id) {
     try {
-      const res = await fetch(`${API_BASE}/packages/${id}`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/packages/${id}`, { next: { revalidate: 60 } });
       if (!res.ok) return null;
       const json = await res.json();
       return json.data || null;
@@ -166,7 +166,7 @@ export const apiService = {
       const decodedSlug = decodeURIComponent(slug || "");
       if (!decodedSlug) return null;
 
-      const res = await fetch(`${API_BASE}/packages/slug/${decodedSlug}`, dynamic ? { cache: "no-store" } : { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/packages/slug/${decodedSlug}`, dynamic ? { cache: "no-store" } : { next: { revalidate: 30 } });
       if (!res.ok) return null;
       const json = await res.json();
       return json.data || null;
@@ -203,7 +203,7 @@ export const apiService = {
 
   async getBlogById(id) {
     try {
-      const res = await fetch(`${API_BASE}/blogs/${id}`, { next: { revalidate: 3600 } });
+      const res = await fetch(`${API_BASE}/blogs/${id}`, { next: { revalidate: 30 } });
       if (!res.ok) return null;
       const json = await res.json();
       return json.data || null;

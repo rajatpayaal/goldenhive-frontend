@@ -497,9 +497,6 @@ export default async function PackagesSlugPage({ params }) {
                     </details>
                   ))}
                 </div>
-                <button className="mt-4 w-full rounded-full bg-rose-50 py-3 text-xs font-bold text-gh-rose transition hover:bg-rose-100">
-                  View Full Itinerary
-                </button>
               </div>
             )}
 
@@ -647,7 +644,7 @@ export default async function PackagesSlugPage({ params }) {
                         href={pkg.location.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 gh-secondary-btn w-full items-center justify-center gap-2 px-5 py-4 text-sm shadow-md"
+                        className="mt-4 gh-secondary-btn flex w-full items-center justify-center gap-2 px-5 py-4 text-sm shadow-md"
                       >
                         Open in Google Maps
                         <ChevronRight className="h-4 w-4" />
