@@ -196,7 +196,7 @@ export function BannerSlider({ banners }) {
 
                         {/* Book Now Button */}
                         <div className="mt-4 lg:mt-8 w-full lg:w-auto flex flex-col items-center lg:items-start">
-                          <Link href={banner.campaignId.targetUrl || "/tour-packages"} className="w-full lg:w-auto group flex items-center justify-between lg:justify-center gap-4 lg:gap-6 rounded-full bg-[#d91656] py-3 lg:py-4 pl-6 lg:pl-8 pr-2 lg:pr-4 text-white shadow-[0_8px_30px_rgba(217,22,86,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                          <Link href={banner.campaignId.targetUrl || "/packages"} className="w-full lg:w-auto group flex items-center justify-between lg:justify-center gap-4 lg:gap-6 rounded-full bg-[#d91656] py-3 lg:py-4 pl-6 lg:pl-8 pr-2 lg:pr-4 text-white shadow-[0_8px_30px_rgba(217,22,86,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
                             <span className="text-sm lg:text-lg font-black tracking-widest uppercase flex-1 text-center sm:text-left">Book Now</span>
                             <div className="flex h-8 w-8 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#d91656] shadow-sm transition-transform group-hover:translate-x-1">
                               <ArrowRight className="h-4 w-4 lg:h-6 lg:w-6" />

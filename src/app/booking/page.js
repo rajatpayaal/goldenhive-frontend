@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useToast } from "@/hooks/useToast";
 import { useDispatch } from "react-redux";
 import { getCartAction, removeFromCartAction } from "@/actions/cart.actions";
@@ -16,6 +16,7 @@ import Loader from "@/components/Loader";
 import { decodeS3Url } from "@/lib/s3url";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { countries } from "@/utils/countries";
 
 export default function BookingPage() {
   const dispatch = useDispatch();
@@ -40,9 +41,22 @@ export default function BookingPage() {
     travellers: 1,
   });
 
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const dropdownRefs = useRef([]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openDropdownIndex !== null && dropdownRefs.current[openDropdownIndex] && !dropdownRefs.current[openDropdownIndex].contains(event.target)) {
+        setOpenDropdownIndex(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openDropdownIndex]);
+
   // Traveler details
   const [travelerDetails, setTravelerDetails] = useState([
-    { name: "", age: "", email: "", phone: "" }
+    { name: "", age: "", email: "", phone: "", gender: "Male", dialCode: "+91" }
   ]);
 
   const normalizeEntry = (item) => (item?.packageId ? item : { packageId: item });
@@ -168,7 +182,7 @@ export default function BookingPage() {
       if (currentCount === targetCount) return prev;
 
       const updated = Array.from({ length: targetCount }, (_, index) =>
-        prev[index] || { name: "", age: "", email: "", phone: "" }
+        prev[index] || { name: "", age: "", email: "", phone: "", gender: "Male", dialCode: "+91" }
       );
       return updated;
     });
@@ -178,7 +192,7 @@ export default function BookingPage() {
   const normalizedTravelerDetails = useMemo(
     () =>
       Array.from({ length: travelerCount }, (_, index) => (
-        travelerDetails[index] || { name: "", age: "", email: "", phone: "" }
+        travelerDetails[index] || { name: "", age: "", email: "", phone: "", gender: "Male", dialCode: "+91" }
       )),
     [travelerCount, travelerDetails]
   );
@@ -194,7 +208,7 @@ export default function BookingPage() {
   const handleTravelerChange = (index, field, value) => {
     setTravelerDetails(prev => {
       const updated = Array.from({ length: travelerCount }, (_, currentIndex) => (
-        prev[currentIndex] || { name: "", age: "", email: "", phone: "" }
+        prev[currentIndex] || { name: "", age: "", email: "", phone: "", gender: "Male", dialCode: "+91" }
       ));
       updated[index] = { ...updated[index], [field]: value };
       return updated;
@@ -245,8 +259,8 @@ export default function BookingPage() {
         setError(`Please enter valid email for Traveler ${i + 1}.`);
         return false;
       }
-      if (!traveler.phone.trim() || !/^[6-9]\d{9}$/.test(traveler.phone.replace(/\s+/g, ''))) {
-        setError(`Please enter valid 10-digit phone number for Traveler ${i + 1}.`);
+      if (!traveler.phone.trim() || !/^\d{6,15}$/.test(traveler.phone.replace(/\s+/g, ''))) {
+        setError(`Please enter valid mobile number for Traveler ${i + 1}.`);
         return false;
       }
     }
@@ -305,7 +319,10 @@ export default function BookingPage() {
         userId,
         user_id: userId,
         totalAmount,
-        travelerDetails: normalizedTravelerDetails,
+        travelerDetails: normalizedTravelerDetails.map(t => ({
+          ...t,
+          phone: `${t.dialCode}${t.phone}`
+        })),
       };
 
       const response = await createBookingAction(payload);
@@ -528,18 +545,33 @@ export default function BookingPage() {
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Age *</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="120"
-                        value={traveler.age}
-                        onChange={(e) => handleTravelerChange(index, 'age', e.target.value)}
-                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
-                        placeholder="Enter age"
-                        required
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Age *</label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="120"
+                          value={traveler.age}
+                          onChange={(e) => handleTravelerChange(index, 'age', e.target.value)}
+                          className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
+                          placeholder="Age"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Gender *</label>
+                        <select
+                          value={traveler.gender || "Male"}
+                          onChange={(e) => handleTravelerChange(index, 'gender', e.target.value)}
+                          className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
+                          required
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Email *</label>
@@ -554,14 +586,59 @@ export default function BookingPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-[color:var(--gh-text-soft)] mb-1">Phone Number *</label>
-                      <input
-                        type="tel"
-                        value={traveler.phone}
-                        onChange={(e) => handleTravelerChange(index, 'phone', e.target.value)}
-                        className="w-full rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 text-sm outline-none focus:border-[color:var(--gh-accent)]"
-                        placeholder="Enter 10-digit phone number"
-                        required
-                      />
+                      <div className="flex items-center gap-3 rounded-xl border border-[color:var(--gh-border)] bg-white px-3 py-2 focus-within:border-[color:var(--gh-accent)]">
+                        <div className="relative shrink-0" ref={el => dropdownRefs.current[index] = el}>
+                          <button
+                            type="button"
+                            onClick={() => setOpenDropdownIndex(openDropdownIndex === index ? null : index)}
+                            className="flex items-center gap-1.5 rounded-lg bg-[color:var(--gh-bg-soft)] px-2 py-1 text-sm font-extrabold text-[color:var(--gh-text-soft)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gh-accent)]"
+                          >
+                            <Image 
+                              src={`https://flagcdn.com/w20/${(countries.find(c => c.dial_code === (traveler.dialCode || "+91")) || countries[0]).code.toLowerCase()}.png`}
+                              alt="flag"
+                              width={20}
+                              height={15}
+                              className="object-contain"
+                            />
+                            {traveler.dialCode || "+91"}
+                            <svg className={`h-4 w-4 transition-transform ${openDropdownIndex === index ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                          </button>
+                          
+                          {openDropdownIndex === index && (
+                            <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-y-auto rounded-xl border border-[color:var(--gh-border)] bg-white p-1 shadow-lg">
+                              {countries.map((c) => (
+                                <button
+                                  key={c.code}
+                                  type="button"
+                                  onClick={() => {
+                                    handleTravelerChange(index, 'dialCode', c.dial_code);
+                                    setOpenDropdownIndex(null);
+                                  }}
+                                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-[color:var(--gh-bg-soft)]"
+                                >
+                                  <Image 
+                                    src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
+                                    alt={c.code}
+                                    width={20}
+                                    height={15}
+                                    className="object-contain"
+                                  />
+                                  <span className="font-semibold text-[color:var(--gh-heading)]">{c.name}</span>
+                                  <span className="ml-auto font-bold text-[color:var(--gh-text-soft)]">{c.dial_code}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="tel"
+                          value={traveler.phone}
+                          onChange={(e) => handleTravelerChange(index, 'phone', e.target.value)}
+                          className="w-full border-0 bg-transparent text-sm font-semibold text-[color:var(--gh-heading)] outline-none placeholder:text-[color:var(--gh-text-soft)]"
+                          placeholder="Mobile number"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

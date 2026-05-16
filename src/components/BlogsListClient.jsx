@@ -203,9 +203,9 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                                 <Calendar className="h-3 w-3" />
                                 {featuredBlog.createdAt ? new Date(featuredBlog.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ""}
                             </span>
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 ml-2">
+                            {/* <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 ml-2">
                                 <Eye className="h-3 w-3" /> 0 Views
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                 </Link>
@@ -271,9 +271,9 @@ export default function BlogsListClient({ initialBlogs = [], initialCategories =
                                     <Calendar className="h-2.5 w-2.5" />
                                     {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ""}
                                 </span>
-                                <span className="hidden md:flex shrink-0 items-center gap-1 text-[9px] font-bold text-slate-400">
+                                {/* <span className="hidden md:flex shrink-0 items-center gap-1 text-[9px] font-bold text-slate-400">
                                     <Eye className="h-2.5 w-2.5" /> 0
-                                </span>
+                                </span> */}
                             </div>
                         </div>
                     </article>

@@ -13,6 +13,7 @@ import {
   MoreVertical,
   Heart
 } from "lucide-react";
+import ShareBlogButton from "@/components/ShareBlogButton";
 
 export const revalidate = 0;
 
@@ -93,7 +94,7 @@ export default async function BlogDetailPage({ params }) {
   const videoId = getYouTubeEmbedId(blog.seo?.youtubeUrl);
 
   return (
-    <main className="min-h-screen bg-white pb-24 md:pb-32">
+    <main className="min-h-screen bg-white pb-10">
         
       {/* ── TOP APP BAR (Mobile Reference) ── */}
       <div className="sticky top-0 z-40 flex items-center justify-between bg-white px-4 py-4 md:px-8">
@@ -159,9 +160,9 @@ export default async function BlogDetailPage({ params }) {
                         <Calendar className="h-3.5 w-3.5" />
                         {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ""}
                     </span>
-                    <span className="flex items-center gap-1.5">
+                    {/* <span className="flex items-center gap-1.5">
                         <Eye className="h-3.5 w-3.5" /> 0 Views
-                    </span>
+                    </span> */}
                 </div>
             </div>
         </div>
@@ -225,25 +226,11 @@ export default async function BlogDetailPage({ params }) {
                 </div>
             )}
         </div>
-      </div>
-
-      {/* ── FIXED FOOTER (Mobile Reference) ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-100 bg-white/95 backdrop-blur-xl px-4 py-3 pb-[env(safe-area-inset-bottom)] md:px-8">
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
-                <button className="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-rose-500 transition-colors">
-                    <Heart className="h-5 w-5" strokeWidth={1.5} />
-                    0
-                </button>
-                <button className="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-rose-500 transition-colors">
-                    <Share2 className="h-5 w-5" strokeWidth={1.5} />
-                    0
-                </button>
-            </div>
-            <button className="flex-1 rounded-[14px] bg-[color:var(--gh-accent)] py-3 text-[13px] font-bold text-white shadow-[0_4px_14px_rgba(225,29,72,0.3)] transition active:scale-95">
-                Share Blog
-            </button>
-        </div>
+        
+        <ShareBlogButton 
+          title={blog.title} 
+          text={blog.seo?.metaDescription || blog.title} 
+        />
       </div>
 
     </main>
