@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
 import {
   CalendarDays,
   MapPin,
@@ -25,6 +26,7 @@ import { checkAuthTokenAction } from "@/actions/auth.check";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
 import Loader from "@/components/Loader";
+import { decodeS3Url } from "@/lib/s3url";
 
 /* ─── helpers ─────────────────────────────────────────────────── */
 const formatDate = (value) => {
@@ -70,30 +72,38 @@ const PAYMENT_CONFIG = {
   UNPAID: { label: "UNPAID", bg: "bg-orange-100",  text: "text-orange-700",  border: "border-orange-200" },
 };
 
-const getPackageName = (booking) => {
+const getPrimaryPackage = (booking) => {
   if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
-    const p = booking.packageId[0];
-    return typeof p === "string" ? null : p.basic?.name || null;
+    const item = booking.packageId[0];
+    return typeof item === "string" ? null : item;
   }
+
+  if (booking.packageId && typeof booking.packageId === "object" && !Array.isArray(booking.packageId)) {
+    return booking.packageId;
+  }
+
+  if (Array.isArray(booking.packageItems) && booking.packageItems.length > 0) {
+    const item = booking.packageItems[0]?.packageId;
+    return item && typeof item === "object" ? item : null;
+  }
+
   return null;
+};
+
+const getPackageName = (booking) => {
+  const pkg = getPrimaryPackage(booking);
+  return pkg?.basic?.name || null;
 };
 
 const getPackageImage = (booking) => {
-  if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
-    const p = booking.packageId[0];
-    if (typeof p !== "string") {
-      return p.images?.primary?.url || p.images?.gallery?.[0]?.url || null;
-    }
-  }
-  return null;
+  const pkg = getPrimaryPackage(booking);
+  const imageUrl = pkg?.images?.primary?.url || pkg?.images?.gallery?.[0]?.url || null;
+  return decodeS3Url(imageUrl);
 };
 
 const getPackageDestination = (booking) => {
-  if (Array.isArray(booking.packageId) && booking.packageId.length > 0) {
-    const p = booking.packageId[0];
-    if (typeof p !== "string") return p.basic?.destination || null;
-  }
-  return null;
+  const pkg = getPrimaryPackage(booking);
+  return pkg?.basic?.destination || null;
 };
 
 const TABS = ["All", "Upcoming", "Confirmed", "Completed", "Cancelled"];
@@ -116,10 +126,20 @@ function BookingCard({ booking }) {
       <div className="flex gap-4 p-3 pb-4">
         {/* Left Image */}
         <div className="relative w-[140px] shrink-0 overflow-hidden rounded-2xl">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: pkgImage ? `url(${pkgImage})` : "linear-gradient(135deg,#1e3a5f,#2d6a9f)" }}
-          />
+          {pkgImage ? (
+            <Image
+              src={pkgImage}
+              alt={pkgName}
+              fill
+              className="object-cover"
+              sizes="140px"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: "linear-gradient(135deg,#1e3a5f,#2d6a9f)" }}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/20" />
           
           <div className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[8px] font-black tracking-wider ${statusCfg.bg} ${statusCfg.text}`}>

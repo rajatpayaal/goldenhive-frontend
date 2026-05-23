@@ -11,6 +11,20 @@ const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 350;
 const MAX_ITEMS_PER_SECTION = 6;
 
+const isMobileViewport = () => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(max-width: 768px)").matches;
+};
+
+const openMobileSearch = (query = "") => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("gh_open_mobile_search", {
+      detail: { query },
+    })
+  );
+};
+
 const normalizeResponse = (payload) => {
   const data = payload?.data || {};
   return {
@@ -32,7 +46,7 @@ const formatPrice = (value) => {
   }
 };
 
-function SearchResults({ query, status, results, onPick }) {
+export function SearchResults({ query, status, results, onPick }) {
   const trimmedQuery = query.trim();
   const hasQuery = trimmedQuery.length >= MIN_QUERY_LENGTH;
   const packages = results?.packages || [];
@@ -250,10 +264,25 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
     setIsDialogOpen(false);
   }, []);
 
+  const redirectToMobileSearch = useCallback(
+    (value = query) => {
+      if (!isMobileViewport()) return false;
+      closeAll();
+      openMobileSearch(value);
+      return true;
+    },
+    [closeAll, query]
+  );
+
   useEffect(() => {
     const handler = (event) => {
       const detail = event?.detail || {};
       const nextQuery = typeof detail.query === "string" ? detail.query : "";
+
+      if (isMobileViewport()) {
+        openMobileSearch(nextQuery);
+        return;
+      }
 
       setQuery(nextQuery);
       if (isIconVariant) {
@@ -366,6 +395,7 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
         <button
           type="button"
           onClick={() => {
+            if (redirectToMobileSearch(query)) return;
             setIsDialogOpen(true);
             setTimeout(() => inputRef.current?.focus(), 0);
           }}
@@ -451,7 +481,17 @@ export function GlobalSearch({ variant = "inline", tone = "header-light" }) {
           id={inputId}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setIsPanelOpen(true)}
+          onPointerDown={(event) => {
+            if (!redirectToMobileSearch(query)) return;
+            event.preventDefault();
+          }}
+          onFocus={(event) => {
+            if (redirectToMobileSearch(query)) {
+              event.target.blur();
+              return;
+            }
+            setIsPanelOpen(true);
+          }}
           placeholder="Search packages, blogs, categories..."
           autoComplete="off"
           className={[

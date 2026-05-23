@@ -174,7 +174,7 @@ export function PackagesListClient({ packages = [], categories = [], title = "Al
                       : "border border-slate-200 bg-white text-slate-600"
                   }`}
                 >
-                  🏔 {cat.name}
+                  {cat.name}
                 </button>
               );
             })}

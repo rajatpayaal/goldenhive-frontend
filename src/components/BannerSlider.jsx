@@ -144,7 +144,6 @@ export function BannerSlider({ banners }) {
 
                         {/* Badge */}
                         <div className="mb-3 lg:mb-4 inline-flex items-center gap-2 rounded-full bg-[#d91656] py-1.5 px-3 lg:px-4 text-white shadow-lg border border-pink-400/30">
-                          <Mountain className="h-3 w-3 lg:h-3.5 lg:w-3.5" />
                           <span className="text-[9px] lg:text-[10px] font-black tracking-widest uppercase">{banner.campaignId.title}</span>
                         </div>
 
@@ -175,7 +174,6 @@ export function BannerSlider({ banners }) {
                         <div className="mt-4 lg:mt-6 flex flex-row items-stretch justify-between lg:justify-start lg:gap-4 w-full">
                           {/* 15% OFF */}
                           <div className="flex flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#d91656] to-[#9a0f3d] p-2 sm:p-4 text-white shadow-xl border border-pink-500/30 w-[28%] lg:w-auto lg:min-w-[100px]">
-                            <Mountain className="h-4 w-4 lg:h-6 lg:w-6 mb-0.5 lg:mb-1 opacity-80" />
                             <div className="flex items-start leading-none">
                               <span className="text-2xl lg:text-4xl font-black">{banner.campaignId.discountPercent}%</span>
                             </div>

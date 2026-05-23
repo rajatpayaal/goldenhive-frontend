@@ -1,9 +1,16 @@
 "use client";
 
+import { useCallback } from "react";
 import { Search } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 
 export function HomeHeroSearch({ className = "" }) {
+  const openMobileSearch = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 768px)").matches) return;
+    window.dispatchEvent(new CustomEvent("gh_open_mobile_search", { detail: { query: "" } }));
+  }, []);
+
   return (
     <div
       className={[
@@ -26,6 +33,7 @@ export function HomeHeroSearch({ className = "" }) {
       <div className="shrink-0 p-1.5">
         <button
           type="button"
+          onClick={openMobileSearch}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-gh-primary text-slate-900 transition-colors hover:bg-yellow-500 active:scale-[0.97]"
           aria-label="Search"
         >
