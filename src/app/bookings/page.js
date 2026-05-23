@@ -20,6 +20,7 @@ import {
   Briefcase,
   Wallet,
   CheckCircle2,
+  Share2,
 } from "lucide-react";
 import { getMyBookingsAction } from "@/actions/booking.actions";
 import { checkAuthTokenAction } from "@/actions/auth.check";
@@ -256,8 +257,35 @@ function QuickActions() {
   );
 }
 
-/* ─── Refer & Earn Banner ─────────────────────────────────────── */
+/* ─── Refer Banner ─────────────────────────────────────── */
 function ReferBanner() {
+  const [shareState, setShareState] = useState("Share Link");
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "GoldenHive Holidays",
+          text: "Check out GoldenHive Holidays.",
+          url,
+        });
+        setShareState("Shared");
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setShareState("Link Copied");
+      } else {
+        setShareState("Share Link");
+        return;
+      }
+
+      window.setTimeout(() => setShareState("Share Link"), 2200);
+    } catch {
+      setShareState("Share Link");
+    }
+  };
+
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-rose-400 to-rose-500 px-5 py-6 shadow-md mt-2">
       <div className="absolute -left-4 -top-4 h-16 w-16 text-rose-300 opacity-50">
@@ -269,15 +297,16 @@ function ReferBanner() {
       
       <div className="relative z-10 flex items-center justify-between gap-4">
         <div className="pl-6">
-          <p className="text-[16px] font-black text-white">Refer &amp; Earn</p>
-          <p className="mt-1 text-[10px] font-semibold text-white/90">Refer your friends and earn exciting rewards</p>
+          <p className="text-[16px] font-black text-white">Refer</p>
+          <p className="mt-1 text-[10px] font-semibold text-white/90">Share GoldenHive with your friends.</p>
         </div>
         <button
           type="button"
+          onClick={handleShare}
           className="flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-[11px] font-black text-rose-500 shadow-sm transition active:scale-95"
         >
-          Refer Now
-          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+          {shareState}
+          <Share2 className="h-3.5 w-3.5" strokeWidth={2.5} />
         </button>
       </div>
     </div>
@@ -542,7 +571,7 @@ export default function BookingsPage() {
           {/* Quick Actions */}
           {!error && filtered.length > 0 && <QuickActions />}
 
-          {/* Refer & Earn */}
+          {/* Refer */}
           <ReferBanner />
         </div>
       </div>
@@ -667,7 +696,7 @@ export default function BookingsPage() {
           {/* Quick Actions */}
           {!error && filtered.length > 0 && <QuickActions />}
 
-          {/* Refer & Earn */}
+          {/* Refer */}
           <ReferBanner />
         </div>
       </div>

@@ -138,17 +138,17 @@ export function BannerSlider({ banners }) {
                     {/* Background Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#1a0b16] via-[#2a1025]/80 to-transparent lg:bg-gradient-to-r lg:from-[#1a0b16]/90 lg:via-[#1a0b16]/60 lg:to-transparent z-0" />
 
-                    <div className="relative z-10 flex h-full w-full flex-col justify-start lg:justify-center px-4 sm:px-10 lg:px-14 pb-8 pt-6 lg:pt-0 lg:pb-0 overflow-visible pt-safe">
+                    <div className="relative z-10 flex h-full w-full flex-col justify-start lg:justify-center px-4 sm:px-10 lg:px-14 pb-8 pt-5 lg:pt-0 lg:pb-0 overflow-visible pt-safe">
 
                       <div className="max-w-3xl w-full mx-auto lg:mx-0 mt-2 lg:mt-0">
 
                         {/* Badge */}
-                        <div className="mb-3 lg:mb-4 inline-flex items-center gap-2 rounded-full bg-[#d91656] py-1.5 px-3 lg:px-4 text-white shadow-lg border border-pink-400/30">
+                        <div className="mb-2.5 lg:mb-4 inline-flex items-center gap-2 rounded-full bg-[#d91656] py-1 px-2.5 lg:px-4 text-white shadow-lg border border-pink-400/30">
                           <span className="text-[9px] lg:text-[10px] font-black tracking-widest uppercase">{banner.campaignId.title}</span>
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-[3rem] sm:text-5xl lg:text-[4.5rem] font-black leading-[1.05] tracking-tight text-white drop-shadow-lg uppercase font-sans">
+                        <h2 className="text-[2.35rem] sm:text-5xl lg:text-[4.5rem] font-black leading-[1.02] tracking-tight text-white drop-shadow-lg uppercase font-sans">
                           {banner.campaignId.title.split(" ").map((word, i) => {
                             if (!isNaN(word) || word.toLowerCase() === "offer" || word.toLowerCase() === "yatra") {
                               return <span key={i} className="text-[#d91656]"> {word}</span>;
@@ -158,7 +158,7 @@ export function BannerSlider({ banners }) {
                         </h2>
 
                         {/* Subtitle */}
-                        <p className="mt-1 lg:mt-3 text-[11px] sm:text-lg lg:text-xl font-bold text-[#ffb703] uppercase tracking-wide">
+                        <p className="mt-1 lg:mt-3 text-[10px] sm:text-lg lg:text-xl font-bold text-[#ffb703] uppercase tracking-wide">
                           {banner.campaignId.subtitle || "Limited Period Spiritual Journey Discount"}
                         </p>
 
@@ -166,26 +166,26 @@ export function BannerSlider({ banners }) {
                         <p className="mt-3 lg:mt-4 text-[10px] sm:text-sm lg:text-base text-white/90 leading-relaxed max-w-xl hidden lg:block">
                           {banner.campaignId.description || "Experience the divine journey with exclusive discounts on Kedarnath, Badrinath, Gangotri & Yamunotri. Enjoy premium stays, comfortable transport, experienced guides & hassle-free spiritual travel for your family."}
                         </p>
-                        <p className="mt-2 text-[10px] text-white/90 leading-relaxed block lg:hidden">
+                        <p className="mt-2 text-[9px] text-white/90 leading-relaxed block lg:hidden">
                           {banner.campaignId.description?.substring(0, 150) + "..." || "Experience the divine journey with exclusive discounts. Enjoy premium stays, comfortable transport, and hassle-free spiritual travel."}
                         </p>
 
                         {/* 3 Action Boxes */}
-                        <div className="mt-4 lg:mt-6 flex flex-row items-stretch justify-between lg:justify-start lg:gap-4 w-full">
+                        <div className="mt-3.5 lg:mt-6 flex flex-row items-stretch justify-between lg:justify-start lg:gap-4 w-full">
                           {/* 15% OFF */}
-                          <div className="flex flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#d91656] to-[#9a0f3d] p-2 sm:p-4 text-white shadow-xl border border-pink-500/30 w-[28%] lg:w-auto lg:min-w-[100px]">
+                          <div className="flex flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-gradient-to-br from-[#d91656] to-[#9a0f3d] p-1.5 sm:p-4 text-white shadow-xl border border-pink-500/30 w-[28%] lg:w-auto lg:min-w-[100px]">
                             <div className="flex items-start leading-none">
-                              <span className="text-2xl lg:text-4xl font-black">{banner.campaignId.discountPercent}%</span>
+                              <span className="text-xl lg:text-4xl font-black">{banner.campaignId.discountPercent}%</span>
                             </div>
-                            <span className="text-[8px] lg:text-sm font-black uppercase tracking-widest mt-0.5 lg:mt-1">Off*</span>
+                            <span className="text-[7px] lg:text-sm font-black uppercase tracking-widest mt-0.5 lg:mt-1">Off*</span>
                           </div>
 
                           {/* Coupon Code */}
-                          <div className="flex flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-white p-2 sm:p-4 shadow-xl border-2 border-dashed border-pink-200 relative w-[38%] lg:w-auto lg:min-w-[180px]">
+                          <div className="flex flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-white p-1.5 sm:p-4 shadow-xl border-2 border-dashed border-pink-200 relative w-[38%] lg:w-auto lg:min-w-[180px]">
                             <div className="absolute -left-1.5 lg:-left-3 top-1/2 -translate-y-1/2 w-3 h-3 lg:w-6 lg:h-6 rounded-full bg-[#1a0b16]"></div>
                             <div className="absolute -right-1.5 lg:-right-3 top-1/2 -translate-y-1/2 w-3 h-3 lg:w-6 lg:h-6 rounded-full bg-[#1a0b16]"></div>
-                            <span className="text-[7px] lg:text-[10px] font-bold text-[#d91656] uppercase tracking-widest mb-0.5 lg:mb-1">Coupon Code</span>
-                            <span className="text-sm lg:text-2xl font-black text-[#d91656] uppercase tracking-widest leading-none">{banner.campaignId.couponCode}</span>
+                            <span className="text-[6px] lg:text-[10px] font-bold text-[#d91656] uppercase tracking-widest mb-0.5 lg:mb-1">Coupon Code</span>
+                            <span className="text-[12px] lg:text-2xl font-black text-[#d91656] uppercase tracking-widest leading-none">{banner.campaignId.couponCode}</span>
                           </div>
 
                           {/* Timer */}
@@ -193,19 +193,19 @@ export function BannerSlider({ banners }) {
                         </div>
 
                         {/* Book Now Button */}
-                        <div className="mt-4 lg:mt-8 w-full lg:w-auto flex flex-col items-center lg:items-start">
-                          <Link href={banner.campaignId.targetUrl || "/packages"} className="w-full lg:w-auto group flex items-center justify-between lg:justify-center gap-4 lg:gap-6 rounded-full bg-[#d91656] py-3 lg:py-4 pl-6 lg:pl-8 pr-2 lg:pr-4 text-white shadow-[0_8px_30px_rgba(217,22,86,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
-                            <span className="text-sm lg:text-lg font-black tracking-widest uppercase flex-1 text-center sm:text-left">Book Now</span>
-                            <div className="flex h-8 w-8 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#d91656] shadow-sm transition-transform group-hover:translate-x-1">
-                              <ArrowRight className="h-4 w-4 lg:h-6 lg:w-6" />
+                        <div className="mt-3.5 lg:mt-8 w-full lg:w-auto flex flex-col items-center lg:items-start">
+                          <Link href={banner.campaignId.targetUrl || "/packages"} className="w-full lg:w-auto group flex items-center justify-between lg:justify-center gap-3 lg:gap-6 rounded-full bg-[#d91656] py-2.5 lg:py-4 pl-5 lg:pl-8 pr-2 lg:pr-4 text-white shadow-[0_8px_30px_rgba(217,22,86,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                            <span className="text-[12px] lg:text-lg font-black tracking-[0.18em] uppercase flex-1 text-center sm:text-left">Book Now</span>
+                            <div className="flex h-7 w-7 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#d91656] shadow-sm transition-transform group-hover:translate-x-1">
+                              <ArrowRight className="h-3.5 w-3.5 lg:h-6 lg:w-6" />
                             </div>
                           </Link>
 
                           {/* Value Props */}
-                          <div className="w-full lg:w-auto flex items-center justify-between lg:justify-start gap-1 lg:gap-6 text-[7px] sm:text-[10px] lg:text-xs text-white/90 font-bold uppercase tracking-wider px-1 lg:px-0 mt-4 lg:mt-6">
-                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><ShieldCheck className="h-3.5 w-3.5 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> Best Price<br className="lg:hidden" /> Guarantee</div>
-                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><Clock className="h-3.5 w-3.5 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> 24/7 Customer<br className="lg:hidden" /> Support</div>
-                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><CheckCircle2 className="h-3.5 w-3.5 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> Family & Group<br className="lg:hidden" /> Friendly</div>
+                          <div className="w-full lg:w-auto flex items-center justify-between lg:justify-start gap-1 lg:gap-6 text-[6px] sm:text-[10px] lg:text-xs text-white/90 font-bold uppercase tracking-wider px-1 lg:px-0 mt-3.5 lg:mt-6">
+                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><ShieldCheck className="h-3 w-3 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> Best Price<br className="lg:hidden" /> Guarantee</div>
+                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><Clock className="h-3 w-3 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> 24/7 Customer<br className="lg:hidden" /> Support</div>
+                            <div className="flex flex-col lg:flex-row items-center gap-1 lg:gap-2 text-center lg:text-left"><CheckCircle2 className="h-3 w-3 lg:h-5 lg:w-5 text-[#d91656] lg:text-pink-400 mb-0.5 lg:mb-0" /> Family & Group<br className="lg:hidden" /> Friendly</div>
                           </div>
                         </div>
 
@@ -355,30 +355,30 @@ export function BannerSlider({ banners }) {
                   <div className="relative h-full z-10">
                     <div className="mx-auto max-w-6xl px-5 h-full">
                       {/* Hero text + CTAs — bottom of banner on mobile, centered on desktop */}
-                      <div className="flex h-full flex-col justify-end pb-12 sm:pb-16 lg:justify-center lg:pb-0 max-w-2xl">
-                        <p className="inline-flex w-fit items-center rounded-full bg-white/20 backdrop-blur-md px-3.5 py-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white shadow-sm ring-1 ring-white/30">
+                      <div className="flex h-full flex-col justify-end pb-10 sm:pb-16 lg:justify-center lg:pb-0 max-w-2xl">
+                        <p className="inline-flex w-fit items-center rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-[9px] sm:text-xs font-bold tracking-widest uppercase text-white shadow-sm ring-1 ring-white/30">
                           {banner.seoTitle || "FEATURED COLLECTION"}
                         </p>
 
-                        <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white drop-shadow-md leading-[1.15]">
+                        <h1 className="mt-3 text-[2rem] sm:text-5xl lg:text-6xl font-black tracking-tight text-white drop-shadow-md leading-[1.1]">
                           {banner.title}
                         </h1>
-                        <p className="mt-4 text-base sm:text-lg font-medium text-white/90 drop-shadow-sm leading-relaxed max-w-xl">
+                        <p className="mt-3 text-[13px] sm:text-lg font-medium text-white/90 drop-shadow-sm leading-relaxed max-w-xl">
                           {banner.description}
                         </p>
 
                         {resolveHref(banner) && (
-                          <div className="mt-8 flex flex-wrap items-center gap-4 pointer-events-auto">
+                          <div className="mt-6 flex flex-wrap items-center gap-3 pointer-events-auto">
                             <Link
                               href={resolveHref(banner)}
-                              className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2 rounded-full bg-white px-6 sm:px-8 text-sm sm:text-base font-bold text-slate-900 shadow-xl transition-all hover:scale-105 active:scale-95"
+                              className="group inline-flex h-10 sm:h-14 items-center justify-center gap-2 rounded-full bg-white px-5 sm:px-8 text-[13px] sm:text-base font-bold text-slate-900 shadow-xl transition-all hover:scale-105 active:scale-95"
                             >
                               {banner.heroCtaText || banner.ctaText || "Explore Packages"}
-                              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                              <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                             </Link>
                             <Link
                               href="/tour-packages"
-                              className="inline-flex h-12 sm:h-14 items-center justify-center rounded-full border-2 border-white/40 bg-black/20 backdrop-blur-md px-6 sm:px-8 text-sm sm:text-base font-bold text-white transition-all hover:bg-white/20 hover:border-white/80"
+                              className="inline-flex h-10 sm:h-14 items-center justify-center rounded-full border-2 border-white/40 bg-black/20 backdrop-blur-md px-5 sm:px-8 text-[13px] sm:text-base font-bold text-white transition-all hover:bg-white/20 hover:border-white/80"
                             >
                               View All Packages
                             </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
@@ -22,6 +23,7 @@ import {
   ChevronRight,
   Package,
   BookOpenText,
+  Share2,
 } from "lucide-react";
 import { logoutAction } from "@/actions/auth.actions";
 import Image from "next/image";
@@ -56,11 +58,37 @@ const QuickLink = ({ href, label, icon: Icon, color = "bg-slate-50" }) => (
 export default function ProfilePage() {
   const { user, isLoading, clearUser } = useAuth();
   const router = useRouter();
+  const [shareState, setShareState] = useState("Share Link");
 
   const handleLogout = async () => {
     await logoutAction();
     clearUser();
     router.push("/");
+  };
+
+  const handleReferShare = async () => {
+    const url = typeof window !== "undefined" ? `${window.location.origin}/` : "/";
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "GoldenHive Holidays",
+          text: "Check out GoldenHive Holidays.",
+          url,
+        });
+        setShareState("Shared");
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setShareState("Link Copied");
+      } else {
+        setShareState("Share Link");
+        return;
+      }
+
+      window.setTimeout(() => setShareState("Share Link"), 2200);
+    } catch {
+      setShareState("Share Link");
+    }
   };
 
   if (isLoading) {
@@ -236,13 +264,18 @@ export default function ProfilePage() {
               <QuickLink href="/" label="Explore More" icon={Package} color="bg-indigo-50" />
             </div>
 
-            {/* Refer & Earn Banner */}
+            {/* Refer Banner */}
             <div className="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-pink-500 to-rose-500 p-8 text-white">
               <div className="relative z-10">
-                <p className="text-xs font-black uppercase tracking-widest text-white/80">Refer & Earn</p>
-                <h3 className="mt-2 text-xl font-black">Invite friends & get ₹500 off</h3>
-                <button className="mt-5 rounded-full bg-white px-6 py-3 text-xs font-black text-rose-500 shadow-lg active:scale-95">
-                  Share Now
+                <p className="text-xs font-black uppercase tracking-widest text-white/80">Refer</p>
+                <h3 className="mt-2 text-xl font-black">Invite friends to GoldenHive</h3>
+                <button
+                  type="button"
+                  onClick={handleReferShare}
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-black text-rose-500 shadow-lg active:scale-95"
+                >
+                  {shareState}
+                  <Share2 className="h-4 w-4" />
                 </button>
               </div>
               <div className="absolute -right-4 -top-4 opacity-20">

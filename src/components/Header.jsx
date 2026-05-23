@@ -114,21 +114,21 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg lg:hidden"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 shadow-sm lg:hidden"
                   aria-label="Open menu"
                   aria-haspopup="dialog"
                   aria-expanded={isMobileMenuOpen}
                 >
-                  <Menu className="h-6 w-6 text-slate-800" strokeWidth={1.5} aria-hidden="true" />
+                  <Menu className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="border-r border-black/5">
-                <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
-                  <div className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">Menu</div>
+              <SheetContent side="left" className="border-r border-rose-100 bg-gradient-to-b from-white via-rose-50/70 to-pink-50/80">
+                <div className="flex items-center justify-between border-b border-rose-100 px-5 py-4">
+                  <div className="text-sm font-black uppercase tracking-[0.3em] text-rose-500">Menu</div>
                   <SheetClose asChild>
                     <button
                       type="button"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-slate-900 hover:bg-slate-50"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-600 shadow-sm hover:bg-rose-50"
                       aria-label="Close"
                     >
                       <ChevronRight className="h-5 w-5 rotate-180" aria-hidden="true" />
@@ -141,16 +141,16 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <SheetClose asChild>
                       <Link
                         href="/blogs"
-                        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-black text-slate-900 shadow-sm hover:bg-rose-50"
                       >
-                        <Newspaper className="h-4 w-4 text-gh-primary" />
+                        <Newspaper className="h-4 w-4 text-rose-500" />
                         Blogs
                       </Link>
                     </SheetClose>
                     <SheetClose asChild>
                       <Link
                         href="/policies"
-                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                        className="inline-flex items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-black text-slate-900 shadow-sm hover:bg-rose-50"
                       >
                         Policies
                       </Link>
@@ -158,15 +158,15 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <SheetClose asChild>
                       <Link
                         href="/about-us"
-                        className="inline-flex items-center justify-center rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                        className="inline-flex items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-black text-slate-900 shadow-sm hover:bg-rose-50"
                       >
                         About Us
                       </Link>
                     </SheetClose>
                   </div>
 
-                  <div className="mt-6 border-t border-black/5 pt-5">
-                    <div className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">
+                  <div className="mt-6 border-t border-rose-100 pt-5">
+                    <div className="text-xs font-black uppercase tracking-[0.3em] text-rose-500">
                       Categories
                     </div>
                     <div className="mt-3 grid gap-2">
@@ -175,15 +175,15 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                           <SheetClose key={category._id} asChild>
                             <Link
                               href={`/${resolveAnchorId(category.slug)}`}
-                              className="inline-flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-black text-slate-900 hover:bg-slate-50"
+                              className="inline-flex items-center justify-between rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-black text-slate-900 shadow-sm hover:bg-rose-50"
                             >
                               <span>{category.name}</span>
-                              <ChevronRight className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                              <ChevronRight className="h-4 w-4 text-rose-400" aria-hidden="true" />
                             </Link>
                           </SheetClose>
                         ))
                       ) : (
-                        <div className="rounded-2xl border border-black/10 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-500">
+                        <div className="rounded-2xl border border-rose-100 bg-white px-4 py-3 text-sm font-semibold text-slate-500 shadow-sm">
                           Loading...
                         </div>
                       )}
@@ -191,7 +191,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                   </div>
 
                   {!isLoading && !user && (
-                    <div className="mt-6 border-t border-black/5 pt-5">
+                    <div className="mt-6 border-t border-rose-100 pt-5">
                       <Button
                         type="button"
                         onClick={() => {
