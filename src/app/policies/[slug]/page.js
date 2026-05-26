@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { apiService } from "../../../services/api.service";
 import { Breadcrumbs } from "../../../components/Breadcrumbs";
+import { sanitizeHtmlContent } from "../../../lib/sanitize";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -82,7 +83,7 @@ export default async function PolicyDetailPage({ params }) {
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.96)] px-6 py-8 shadow-[0_18px_45px_rgba(121,68,44,0.10)] sm:px-10">
             <div className="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-[color:var(--gh-heading)] prose-p:text-[color:var(--gh-text)] prose-p:leading-relaxed prose-strong:text-[color:var(--gh-heading)] prose-a:text-[color:var(--gh-accent)]">
-              <div dangerouslySetInnerHTML={{ __html: policy.content }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(policy.content) }} />
             </div>
           </div>
 

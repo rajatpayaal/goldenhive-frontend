@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { decodeS3Url } from "../../../lib/s3url";
 import { apiService } from "../../../services/api.service";
+import { sanitizeHtmlContent } from "../../../lib/sanitize";
 import { 
   Clock, 
   Calendar, 
@@ -171,7 +172,7 @@ export default async function BlogDetailPage({ params }) {
         <div className="px-4 pb-8 md:px-8">
             <div className="prose prose-sm md:prose-base prose-slate max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:font-medium prose-p:text-slate-600 prose-img:rounded-xl">
                 {blog.content && (!blog.sections || blog.sections.length === 0) && (
-                    <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(blog.content) }} />
                 )}
 
                 {blog.sections
@@ -184,7 +185,7 @@ export default async function BlogDetailPage({ params }) {
                                     {section.title}
                                 </h3>
                             )}
-                            <div className="text-[13px] leading-[1.6] text-slate-600 mb-4" dangerouslySetInnerHTML={{ __html: section.content }} />
+                            <div className="text-[13px] leading-[1.6] text-slate-600 mb-4" dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(section.content) }} />
                             
                             {section.media
                                 ?.filter((media) => media.isVisible !== false)

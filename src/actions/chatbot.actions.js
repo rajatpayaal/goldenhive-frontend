@@ -1,17 +1,16 @@
 "use server";
 
-import { headers } from "next/headers";
-
-function getOriginFromHeaders() {
-  const hdrs = headers();
-  const host = hdrs.get("x-forwarded-host") || hdrs.get("host");
-  const proto = hdrs.get("x-forwarded-proto") || "http";
-  if (!host) return "http://localhost";
-  return `${proto}://${host}`;
+function getBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_SITE_URL ||
+    process.env.SITE_URL ||
+    "http://localhost:3000"
+  );
 }
 
 export async function getChatbotFaqListAction({ query, isActive = true } = {}) {
-  const url = new URL("/api/chatbot/faq", getOriginFromHeaders());
+  const url = new URL("/api/chatbot/faq", getBaseUrl());
   if (query) url.searchParams.set("query", query);
   if (isActive != null) url.searchParams.set("isActive", String(isActive));
 
@@ -28,7 +27,7 @@ export async function getChatbotFaqListAction({ query, isActive = true } = {}) {
 }
 
 export async function getChatbotFaqAction(id) {
-  const url = new URL(`/api/chatbot/faq/${encodeURIComponent(id)}`, getOriginFromHeaders());
+  const url = new URL(`/api/chatbot/faq/${encodeURIComponent(id)}`, getBaseUrl());
 
   const response = await fetch(url.toString(), {
     method: "GET",

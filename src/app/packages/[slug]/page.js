@@ -22,46 +22,7 @@ import { Breadcrumbs } from "../../../components/Breadcrumbs";
 import { PackageSuggestionsSection } from "../../../components/PackageSuggestionsSection";
 import { PricingOptionsSelector } from "../../../components/PricingOptionsSelector";
 import { PricingSidebarSync } from "../../../components/PricingSidebarSync";
-import { apiService } from "../../../services/api.service";
-
-async function resolvePackageId(slugOrId) {
-  const decoded = decodeURIComponent(slugOrId || "");
-  if (/^[0-9a-fA-F]{24}$/.test(decoded)) return decoded;
-
-  const directPackage = await apiService.getPackageBySlug(decoded, { dynamic: false });
-  if (directPackage?._id) return directPackage._id;
-
-  const trySearch = async (search) => {
-    const { items } = await apiService.getPackages({
-      search,
-      page: 1,
-      limit: 100,
-      sort: "-createdAt",
-    });
-    const matched = items.find((pkg) => pkg.basic?.slug === decoded);
-    return matched ? matched._id : null;
-  };
-
-  const bySlugQuery = await trySearch(decoded);
-  if (bySlugQuery) return bySlugQuery;
-
-  const byNameQuery = await trySearch(decoded.replace(/-/g, " "));
-  if (byNameQuery) return byNameQuery;
-
-  const categories = await apiService.getCategories();
-  for (const category of categories || []) {
-    const { items } = await apiService.getPackages({
-      categoryId: category._id,
-      page: 1,
-      limit: 100,
-      sort: "-createdAt",
-    });
-    const matched = items.find((pkg) => pkg.basic?.slug === decoded);
-    if (matched?._id) return matched._id;
-  }
-
-  return null;
-}
+import { getPackageBySlug as getPackageBySlugCached } from "../../../lib/package-data";
 
 const cleanText = (value) => {
   const text = String(value ?? "").trim();
@@ -183,9 +144,7 @@ function SectionShell({ title, subtitle, children, className = "" }) {
 
 async function getPackageByRouteParam(slugOrId) {
   const decoded = decodeURIComponent(slugOrId || "");
-  const directPackage = await apiService.getPackageBySlug(decoded, { dynamic: false });
-  const resolvedId = directPackage?._id || (await resolvePackageId(decoded));
-  return directPackage || (resolvedId ? await apiService.getPackageById(resolvedId) : null);
+  return getPackageBySlugCached(decoded);
 }
 
 export async function generateMetadata({ params }) {

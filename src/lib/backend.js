@@ -1,4 +1,7 @@
-const API_BASE ="https://api.goldenhiveholidays.in/api"; 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ||
+  process.env.API_BASE ||
+  "https://api.goldenhiveholidays.in/api";
 
 export const BACKEND_API_BASE = API_BASE;
 
