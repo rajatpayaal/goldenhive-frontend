@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getBookingByIdAction } from "@/actions/booking.actions";
 import Loader from "@/components/Loader";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   Bell,
@@ -216,7 +217,13 @@ export default function BookingDetailsPage() {
                   return (
                     <div key={i} className="relative overflow-hidden bg-slate-100">
                       {imgUrl ? (
-                        <img src={imgUrl} alt={item.pkg?.basic?.name || ''} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                        <Image
+                          src={imgUrl}
+                          alt={item.pkg?.basic?.name || ""}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 176px"
+                          className="object-cover"
+                        />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-slate-100">
                           <span className="text-xs font-black text-slate-400">{i + 1}</span>
@@ -228,7 +235,13 @@ export default function BookingDetailsPage() {
               </div>
             ) : (
               <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-[2rem] sm:h-44 sm:w-44">
-                <img src={pkgImage} alt={pkgName} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                <Image
+                  src={pkgImage}
+                  alt={pkgName}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 176px"
+                  className="object-cover"
+                />
               </div>
             )}
             <div className="flex flex-1 flex-col justify-between py-1">
@@ -460,7 +473,13 @@ export default function BookingDetailsPage() {
                   <div className="flex items-center gap-4">
                     <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
                       {itemImage ? (
-                        <img src={itemImage} alt="" className="absolute inset-0 h-full w-full rounded-2xl object-cover" loading="lazy" />
+                        <Image
+                          src={itemImage}
+                          alt=""
+                          fill
+                          sizes="48px"
+                          className="rounded-2xl object-cover"
+                        />
                       ) : (
                         <Navigation className="h-6 w-6" />
                       )}

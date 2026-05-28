@@ -359,10 +359,13 @@ export default async function PackagesSlugPage({ params }) {
         <div className="mt-0 sm:mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <section className="relative overflow-hidden sm:rounded-[2.2rem] border-b sm:border border-[color:var(--gh-border)] shadow-[0_28px_70px_rgba(121,68,44,0.16)] -mx-4 sm:mx-0">
             <div className="relative min-h-[400px] sm:min-h-[560px]">
-              <img
+              <Image
                 src={heroImageDecoded}
                 alt={pkg.images?.primary?.alt || pkg.basic?.name || "Package image"}
-                className="absolute inset-0 h-full w-full object-cover"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 

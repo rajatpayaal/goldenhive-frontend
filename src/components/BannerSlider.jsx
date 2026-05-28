@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { HomeHeroSearch } from "@/components/HomeHeroSearch";
 import { ArrowRight, ShieldCheck, CheckCircle2, Copy, Clock, Mountain } from "lucide-react";
@@ -65,7 +65,7 @@ const resolveHref = (banner) => {
 };
 
 export function BannerSlider({ banners }) {
-  const items = banners || [];
+  const items = useMemo(() => banners || [], [banners]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [copied, setCopied] = useState({});
 
