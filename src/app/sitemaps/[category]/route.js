@@ -22,6 +22,7 @@ export async function generateStaticParams() {
 export async function GET(request, { params }) {
   const siteUrl = resolveSiteUrl();
   const { category: categoryParam } = params || {};
+  const debugMode = Boolean(new URL(request.url).searchParams.get("debug"));
 
   // Resolve the requested category slug against API categories.
   const categories = await getCachedCategories();
@@ -39,7 +40,7 @@ export async function GET(request, { params }) {
   }
 
   // Pull all packages for this category to keep the sitemap complete.
-  const packages = await fetchAllCategoryPackages(category);
+  const { items: packages, meta } = await fetchAllCategoryPackages(category);
 
   const urls = (packages || []).map((pkg) => {
     const slug = pkg?.basic?.slug || pkg?._id;
@@ -62,8 +63,14 @@ export async function GET(request, { params }) {
       .join("\n") +
     `\n</urlset>`;
 
+  const headers = { "Content-Type": "application/xml" };
+
+  if (debugMode) {
+    headers["X-Sitemap-Debug"] = JSON.stringify(meta || {});
+  }
+
   return new Response(xml, {
     status: 200,
-    headers: { "Content-Type": "application/xml" },
+    headers,
   });
 }

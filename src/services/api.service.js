@@ -88,19 +88,38 @@ export const apiService = {
     }
   },
 
-  async getPackages({ categoryId, categoryName, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
+  async getPackages({ categoryId, categoryName, categorySlug, destination, status, search, page = 1, limit = 10, sort = "-createdAt" } = {}) {
     try {
-      const url = buildUrl("/packages", { categoryId, categoryName, destination, status, search, page, limit, sort });
+      const url = buildUrl("/packages", { categoryId, categoryName, categorySlug, destination, status, search, page, limit, sort });
       const res = await fetch(url, { next: { revalidate: 60 } });
       if (!res.ok) return { items: [], total: 0, page, limit, totalPages: 0 };
       const json = await res.json();
-      const data = json?.data || {};
+      const data = json?.data;
+      let items = [];
+      let total = 0;
+      let totalPages = 0;
+
+      if (Array.isArray(data)) {
+        items = data;
+        total = data.length;
+        totalPages = data.length > 0 ? 1 : 0;
+      } else if (data && Array.isArray(data.items)) {
+        items = data.items || [];
+        total = data.total ?? items.length;
+        totalPages = data.totalPages ?? (total > 0 ? Math.ceil(total / limit) : 0);
+      } else if (data && data._id) {
+        // Some API variants return a single package object.
+        items = [data];
+        total = 1;
+        totalPages = 1;
+      }
+
       return {
-        items: data.items || [],
-        total: data.total ?? 0,
-        page: data.page ?? page,
-        limit: data.limit ?? limit,
-        totalPages: data.totalPages ?? 0,
+        items,
+        total,
+        page: data?.page ?? page,
+        limit: data?.limit ?? limit,
+        totalPages,
       };
     } catch (error) {
       console.error("Error fetching packages:", error);

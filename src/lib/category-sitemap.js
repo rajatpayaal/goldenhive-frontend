@@ -69,20 +69,64 @@ export function getPackageCategoryId(pkg) {
     .toLowerCase();
 }
 
+function collectDescendantCategoryIds(categories, rootId) {
+  const normalizedRoot = String(rootId || "").trim().toLowerCase();
+  if (!normalizedRoot) return [];
+
+  const idSet = new Set([normalizedRoot]);
+  let changed = true;
+
+  while (changed) {
+    changed = false;
+    categories.forEach((category) => {
+      const parentId = String(category?.parentId || "").trim().toLowerCase();
+      const categoryId = String(category?._id || "").trim().toLowerCase();
+
+      if (parentId && idSet.has(parentId) && categoryId && !idSet.has(categoryId)) {
+        idSet.add(categoryId);
+        changed = true;
+      }
+    });
+  }
+
+  return Array.from(idSet);
+}
+
 export async function fetchAllCategoryPackages(category) {
-  if (!category) return [];
+  if (!category) {
+    return { items: [], meta: { reason: "missing-category" } };
+  }
 
   const categorySlug = getCategorySlug(category);
-  if (!categorySlug) return [];
+  if (!categorySlug) {
+    return { items: [], meta: { reason: "missing-category-slug" } };
+  }
 
   const limit = 100;
   let page = 1;
   let totalPages = 1;
   const items = [];
+  let fallbackUsed = false;
+
+  const categories = await getCachedCategories();
+  const allowedCategoryIds = collectDescendantCategoryIds(
+    categories || [],
+    category?._id
+  );
+  const allowedCategorySlugs = new Set(
+    (categories || [])
+      .filter((cat) =>
+        allowedCategoryIds.includes(String(cat?._id || "").trim().toLowerCase())
+      )
+      .map((cat) => getCategorySlug(cat))
+      .filter(Boolean)
+  );
 
   while (page <= totalPages) {
     const response = await apiService.getPackages({
       categoryId: category?._id,
+      categoryName: category?.name || category?.title || category?.slug,
+      categorySlug,
       page,
       limit,
       sort: "-updatedAt",
@@ -93,14 +137,38 @@ export async function fetchAllCategoryPackages(category) {
     page += 1;
   }
 
+  if (items.length === 0) {
+    // Fallback: some API variants ignore categoryId on list endpoints.
+    const allPackages = await apiService.getAllPackages({ limit: 200, sort: "-updatedAt" });
+    items.push(...(allPackages || []));
+    fallbackUsed = true;
+  }
+
   // Enforce strict slug match; fall back to categoryId when slug is missing.
   const categoryId = String(category?._id || "").trim().toLowerCase();
 
-  return items.filter((pkg) => {
+  const filtered = items.filter((pkg) => {
     const pkgSlug = getPackageCategorySlug(pkg);
-    if (pkgSlug) return pkgSlug === categorySlug;
+    if (pkgSlug) return allowedCategorySlugs.has(pkgSlug);
 
     const pkgCategoryId = getPackageCategoryId(pkg);
-    return Boolean(categoryId && pkgCategoryId && pkgCategoryId === categoryId);
+    return Boolean(
+      pkgCategoryId &&
+        (allowedCategoryIds.includes(pkgCategoryId) ||
+          (categoryId && pkgCategoryId === categoryId))
+    );
   });
+
+  return {
+    items: filtered,
+    meta: {
+      categorySlug,
+      categoryId,
+      allowedCategoryIdsCount: allowedCategoryIds.length,
+      allowedCategorySlugsCount: allowedCategorySlugs.size,
+      fetchedCount: items.length,
+      filteredCount: filtered.length,
+      fallbackUsed,
+    },
+  };
 }
