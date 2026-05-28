@@ -25,6 +25,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/sitemaps/:category.xml",
+        destination: "/sitemaps/:category",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -27,6 +27,7 @@ export async function GET() {
 
   // Add one sitemap per category using SEO-friendly slugs.
   const categoryEntries = (categories || [])
+    .filter((category) => category?.isActive !== false)
     .map((category) => {
       const slug = getCategorySlug(category);
       if (!slug) return null;

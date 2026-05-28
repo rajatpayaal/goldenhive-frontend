@@ -30,8 +30,7 @@ export function getCategorySlug(category) {
   const directSlug = String(category?.slug || "").trim();
   if (directSlug) return directSlug.toLowerCase();
 
-  const title = category?.name || category?.title || category?.label || "";
-  return slugifyCategoryTitle(title);
+  return "";
 }
 
 export function resolveCategoryBySlug(categories, targetSlug) {
@@ -42,10 +41,6 @@ export function resolveCategoryBySlug(categories, targetSlug) {
     categories.find((category) =>
       String(category?.slug || "").toLowerCase() === normalizedTarget
     ) ||
-    categories.find((category) => {
-      const title = category?.name || category?.title || category?.label || "";
-      return slugifyCategoryTitle(title) === normalizedTarget;
-    }) ||
     null
   );
 }
