@@ -22,10 +22,7 @@ export default function robots() {
     },
     sitemap: [
       `${siteUrl}/sitemap.xml`,
-      `${siteUrl}/sitemaps/packages.xml`,
-      `${siteUrl}/sitemaps/blogs.xml`,
-      `${siteUrl}/sitemaps/categories.xml`,
-      `${siteUrl}/sitemaps/campaigns.xml`,
+      `${siteUrl}/sitemaps/index.xml`,
     ],
   };
 }
