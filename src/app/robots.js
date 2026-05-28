@@ -24,6 +24,7 @@ export default function robots() {
       `${siteUrl}/sitemap.xml`,
       `${siteUrl}/sitemaps/packages.xml`,
       `${siteUrl}/sitemaps/blogs.xml`,
+      `${siteUrl}/sitemaps/categories.xml`,
       `${siteUrl}/sitemaps/campaigns.xml`,
     ],
   };
