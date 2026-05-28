@@ -1,7 +1,12 @@
-const API_BASE =
+const rawApiBase =
   process.env.NEXT_PUBLIC_API_BASE ||
+  process.env.NEXT_PUBLIC_API_URL ||
   process.env.API_BASE ||
   "https://api.goldenhiveholidays.in/api";
+
+const API_BASE = rawApiBase.endsWith("/api")
+  ? rawApiBase
+  : `${rawApiBase.replace(/\/$/, "")}/api`;
 
 export const BACKEND_API_BASE = API_BASE;
 

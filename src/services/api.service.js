@@ -201,6 +201,31 @@ export const apiService = {
     }
   },
 
+  async getActiveCampaigns() {
+    try {
+      const res = await fetch(`${API_BASE}/campaigns/active`, { next: { revalidate: 60 } });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch (error) {
+      console.error("Error fetching active campaigns:", error);
+      return [];
+    }
+  },
+
+  async getCampaignById(id) {
+    if (!id) return null;
+    try {
+      const res = await fetch(`${API_BASE}/campaigns/${id}`, { next: { revalidate: 60 } });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch (error) {
+      console.error(`Error fetching campaign ${id}:`, error);
+      return null;
+    }
+  },
+
   async getBlogById(id) {
     try {
       const res = await fetch(`${API_BASE}/blogs/${id}`, { next: { revalidate: 30 } });
