@@ -8,11 +8,12 @@ export default async function sitemap() {
     "https://www.goldenhiveholidays.in";
 
   try {
-    const [packages, categories, blogs, policies] = await Promise.all([
+    const [packages, categories, blogs, policies, campaigns] = await Promise.all([
       getAllPackages(),
       apiService.getCategories(),
       apiService.getBlogs({ isPublished: true }),
       apiService.getPolicies({ isActive: true }),
+      apiService.getActiveCampaigns(),
     ]);
 
     const staticRoutes = [
@@ -22,6 +23,7 @@ export default async function sitemap() {
       "/policies",
       "/about-us",
       "/custom-requests",
+      "/campaigns",
     ];
 
     const staticUrls = staticRoutes.map((route) => ({
@@ -69,12 +71,23 @@ export default async function sitemap() {
         priority: 0.5,
       })) || [];
 
+    const campaignUrls =
+      campaigns?.map((campaign) => ({
+        url: `${siteUrl}/campaigns/${campaign?._id}`,
+        lastModified: new Date(
+          campaign?.updatedAt || campaign?.createdAt || Date.now()
+        ),
+        changeFrequency: "weekly",
+        priority: 0.6,
+      })) || [];
+
     return [
       ...staticUrls,
       ...packageUrls,
       ...categoryUrls,
       ...blogUrls,
       ...policyUrls,
+      ...campaignUrls,
     ];
   } catch (error) {
     console.error("Sitemap Error:", error);

@@ -8,7 +8,23 @@ export default function robots() {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: [
+        "/admin/",
+        "/dashboard/",
+        "/api/",
+        "/login/",
+        "/register/",
+        "/checkout/",
+        "/payment/",
+        "/profile/",
+        "/booking-success/",
+      ],
     },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: [
+      `${siteUrl}/sitemap.xml`,
+      `${siteUrl}/sitemaps/packages.xml`,
+      `${siteUrl}/sitemaps/blogs.xml`,
+      `${siteUrl}/sitemaps/campaigns.xml`,
+    ],
   };
 }
