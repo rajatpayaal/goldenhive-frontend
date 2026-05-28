@@ -85,6 +85,27 @@ export default async function RootLayout({ children }) {
     },
   };
 
+  const travelAgencySchema = {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    name: "GoldenHive Holidays",
+    url: "https://goldenhiveholidays.in",
+    image: "https://goldenhiveholidays.in/logo.png",
+    telephone: "+917505917525",
+    email: "info@goldenhiveholidays.in",
+    sameAs: [
+      "https://www.instagram.com/goldenhiveholidays.official",
+      "https://www.linkedin.com/company/golden-hive-holidays/",
+      "https://youtube.com/@goldenhiveholidays",
+    ],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Rishikesh",
+      addressRegion: "Uttarakhand",
+      addressCountry: "IN",
+    },
+  };
+
   const activeCategories = (categories || []).filter(
     (category) => category?.isActive !== false
   );
@@ -103,6 +124,12 @@ export default async function RootLayout({ children }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                   __html: JSON.stringify(organizationSchema),
+                }}
+              />
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify(travelAgencySchema),
                 }}
               />
               <HeaderServer categories={activeCategories} />

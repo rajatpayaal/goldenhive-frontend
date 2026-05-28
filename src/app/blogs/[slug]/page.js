@@ -83,6 +83,12 @@ export async function generateMetadata({ params }) {
     const ogImages = blog.bannerImage?.url
         ? [decodeS3Url(blog.bannerImage.url)]
         : [];
+    const publishedTime = blog.createdAt
+        ? new Date(blog.createdAt).toISOString()
+        : undefined;
+    const modifiedTime = blog.updatedAt
+        ? new Date(blog.updatedAt).toISOString()
+        : publishedTime;
 
   return {
     title: blog.seo?.metaTitle || `${blog.title} | GoldenHive Blogs`,
@@ -96,12 +102,18 @@ export async function generateMetadata({ params }) {
             siteName: "GoldenHive Holidays",
             url: `/blogs/${canonicalSlug}`,
             images: ogImages.map((url) => ({ url })),
+            publishedTime,
+            modifiedTime,
         },
         twitter: {
             card: ogImages.length > 0 ? "summary_large_image" : "summary",
             title: blog.seo?.metaTitle || `${blog.title} | GoldenHive Blogs`,
             description: blog.seo?.metaDescription || blog.sections?.[0]?.content?.substring(0, 160),
             images: ogImages,
+        },
+        other: {
+            "article:published_time": publishedTime,
+            "article:modified_time": modifiedTime,
         },
   };
 }

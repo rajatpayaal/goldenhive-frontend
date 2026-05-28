@@ -16,10 +16,35 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const publishedTime = category.createdAt
+    ? new Date(category.createdAt).toISOString()
+    : undefined;
+  const modifiedTime = category.updatedAt
+    ? new Date(category.updatedAt).toISOString()
+    : publishedTime;
+
   return {
     title: `${category.name} Packages`,
     description: `Explore ${category.name} packages and curated holidays from GoldenHive.`,
     alternates: { canonical: `/category/${slug}` },
+    openGraph: {
+      title: `${category.name} Packages`,
+      description: `Explore ${category.name} packages and curated holidays from GoldenHive.`,
+      type: "website",
+      siteName: "GoldenHive Holidays",
+      url: `/category/${slug}`,
+      images: [{ url: "/logo-full.svg" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${category.name} Packages`,
+      description: `Explore ${category.name} packages and curated holidays from GoldenHive.`,
+      images: ["/logo-full.svg"],
+    },
+    other: {
+      "article:published_time": publishedTime,
+      "article:modified_time": modifiedTime,
+    },
   };
 }
 

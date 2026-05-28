@@ -27,6 +27,12 @@ export async function generateMetadata({ params }) {
     campaign.description ||
     "Explore the latest offers from GoldenHive Holidays.";
   const ogImage = campaign.mediaImage ? [campaign.mediaImage] : [];
+  const publishedTime = campaign.createdAt
+    ? new Date(campaign.createdAt).toISOString()
+    : undefined;
+  const modifiedTime = campaign.updatedAt
+    ? new Date(campaign.updatedAt).toISOString()
+    : publishedTime;
 
   return {
     title: `${title} | GoldenHive Holidays`,
@@ -45,6 +51,10 @@ export async function generateMetadata({ params }) {
       title: `${title} | GoldenHive Holidays`,
       description,
       images: ogImage,
+    },
+    other: {
+      "article:published_time": publishedTime,
+      "article:modified_time": modifiedTime,
     },
   };
 }

@@ -180,6 +180,12 @@ export async function generateMetadata({ params }) {
   const primaryImage = pkg.images?.primary?.url;
   const galleryImages = (pkg.images?.gallery || []).map((img) => img?.url).filter(Boolean);
   const ogImages = [primaryImage, ...galleryImages].filter(Boolean).slice(0, 3);
+  const publishedTime = pkg.createdAt
+    ? new Date(pkg.createdAt).toISOString()
+    : undefined;
+  const modifiedTime = pkg.updatedAt
+    ? new Date(pkg.updatedAt).toISOString()
+    : publishedTime;
 
   return {
     title,
@@ -206,6 +212,10 @@ export async function generateMetadata({ params }) {
       title,
       description,
       images: ogImages,
+    },
+    other: {
+      "article:published_time": publishedTime,
+      "article:modified_time": modifiedTime,
     },
   };
 }
