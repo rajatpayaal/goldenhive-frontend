@@ -1,19 +1,30 @@
 import {
   buildUrl,
   fetchAllCategoryPackages,
+  getCategorySlug,
+  getCachedCategories,
   resolveCategoryBySlug,
   resolveSiteUrl,
 } from "../../../lib/category-sitemap";
-import { apiService } from "../../../services/api.service";
 
 export const revalidate = 300;
+
+export async function generateStaticParams() {
+  // Prebuild sitemap paths for all active category slugs.
+  const categories = await getCachedCategories();
+
+  return (categories || [])
+    .filter((category) => category?.isActive !== false)
+    .map((category) => ({ category: getCategorySlug(category) }))
+    .filter((entry) => entry.category);
+}
 
 export async function GET(request, { params }) {
   const siteUrl = resolveSiteUrl();
   const { category: categoryParam } = params || {};
 
   // Resolve the requested category slug against API categories.
-  const categories = await apiService.getCategories();
+  const categories = await getCachedCategories();
   const category = resolveCategoryBySlug(categories || [], categoryParam);
 
   if (!category) {

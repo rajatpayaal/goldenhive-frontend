@@ -1,6 +1,11 @@
+import { cache } from "react";
 import { apiService } from "../services/api.service";
 
 const DEFAULT_SITE_URL = "https://goldenhiveholidays.in";
+
+export const getCachedCategories = cache(async () => {
+  return apiService.getCategories();
+});
 
 export function resolveSiteUrl() {
   return (
@@ -45,8 +50,30 @@ export function resolveCategoryBySlug(categories, targetSlug) {
   );
 }
 
+export function getPackageCategorySlug(pkg) {
+  if (!pkg) return "";
+  return String(
+    pkg?.categoryId?.slug ||
+      pkg?.category?.slug ||
+      pkg?.categorySlug ||
+      ""
+  )
+    .trim()
+    .toLowerCase();
+}
+
+export function getPackageCategoryId(pkg) {
+  if (!pkg) return "";
+  return String(pkg?.categoryId?._id || pkg?.categoryId || "")
+    .trim()
+    .toLowerCase();
+}
+
 export async function fetchAllCategoryPackages(category) {
   if (!category) return [];
+
+  const categorySlug = getCategorySlug(category);
+  if (!categorySlug) return [];
 
   const limit = 100;
   let page = 1;
@@ -56,7 +83,6 @@ export async function fetchAllCategoryPackages(category) {
   while (page <= totalPages) {
     const response = await apiService.getPackages({
       categoryId: category?._id,
-      categoryName: category?.name || category?.title || category?.slug,
       page,
       limit,
       sort: "-updatedAt",
@@ -67,5 +93,14 @@ export async function fetchAllCategoryPackages(category) {
     page += 1;
   }
 
-  return items;
+  // Enforce strict slug match; fall back to categoryId when slug is missing.
+  const categoryId = String(category?._id || "").trim().toLowerCase();
+
+  return items.filter((pkg) => {
+    const pkgSlug = getPackageCategorySlug(pkg);
+    if (pkgSlug) return pkgSlug === categorySlug;
+
+    const pkgCategoryId = getPackageCategoryId(pkg);
+    return Boolean(categoryId && pkgCategoryId && pkgCategoryId === categoryId);
+  });
 }

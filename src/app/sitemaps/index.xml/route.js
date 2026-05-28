@@ -1,15 +1,15 @@
 import {
   buildUrl,
   getCategorySlug,
+  getCachedCategories,
   resolveSiteUrl,
 } from "../../../lib/category-sitemap";
-import { apiService } from "../../../services/api.service";
 
 export const revalidate = 300;
 
 export async function GET() {
   const siteUrl = resolveSiteUrl();
-  const categories = await apiService.getCategories();
+  const categories = await getCachedCategories();
 
   // Include the primary sitemaps that are already published.
   const baseSitemaps = [
