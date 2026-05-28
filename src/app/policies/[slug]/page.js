@@ -28,10 +28,20 @@ export async function generateMetadata({ params }) {
     title: policy.seo?.metaTitle || policy.title,
     description: policy.seo?.metaDescription || policy.content?.substring(0, 160),
     keywords: policy.seo?.keywords?.join(", "),
+    alternates: { canonical: `/policies/${policy.slug || slug}` },
     openGraph: {
       title: policy.seo?.metaTitle || policy.title,
       description: policy.seo?.metaDescription || policy.content?.substring(0, 160),
+      type: "article",
+      siteName: "GoldenHive Holidays",
+      url: `/policies/${policy.slug || slug}`,
       images: policy.seo?.ogImage ? [{ url: policy.seo.ogImage }] : [],
+    },
+    twitter: {
+      card: policy.seo?.ogImage ? "summary_large_image" : "summary",
+      title: policy.seo?.metaTitle || policy.title,
+      description: policy.seo?.metaDescription || policy.content?.substring(0, 160),
+      images: policy.seo?.ogImage ? [policy.seo.ogImage] : [],
     },
   };
 }
@@ -51,8 +61,42 @@ export default async function PolicyDetailPage({ params }) {
     notFound();
   }
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://goldenhiveholidays.in";
+  const canonicalSlug = policy.slug || slug;
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${siteUrl}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Policies",
+        item: `${siteUrl}/policies`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: policy.title || "Policy",
+        item: `${siteUrl}/policies/${canonicalSlug}`,
+      },
+    ],
+  };
+
   return (
     <main className="pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-5 sm:py-12">
         <Breadcrumbs
           items={[

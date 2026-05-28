@@ -275,8 +275,67 @@ export default async function PackagesSlugPage({ params }) {
     tags: tags.length > 0,
   };
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://goldenhiveholidays.in";
+
+  const breadcrumbItems = [
+    { name: "Home", item: `${siteUrl}/` },
+  ];
+
+  if (pkg.categoryId?.name) {
+    breadcrumbItems.push({
+      name: pkg.categoryId.name,
+      item: `${siteUrl}/${pkg.categoryId.slug || "packages"}`,
+    });
+  } else {
+    breadcrumbItems.push({ name: "Packages", item: `${siteUrl}/packages` });
+  }
+
+  breadcrumbItems.push({
+    name: pkg.basic?.name || "Package",
+    item: `${siteUrl}/packages/${pkg.basic?.slug || pkg._id}`,
+  });
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.item,
+    })),
+  };
+
+  const faqSchema = show.faq
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer || "",
+          },
+        })),
+      }
+    : null;
+
   return (
     <div className="pb-20 pt-0 sm:pt-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {faqSchema ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      ) : null}
       <div className="mx-auto px-4 sm:px-5 lg:px-6">
         <div className="hidden sm:block rounded-[1.6rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.72)] px-4 py-3 backdrop-blur sm:px-5">
           <Breadcrumbs

@@ -20,6 +20,7 @@ export default async function SectionPage({ params }) {
   const matchedCategory = activeCategories.find((c) => c?.slug === slug);
 
   if (matchedCategory) {
+    const categoryTitle = matchedCategory.name || "Packages";
     const { items: packages } = await apiService.getPackages({
       categoryId: matchedCategory._id,
       limit: 60,
@@ -28,6 +29,7 @@ export default async function SectionPage({ params }) {
 
     return (
       <>
+        <h1 className="sr-only">{categoryTitle}</h1>
         {/* ── MOBILE only: new app-like package list UI ── */}
         <div className="md:hidden">
           <PackagesListClient

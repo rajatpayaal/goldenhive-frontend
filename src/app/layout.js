@@ -28,13 +28,30 @@ export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ||
       process.env.SITE_URL ||
-      "https://goldenhive-frontend.vercel.app"
+      "https://goldenhiveholidays.in"
   ),
   title: {
     default: "GoldenHive Holidays | Premium Getaways & Curated Packages",
     template: "%s | GoldenHive Holidays",
   },
   description: "GoldenHive Holidays helps travelers discover curated tours, weekend escapes, and custom travel experiences across India.",
+  openGraph: {
+    title: "GoldenHive Holidays | Premium Getaways & Curated Packages",
+    description: "GoldenHive Holidays helps travelers discover curated tours, weekend escapes, and custom travel experiences across India.",
+    type: "website",
+    siteName: "GoldenHive Holidays",
+    images: [{ url: "/logo-full.svg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GoldenHive Holidays | Premium Getaways & Curated Packages",
+    description: "GoldenHive Holidays helps travelers discover curated tours, weekend escapes, and custom travel experiences across India.",
+    images: ["/logo-full.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({ children }) {
@@ -42,6 +59,31 @@ export default async function RootLayout({ children }) {
     apiService.getCategories(),
     apiService.getFooter({ isActive: true }),
   ]);
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "GoldenHive Holidays",
+    url: "https://goldenhiveholidays.in",
+    logo: "https://goldenhiveholidays.in/logo.png",
+    sameAs: [
+      "https://www.instagram.com/goldenhiveholidays.official",
+      "https://www.linkedin.com/company/golden-hive-holidays/",
+      "https://youtube.com/@goldenhiveholidays",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+917505917525",
+      contactType: "customer service",
+      email: "info@goldenhiveholidays.in",
+    },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Rishikesh",
+      addressRegion: "Uttarakhand",
+      addressCountry: "IN",
+    },
+  };
 
   const activeCategories = (categories || []).filter(
     (category) => category?.isActive !== false
@@ -57,6 +99,12 @@ export default async function RootLayout({ children }) {
         <ReduxProvider>
           <ToastProvider>
             <div className="min-h-screen flex flex-col">
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify(organizationSchema),
+                }}
+              />
               <HeaderServer categories={activeCategories} />
               <main className="flex-1 pb-20 md:pb-0">{children}</main>
               <Footer footer={footer} />

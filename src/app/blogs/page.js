@@ -5,6 +5,21 @@ export const metadata = {
   title: "Blogs & Stories | GoldenHive Holidays",
   description: "Read our latest travel blogs, guides, and tips for your spiritual journeys.",
   keywords: ["travel blogs", "char dham guide", "uttarakhand travel"],
+  alternates: { canonical: "/blogs" },
+  openGraph: {
+    title: "Blogs & Stories | GoldenHive Holidays",
+    description: "Read our latest travel blogs, guides, and tips for your spiritual journeys.",
+    type: "website",
+    siteName: "GoldenHive Holidays",
+    url: "/blogs",
+    images: [{ url: "/logo-full.svg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blogs & Stories | GoldenHive Holidays",
+    description: "Read our latest travel blogs, guides, and tips for your spiritual journeys.",
+    images: ["/logo-full.svg"],
+  },
 };
 
 export default async function BlogsPage() {
@@ -16,4 +31,4 @@ export default async function BlogsPage() {
       <BlogsListClient initialBlogs={blogs} initialCategories={blogCategories} />
     </main>
   );
-}
+}

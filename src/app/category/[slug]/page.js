@@ -38,6 +38,29 @@ export default async function CategoryPage({ params }) {
     notFound();
   }
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://goldenhiveholidays.in";
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${siteUrl}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: category.name || "Category",
+        item: `${siteUrl}/category/${slug}`,
+      },
+    ],
+  };
+
   const { items } = await apiService.getPackages({
     categoryId: category._id,
     limit: 60,
@@ -46,6 +69,10 @@ export default async function CategoryPage({ params }) {
 
   return (
     <main className="px-4 py-8 sm:px-5 sm:py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <section className="mx-auto max-w-6xl rounded-[2rem] border border-[color:var(--gh-border)] bg-[rgba(255,253,249,0.94)] p-5 shadow-[0_20px_55px_rgba(121,68,44,0.12)] sm:p-8">
         <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
           Category Collection

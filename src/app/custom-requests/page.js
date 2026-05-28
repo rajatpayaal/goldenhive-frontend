@@ -3,6 +3,21 @@ import CustomRequestFlow from "@/components/CustomRequestFlow";
 export const metadata = {
   title: "Request a Custom Itinerary | GoldenHive",
   description: "Craft a personalized travel plan with our concierge team and track every custom request in one place.",
+  alternates: { canonical: "/custom-requests" },
+  openGraph: {
+    title: "Request a Custom Itinerary | GoldenHive",
+    description: "Craft a personalized travel plan with our concierge team and track every custom request in one place.",
+    type: "website",
+    siteName: "GoldenHive Holidays",
+    url: "/custom-requests",
+    images: [{ url: "/logo-full.svg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Request a Custom Itinerary | GoldenHive",
+    description: "Craft a personalized travel plan with our concierge team and track every custom request in one place.",
+    images: ["/logo-full.svg"],
+  },
 };
 
 export default function CustomRequestsPage() {

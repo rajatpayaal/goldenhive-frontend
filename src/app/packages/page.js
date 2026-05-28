@@ -27,6 +27,7 @@ export default async function PackagesPage() {
 
   return (
     <>
+      <h1 className="sr-only">All Packages</h1>
       {/* ── MOBILE only: new app-like list UI ── */}
       <div className="md:hidden">
         <PackagesListClient
@@ -43,9 +44,9 @@ export default async function PackagesPage() {
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[color:var(--gh-accent)]">
             GoldenHive Holidays
           </p>
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--gh-heading)] sm:text-4xl lg:text-5xl">
             All Packages
-          </h1>
+          </h2>
           <p className="mt-3 max-w-2xl text-base font-medium text-[color:var(--gh-text-soft)]">
             Discover premium trips styled with the same soft cream and sunset accent theme across the site.
           </p>

@@ -5,6 +5,21 @@ export const metadata = {
   title: "Policies | GoldenHive",
   description: "Read our policies including privacy policy, corporate tours policy, and fraud awareness.",
   keywords: ["policies", "privacy policy", "corporate tours", "fraud awareness"],
+  alternates: { canonical: "/policies" },
+  openGraph: {
+    title: "Policies | GoldenHive",
+    description: "Read our policies including privacy policy, corporate tours policy, and fraud awareness.",
+    type: "website",
+    siteName: "GoldenHive Holidays",
+    url: "/policies",
+    images: [{ url: "/logo-full.svg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Policies | GoldenHive",
+    description: "Read our policies including privacy policy, corporate tours policy, and fraud awareness.",
+    images: ["/logo-full.svg"],
+  },
 };
 
 export default async function PoliciesPage() {

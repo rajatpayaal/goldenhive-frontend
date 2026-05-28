@@ -79,10 +79,30 @@ export async function generateMetadata({ params }) {
 
   if (!blog) return { title: "Blog Not Found" };
 
+    const canonicalSlug = blog.slug || slug;
+    const ogImages = blog.bannerImage?.url
+        ? [decodeS3Url(blog.bannerImage.url)]
+        : [];
+
   return {
     title: blog.seo?.metaTitle || `${blog.title} | GoldenHive Blogs`,
     description: blog.seo?.metaDescription || blog.sections?.[0]?.content?.substring(0, 160),
     keywords: blog.seo?.keywords?.join(", "),
+        alternates: { canonical: `/blogs/${canonicalSlug}` },
+        openGraph: {
+            title: blog.seo?.metaTitle || `${blog.title} | GoldenHive Blogs`,
+            description: blog.seo?.metaDescription || blog.sections?.[0]?.content?.substring(0, 160),
+            type: "article",
+            siteName: "GoldenHive Holidays",
+            url: `/blogs/${canonicalSlug}`,
+            images: ogImages.map((url) => ({ url })),
+        },
+        twitter: {
+            card: ogImages.length > 0 ? "summary_large_image" : "summary",
+            title: blog.seo?.metaTitle || `${blog.title} | GoldenHive Blogs`,
+            description: blog.seo?.metaDescription || blog.sections?.[0]?.content?.substring(0, 160),
+            images: ogImages,
+        },
   };
 }
 
@@ -93,9 +113,42 @@ export default async function BlogDetailPage({ params }) {
   if (!blog) notFound();
 
   const videoId = getYouTubeEmbedId(blog.seo?.youtubeUrl);
+    const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        process.env.SITE_URL ||
+        "https://goldenhiveholidays.in";
+    const canonicalSlug = blog.slug || slug;
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: `${siteUrl}/`,
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Blogs",
+                item: `${siteUrl}/blogs`,
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: blog.title || "Blog",
+                item: `${siteUrl}/blogs/${canonicalSlug}`,
+            },
+        ],
+    };
 
   return (
     <main className="min-h-screen bg-white pb-10">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
         
       {/* ── TOP APP BAR (Mobile Reference) ── */}
       <div className="sticky top-0 z-40 flex items-center justify-between bg-white px-4 py-4 md:px-8">
