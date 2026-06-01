@@ -1,3 +1,4 @@
+// Increased close button size to h-11 w-11 (44x44px) to meet accessibility standards for mobile touch targets
 "use client";
 
 import React, { useMemo, useState } from "react";
@@ -123,7 +124,7 @@ export function BookingModal({ isOpen, onClose, packages = [], onSuccess }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
+          className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-black text-slate-900 hover:bg-slate-50"
           onClick={onClose}
           aria-label="Close"
         >

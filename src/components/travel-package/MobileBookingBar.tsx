@@ -1,3 +1,4 @@
+// Fixed overlapping bottom nav on mobile by shifting upward to bottom-[76px], and increased button touch targets to 44px (h-11)
 "use client";
 
 import { MessageCircle, PhoneCall, Sparkles } from "lucide-react";
@@ -11,7 +12,7 @@ export function MobileBookingBar({ data, className }: { data: TravelPackage; cla
   const priceLabel = formatMoney(data.pricing.finalPrice, data.pricing.currency);
 
   return (
-    <div className={cn("fixed inset-x-0 bottom-0 z-40 lg:hidden", className)}>
+    <div className={cn("fixed inset-x-0 bottom-[76px] md:bottom-0 z-40 lg:hidden", className)}>
       <div className="mx-auto max-w-6xl px-4 pb-4">
         <div className="rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-xl backdrop-blur">
           <div className="flex items-center justify-between gap-3">
@@ -27,6 +28,7 @@ export function MobileBookingBar({ data, className }: { data: TravelPackage; cla
               <Button
                 size="icon"
                 variant="success"
+                className="h-11 w-11"
                 aria-label="WhatsApp"
                 onClick={() =>
                   window.open(
@@ -40,12 +42,13 @@ export function MobileBookingBar({ data, className }: { data: TravelPackage; cla
               <Button
                 size="icon"
                 variant="outline"
+                className="h-11 w-11"
                 aria-label="Call"
                 onClick={() => (window.location.href = `tel:${data.cta.call}`)}
               >
                 <PhoneCall className="h-4 w-4" />
               </Button>
-              <Button variant="gradient" className="px-4">
+              <Button variant="gradient" className="h-11 px-4">
                 <Sparkles className="h-4 w-4" />
                 Book
               </Button>
@@ -56,3 +59,4 @@ export function MobileBookingBar({ data, className }: { data: TravelPackage; cla
     </div>
   );
 }
+

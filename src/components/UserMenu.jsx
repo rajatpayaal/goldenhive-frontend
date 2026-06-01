@@ -44,11 +44,11 @@ export function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative overflow-hidden flex h-10 w-10 items-center justify-center rounded-full bg-gh-gold text-gh-plum font-black text-sm transition hover:scale-105 active:scale-95"
+        className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gh-gold text-gh-plum font-black text-sm transition hover:scale-105 active:scale-95 after:absolute after:-inset-0.5"
         title={`${user.firstName} ${user.lastName}`}
       >
         {avatarUrl ? (
-          <Image src={avatarUrl} alt="" width={40} height={40} className="h-full w-full object-cover" />
+          <Image src={avatarUrl} alt="" width={40} height={40} className="h-full w-full object-cover rounded-full" />
         ) : (
           initials
         )}

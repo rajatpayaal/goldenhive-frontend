@@ -1,9 +1,10 @@
+// Adjusted padding from py-1 to py-2 to meet 44px minimum touch target height for mobile navigation items
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, Headset, User, Ticket, Search } from "lucide-react";
+import { Home, ShoppingBag, Headset, User, Ticket, Search, BookOpenText } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginModal } from "./LoginModal";
@@ -43,6 +44,7 @@ export function MobileBottomNav() {
     { name: "Home",     href: "/",         icon: Home },
     { name: "Packages", href: "/packages", icon: ShoppingBag },
     { name: "Trips",    href: "/bookings", icon: Ticket },
+    { name: "Blog",     href: "/blogs",    icon: BookOpenText },
     { name: "Help",     href: null,        icon: Headset, isCentral: true },
     { name: "Search",   href: null,        icon: Search,  isSearch: true },
     { name: "Profile",  href: "/profile",  icon: User },
@@ -113,7 +115,7 @@ export function MobileBottomNav() {
                       setSearchQuery("");
                       setSearchOpen(true);
                     }}
-                    className="flex flex-col items-center gap-1 min-w-[52px] py-1"
+                    className="flex flex-col items-center gap-1 min-w-[52px] py-2"
                     aria-label="Search"
                   >
                     <div className="flex items-center justify-center">
@@ -136,7 +138,7 @@ export function MobileBottomNav() {
                   key={item.name}
                   href={item.href}
                   onClick={handleClick}
-                  className="flex flex-col items-center gap-1 min-w-[52px] py-1 transition-all"
+                  className="flex flex-col items-center gap-1 min-w-[52px] py-2 transition-all"
                   aria-label={item.name}
                 >
                   <div className="relative flex items-center justify-center">

@@ -1,3 +1,4 @@
+// Increased clear search query button touch target to 44px (h-11 w-11) while maintaining visual appearance
 "use client";
 
 import React, { useEffect, useId, useRef, useState } from "react";
@@ -458,10 +459,12 @@ export function MobileSearchPage({ onClose, initialQuery = "" }) {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.85, opacity: 0 }}
                     whileTap={{ scale: 0.9 }}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center -my-2.5 -mr-2.5 text-rose-600"
                     aria-label="Clear search"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-100">
+                      <X className="h-3.5 w-3.5" />
+                    </div>
                   </motion.button>
                 ) : null}
               </AnimatePresence>

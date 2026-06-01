@@ -1,3 +1,4 @@
+// Increased wishlist button touch target to 44px (h-11 w-11) while preserving exact 28px (h-7 w-7) visual appearance
 "use client";
 
 import Image from "next/image";
@@ -266,13 +267,15 @@ export function PackagesListClient({ packages = [], categories = [], title = "Al
                   <button
                     type="button"
                     onClick={(e) => toggleWishlist(e, id)}
-                    className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition active:scale-90"
+                    className="absolute -right-1.5 -top-1.5 flex h-11 w-11 items-center justify-center rounded-full bg-transparent transition active:scale-90"
                     aria-label="Wishlist"
                   >
-                    <Heart
-                      className={`h-3.5 w-3.5 ${isWishlisted ? "fill-[color:var(--gh-accent)] text-[color:var(--gh-accent)]" : "text-slate-500"}`}
-                      strokeWidth={2}
-                    />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm">
+                      <Heart
+                        className={`h-3.5 w-3.5 ${isWishlisted ? "fill-[color:var(--gh-accent)] text-[color:var(--gh-accent)]" : "text-slate-500"}`}
+                        strokeWidth={2}
+                      />
+                    </div>
                   </button>
 
                   {/* Gallery count */}

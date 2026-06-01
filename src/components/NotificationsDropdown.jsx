@@ -171,6 +171,7 @@ export function NotificationsDropdown({
             isDark
               ? "bg-white/10 text-white hover:bg-white/15"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+            "after:absolute after:-inset-1"
           ].join(" ")}
           aria-label="Notifications"
           aria-expanded={open}
@@ -233,7 +234,7 @@ export function NotificationsDropdown({
               type="button"
               onClick={refresh}
               disabled={loading}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-black/10 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-black/10 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60 after:absolute after:-inset-1"
               aria-label="Refresh alerts"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />

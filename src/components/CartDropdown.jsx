@@ -170,6 +170,7 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
             isDark
               ? "bg-white/10 text-white hover:bg-white/15"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+            "after:absolute after:-inset-1"
           ].join(" ")}
           aria-label="Wishlist"
           aria-expanded={open}
@@ -321,7 +322,7 @@ export function CartDropdown({ cartCount = 0, variant = "header-dark" }) {
                       <button
                         type="button"
                         onClick={() => removeItem(packageId)}
-                        className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-2xl border border-black/10 bg-white text-slate-700 hover:bg-slate-50"
+                        className="relative inline-flex h-9 w-9 flex-none items-center justify-center rounded-2xl border border-black/10 bg-white text-slate-700 hover:bg-slate-50 after:absolute after:-inset-1"
                         aria-label="Remove item"
                       >
                         <X className="h-4 w-4" aria-hidden="true" />

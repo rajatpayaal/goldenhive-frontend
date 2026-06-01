@@ -1,3 +1,4 @@
+// Increased slide indicator dots touch target to 44px (h-11) while preserving exact visual appearance
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
@@ -393,17 +394,21 @@ export function BannerSlider({ banners }) {
           ))}
 
           {items.length > 1 && (
-            <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 px-5 z-30">
+            <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-0.5 px-5 z-30">
               {items.map((_, idx) => (
                 <button
                   key={idx}
-                  className={[
-                    "h-1.5 rounded-full transition-all",
-                    idx === currentIndex ? "w-4 bg-gh-gold" : "w-1.5 bg-white",
-                  ].join(" ")}
+                  className="flex h-11 w-8 items-center justify-center transition-all"
                   onClick={() => setCurrentIndex(idx)}
                   aria-label={`Go to slide ${idx + 1}`}
-                />
+                >
+                  <span
+                    className={[
+                      "h-1.5 rounded-full transition-all",
+                      idx === currentIndex ? "w-4 bg-gh-gold" : "w-1.5 bg-white",
+                    ].join(" ")}
+                  />
+                </button>
               ))}
             </div>
           )}

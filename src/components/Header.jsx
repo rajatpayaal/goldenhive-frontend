@@ -199,7 +199,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 shadow-sm lg:hidden"
+                  className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 shadow-sm lg:hidden after:absolute after:-inset-1"
                   aria-label="Open menu"
                   aria-haspopup="dialog"
                   aria-expanded={isMobileMenuOpen}
@@ -220,7 +220,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
                     <SheetClose asChild>
                       <button
                         type="button"
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-slate-700 shadow-sm hover:bg-rose-50"
+                        className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-slate-700 shadow-sm hover:bg-rose-50 after:absolute after:-inset-0.5"
                         aria-label="Close"
                       >
                         <X className="h-5 w-5" aria-hidden="true" />
@@ -644,7 +644,7 @@ export function Header({ categories = [], initialUnreadCount = 0 }) {
             {!isLoading && !user && (
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white shadow-md transition hover:opacity-90 lg:hidden"
+                className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--gh-accent),var(--gh-accent-strong))] text-white shadow-md transition hover:opacity-90 lg:hidden after:absolute after:-inset-1"
                 aria-label="Log In"
               >
                 <User className="h-4 w-4" />
