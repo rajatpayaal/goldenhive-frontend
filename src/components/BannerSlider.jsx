@@ -257,7 +257,7 @@ export function BannerSlider({ banners }) {
                                       <p className="text-[8px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">{pkg.basic?.tagline}</p>
                                       <div className="mt-auto pt-2 flex items-baseline gap-1">
                                         <span className="text-[9px] text-slate-500 font-bold">From</span>
-                                        <span className="text-[11px] font-black text-[#d91656]">{pkg.price ? `₹${pkg.price}` : "₹24,999"}</span>
+                                        <span className="text-[11px] font-black text-[#d91656]">{pkg.pricing?.finalPrice ? `₹${pkg.pricing.finalPrice.toLocaleString('en-IN')}` : "₹24,999"}</span>
                                       </div>
                                     </div>
                                   </Link>
@@ -340,7 +340,7 @@ export function BannerSlider({ banners }) {
                                     <h4 className="text-[11px] font-black text-slate-800 leading-snug line-clamp-2">{pkg.basic?.name}</h4>
                                     <div className="mt-auto pt-2 flex items-baseline gap-1">
                                       <span className="text-[9px] text-slate-500 font-bold">From</span>
-                                      <span className="text-xs font-black text-[#d91656]">{pkg.price ? `₹${pkg.price}` : "₹24,999"}</span>
+                                      <span className="text-xs font-black text-[#d91656]">{pkg.pricing?.finalPrice ? `₹${pkg.pricing.finalPrice.toLocaleString('en-IN')}` : "₹24,999"}</span>
                                     </div>
                                   </div>
                                 </Link>
