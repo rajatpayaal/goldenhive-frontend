@@ -118,6 +118,27 @@ export default async function RootLayout({ children }) {
       data-scroll-behavior="smooth"
     >
       <body className={bodyFont.className}>
+        {/* Google Tag Manager - Head Script */}
+        <Script
+          id="google-tag-manager"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-PCKJMC9C');`,
+          }}
+        />
+        {/* Google Tag Manager - NoScript Fallback */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PCKJMC9C"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-VNZ4RVNQ66"
@@ -135,6 +156,15 @@ export default async function RootLayout({ children }) {
             `,
           }}
         />
+
+        {/* Ahrefs Analytics */}
+        <Script
+          id="ahrefs-analytics"
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="W4KKz0Yg9HrOADL6oyFTQQ"
+          strategy="afterInteractive"
+        />
+
         <ReduxProvider>
           <ToastProvider>
             <div className="min-h-screen flex flex-col">
