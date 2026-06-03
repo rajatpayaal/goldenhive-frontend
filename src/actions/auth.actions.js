@@ -63,6 +63,19 @@ export async function loginAction(payload) {
   return result;
 }
 
+/** Google OAuth — frontend sends Google's id_token credential + optional mobile (for signup) */
+export async function googleLoginAction(credential, mobile = "") {
+  const result = await postJson("/auth/google", { credential, mobile });
+  if (result.ok) {
+    const token = extractToken(result.data);
+    if (token) {
+      const store = await cookies();
+      store.set(authCookieName, token, cookieOptions());
+    }
+  }
+  return result;
+}
+
 export async function forgotPasswordAction(payload) {
   return postJson("/auth/forgot-password", payload);
 }
@@ -76,4 +89,3 @@ export async function logoutAction() {
   store.set(authCookieName, "", { ...cookieOptions(), maxAge: 0 });
   return { ok: true };
 }
-

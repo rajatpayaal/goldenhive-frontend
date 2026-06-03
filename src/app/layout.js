@@ -165,6 +165,13 @@ export default async function RootLayout({ children }) {
           strategy="afterInteractive"
         />
 
+        {/* Google Identity Services — used for Google Sign-In button in LoginModal */}
+        <Script
+          id="google-gsi"
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
+
         <ReduxProvider>
           <ToastProvider>
             <div className="min-h-screen flex flex-col">
