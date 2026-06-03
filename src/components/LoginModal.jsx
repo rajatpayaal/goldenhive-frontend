@@ -32,6 +32,8 @@ export function LoginModal({ isOpen, onClose }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const countryDropdownRef = useRef(null);
+  const googleMobileRef = useRef("");
+  const googleInitializedRef = useRef(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -103,37 +105,41 @@ export function LoginModal({ isOpen, onClose }) {
     setError(null);
     setGoogleLoading(true);
 
-    // Mobile number — sirf signup pe pass karo
-    const mobile = mode !== "login"
+    // Mobile number — sirf signup pe pass karo (ref mein store so callback always gets latest)
+    googleMobileRef.current = mode !== "login"
       ? `${formData.dialCode}${String(formData.phone || "").trim()}`
       : "";
 
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: async ({ credential }) => {
-        try {
-          const { ok, data } = await googleLoginAction(credential, mobile);
-          if (ok) {
-            let loggedInUser = data?.data?.user || data?.user || null;
-            if (refreshUser) {
-              try { const me = await refreshUser(); if (me) loggedInUser = me; } catch { /* ignore */ }
+    // Initialize sirf ek baar — callback ref se mobile read karega
+    if (!googleInitializedRef.current) {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }) => {
+          try {
+            const { ok, data } = await googleLoginAction(credential, googleMobileRef.current);
+            if (ok) {
+              let loggedInUser = data?.data?.user || data?.user || null;
+              if (refreshUser) {
+                try { const me = await refreshUser(); if (me) loggedInUser = me; } catch { /* ignore */ }
+              }
+              if (loggedInUser) setUser(loggedInUser);
+              setSuccess(true);
+              setTimeout(() => closeModal(), 900);
+            } else {
+              setError(data?.data?.error || data?.error || "Google Sign-In failed.");
             }
-            if (loggedInUser) setUser(loggedInUser);
-            setSuccess(true);
-            setTimeout(() => closeModal(), 900);
-          } else {
-            setError(data?.data?.error || data?.error || "Google Sign-In failed.");
+          } catch {
+            setError("Google Sign-In failed. Please try again.");
+          } finally {
+            setGoogleLoading(false);
           }
-        } catch {
-          setError("Google Sign-In failed. Please try again.");
-        } finally {
-          setGoogleLoading(false);
-        }
-      },
-      use_fedcm_for_prompt: true, // FedCM migration — removes deprecated prompt UI status warnings
-    });
+        },
+        use_fedcm_for_prompt: true,
+      });
+      googleInitializedRef.current = true;
+    }
 
-    // FedCM: prompt() without callback — browser controls prompt UI now
+    // Prompt har click pe call hoga — FedCM browser controls the UI
     window.google.accounts.id.prompt();
 
     // Fallback: reset loading state if user doesn't interact within 10s
