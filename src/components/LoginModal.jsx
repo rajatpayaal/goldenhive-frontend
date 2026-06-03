@@ -130,13 +130,16 @@ export function LoginModal({ isOpen, onClose }) {
           setGoogleLoading(false);
         }
       },
+      use_fedcm_for_prompt: true, // FedCM migration — removes deprecated prompt UI status warnings
     });
 
-    window.google.accounts.id.prompt((notification) => {
-      if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
-        setGoogleLoading(false);
-      }
-    });
+    // FedCM: prompt() without callback — browser controls prompt UI now
+    window.google.accounts.id.prompt();
+
+    // Fallback: reset loading state if user doesn't interact within 10s
+    setTimeout(() => {
+      setGoogleLoading(false);
+    }, 10000);
   };
 
   if (!isOpen) return null;
