@@ -32,6 +32,14 @@ export function LoginModal({ isOpen, onClose }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const countryDropdownRef = useRef(null);
+  const googlePhoneDialogOpenRef = useRef(false);
+  const [isGooglePhoneDialogOpen, setIsGooglePhoneDialogOpen] = useState(false);
+  const [googlePhoneData, setGooglePhoneData] = useState({
+    phone: "",
+    dialCode: "+91",
+  });
+  const [googlePhoneDialogCountryOpen, setGooglePhoneDialogCountryOpen] = useState(false);
+  const googlePhoneDialogCountryRef = useRef(null);
   const googleMobileRef = useRef("");
   const googleInitializedRef = useRef(false);
   const [formData, setFormData] = useState({
@@ -57,6 +65,9 @@ export function LoginModal({ isOpen, onClose }) {
       if (countryDropdownRef.current && !countryDropdownRef.current.contains(event.target)) {
         setIsCountryDropdownOpen(false);
       }
+      if (googlePhoneDialogCountryRef.current && !googlePhoneDialogCountryRef.current.contains(event.target)) {
+        setGooglePhoneDialogCountryOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -68,6 +79,11 @@ export function LoginModal({ isOpen, onClose }) {
     setOtp("");
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setIsGooglePhoneDialogOpen(false);
+    setGooglePhoneData({
+      phone: "",
+      dialCode: "+91",
+    });
     setError(null);
     setFieldErrors({});
     setFormData({
@@ -90,25 +106,29 @@ export function LoginModal({ isOpen, onClose }) {
   };
 
   const handleGoogleLogin = () => {
+    // For login mode, directly proceed
+    if (mode === "login") {
+      proceedWithGoogleAuth("");
+      return;
+    }
+
+    // For register mode, show phone dialog first
+    setIsGooglePhoneDialogOpen(true);
+  };
+
+  const proceedWithGoogleAuth = (mobileNumber) => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId || !window?.google?.accounts?.id) {
       setError("Google Sign-In is not available right now.");
       return;
     }
 
-    // Register mode pe phone validate karo pehle
-    if (mode !== "login" && !isPhoneValid(formData.phone)) {
-      setError("Please enter a valid mobile number before signing in with Google.");
-      return;
-    }
-
     setError(null);
     setGoogleLoading(true);
+    setIsGooglePhoneDialogOpen(false);
 
-    // Mobile number — sirf signup pe pass karo (ref mein store so callback always gets latest)
-    googleMobileRef.current = mode !== "login"
-      ? `${formData.dialCode}${String(formData.phone || "").trim()}`
-      : "";
+    // Store mobile number for the callback
+    googleMobileRef.current = mobileNumber;
 
     // Initialize sirf ek baar — callback ref se mobile read karega
     if (!googleInitializedRef.current) {
@@ -150,6 +170,11 @@ export function LoginModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
   if (!mounted) return null;
+
+  const isGooglePhoneValid = (phone) => {
+    const cleanPhone = String(phone || "").replace(/\s+/g, "");
+    return /^\d{6,15}$/.test(cleanPhone);
+  };
 
   const title = (() => {
     if (mode === "login") return "Log In";
@@ -869,7 +894,7 @@ export function LoginModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                disabled={googleLoading || loading || (mode !== "login" && step === 1 && !isPhoneValid(formData.phone))}
+                disabled={googleLoading || loading}
                 className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-3.5 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {googleLoading ? (
@@ -887,12 +912,6 @@ export function LoginModal({ isOpen, onClose }) {
                 )}
                 {googleLoading ? "Signing in with Google..." : "Continue with Google"}
               </button>
-              {/* Hint on Register Step 1 when phone not filled yet */}
-              {mode !== "login" && step === 1 && !isPhoneValid(formData.phone) && (
-                <p className="mt-2 text-center text-xs font-semibold text-slate-400">
-                  Enter your mobile number above to enable Google Sign-In
-                </p>
-              )}
             </div>
           )}
 
@@ -913,5 +932,126 @@ export function LoginModal({ isOpen, onClose }) {
     </div>
   );
 
-  return createPortal(modalContent, document.body);
+  // Google Phone Dialog for Registration
+  const googlePhoneDialogContent = isGooglePhoneDialogOpen && (
+    <div
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/65 p-3 backdrop-blur-sm"
+      onClick={() => setIsGooglePhoneDialogOpen(false)}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="relative w-full max-w-md rounded-3xl border border-[rgba(255,255,255,0.12)] bg-[linear-gradient(135deg,rgba(255,250,245,0.98),rgba(255,255,255,0.96))] shadow-[0_28px_70px_rgba(2,6,23,0.3)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xl font-black text-white backdrop-blur-sm hover:bg-white/20"
+          onClick={() => setIsGooglePhoneDialogOpen(false)}
+          aria-label="Close"
+          type="button"
+        >
+          {"\u00D7"}
+        </button>
+
+        <div className="px-6 py-6 sm:px-8 sm:py-8">
+          <h3 className="text-2xl font-black tracking-tight text-slate-900">Add Your Mobile Number</h3>
+          <p className="mt-2 text-sm font-semibold text-slate-600">
+            We need your mobile number to complete your registration with Google.
+          </p>
+
+          <div className="mt-6">
+            <label htmlFor="googlePhone" className="block text-sm font-bold text-slate-900 mb-2">
+              Mobile Number <span className="text-rose-500">*</span>
+            </label>
+            <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3">
+              <div className="relative shrink-0" ref={googlePhoneDialogCountryRef}>
+                <button
+                  type="button"
+                  onClick={() => setGooglePhoneDialogCountryOpen(!googlePhoneDialogCountryOpen)}
+                  className="flex h-[42px] items-center gap-1.5 rounded-xl bg-slate-50 px-3 text-sm font-extrabold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[color:var(--gh-accent)]"
+                >
+                  <Image 
+                    src={`https://flagcdn.com/w20/${(countries.find(c => c.dial_code === googlePhoneData.dialCode) || countries[0]).code.toLowerCase()}.png`}
+                    alt="flag"
+                    width={20}
+                    height={15}
+                    className="object-contain"
+                  />
+                  {googlePhoneData.dialCode}
+                  <svg className={`h-4 w-4 text-slate-400 transition-transform ${googlePhoneDialogCountryOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                
+                {googlePhoneDialogCountryOpen && (
+                  <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-y-auto rounded-xl border border-black/10 bg-white p-1 shadow-lg">
+                    {countries.map((c) => (
+                      <button
+                        key={c.code}
+                        type="button"
+                        onClick={() => {
+                          setGooglePhoneData((prev) => ({ ...prev, dialCode: c.dial_code }));
+                          setGooglePhoneDialogCountryOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-50"
+                      >
+                        <Image 
+                          src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
+                          alt={c.code}
+                          width={20}
+                          height={15}
+                          className="object-contain"
+                        />
+                        <span className="font-semibold text-slate-700">{c.name}</span>
+                        <span className="ml-auto font-bold text-slate-500">{c.dial_code}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <input
+                id="googlePhone"
+                type="tel"
+                className="w-full border-0 bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+                placeholder="Mobile number"
+                value={googlePhoneData.phone}
+                onChange={(e) => setGooglePhoneData((prev) => ({ ...prev, phone: e.target.value }))}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={() => setIsGooglePhoneDialogOpen(false)}
+              className="flex-1 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!isGooglePhoneValid(googlePhoneData.phone)) {
+                  setError("Please enter a valid mobile number.");
+                  return;
+                }
+                const mobileNumber = `${googlePhoneData.dialCode}${String(googlePhoneData.phone || "").trim()}`;
+                proceedWithGoogleAuth(mobileNumber);
+              }}
+              disabled={!isGooglePhoneValid(googlePhoneData.phone) || googleLoading}
+              className="flex-1 gh-primary-btn rounded-2xl px-4 py-3 text-sm font-bold disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {googleLoading ? "Processing..." : "Continue"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {createPortal(modalContent, document.body)}
+      {createPortal(googlePhoneDialogContent, document.body)}
+    </>
+  );
 }
