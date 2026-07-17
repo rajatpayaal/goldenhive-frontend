@@ -1,4 +1,4 @@
-﻿import CartClient from "./CartClient";
+import CartClient from "./CartClient";
 import { PackageSuggestionsSection } from "@/components/PackageSuggestionsSection";
 import { getCartAction } from "@/actions/cart.actions";
 
