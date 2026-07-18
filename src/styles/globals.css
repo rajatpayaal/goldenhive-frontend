@@ -123,6 +123,88 @@ select {
   display: none;
 }
 
+@keyframes gh-badge-pop {
+  0% {
+    transform: scale(0.94);
+  }
+  70% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gh-heart-bounce {
+  0% {
+    transform: scale(0.88);
+  }
+  65% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gh-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-6deg);
+  }
+  40% {
+    transform: rotate(6deg);
+  }
+  60% {
+    transform: rotate(-4deg);
+  }
+  80% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes gh-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--bg-warning, var(--gh-accent));
+  }
+  50% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+}
+
+.gh-bestseller-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation:
+    gh-shake 3s ease-in-out infinite,
+    gh-glow 1.6s ease-in-out infinite !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  transform-origin: 50% 0%;
+  transform-box: fill-box;
+  will-change: transform, box-shadow;
+}
+
+.gh-bestseller-badge::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: gh-glow 1.6s ease-in-out infinite !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-bestseller-badge,
+  .gh-bestseller-badge::after {
+    animation: none;
+  }
+}
+
 img,
 svg,
 video,
