@@ -29,6 +29,14 @@ const formatInr = (value) => {
   return null;
 };
 
+const isTruthyFlag = (value) => value === true || value === "true" || value === 1 || value === "1";
+
+const isPackageBestSeller = (pkg) =>
+  isTruthyFlag(pkg?.isBestSeller) ||
+  isTruthyFlag(pkg?.bestSeller) ||
+  isTruthyFlag(pkg?.basic?.isBestSeller) ||
+  isTruthyFlag(pkg?.bestDeal?.isBestDeal);
+
 export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500 }) {
   const scrollerRef = useRef(null);
   const [paused, setPaused] = useState(false);
@@ -118,6 +126,7 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
         const title = pkg.basic?.name || "Untitled Journey";
         const imageAlt = pkg.images?.primary?.alt || title;
         const isWishlisted = wishlist[id] || false;
+        const showBestSeller = isPackageBestSeller(pkg) || index === 0;
 
         return (
           <Link
@@ -147,8 +156,8 @@ export function PackagesCarousel({ packages, autoSlide = true, intervalMs = 3500
                 </div>
               )}
 
-              {pkg.isBestSeller === true && (
-                <div className="gh-bestseller-badge absolute bottom-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-[8px] font-black uppercase tracking-wide text-slate-800 backdrop-blur-sm">
+              {showBestSeller && (
+                <div className="gh-bestseller-badge absolute bottom-2 right-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-white shadow-lg">
                   Bestseller
                 </div>
               )}

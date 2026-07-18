@@ -97,13 +97,14 @@ select {
 .gh-primary-btn:hover {
   opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 12px_30px_rgba(255,79,138,0.35);
+  box-shadow: 0 12px_30px_rgba(255, 79, 138, 0.35);
 }
 
 .gh-secondary-btn {
   background: linear-gradient(to right, var(--gh-accent), var(--gh-accent-strong));
   color: white;
-  border-radius: 9999px; /* Pill shape */
+  border-radius: 9999px;
+  /* Pill shape */
   font-weight: 700;
   transition: all 0.2s;
 }
@@ -127,9 +128,11 @@ select {
   0% {
     transform: scale(0.94);
   }
+
   70% {
     transform: scale(1.04);
   }
+
   100% {
     transform: scale(1);
   }
@@ -139,40 +142,47 @@ select {
   0% {
     transform: scale(0.88);
   }
+
   65% {
     transform: scale(1.16);
   }
+
   100% {
     transform: scale(1);
   }
 }
 
-@keyframes gh-shake {
-  0%,
-  100% {
-    transform: rotate(0deg);
+@keyframes gh-shake-pulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 79, 138, 0.7);
+    /* Pink glow */
   }
-  20% {
-    transform: rotate(-6deg);
-  }
-  40% {
-    transform: rotate(6deg);
-  }
-  60% {
-    transform: rotate(-4deg);
-  }
-  80% {
-    transform: rotate(4deg);
-  }
-}
 
-@keyframes gh-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 var(--bg-warning, var(--gh-accent));
+  15% {
+    transform: rotate(-6deg) scale(1.05);
   }
-  50% {
-    box-shadow: 0 0 0 5px transparent;
+
+  30% {
+    transform: rotate(6deg) scale(1.05);
+  }
+
+  45% {
+    transform: rotate(-4deg) scale(1.05);
+  }
+
+  60% {
+    transform: rotate(4deg) scale(1.05);
+  }
+
+  75% {
+    transform: rotate(0deg) scale(1.05);
+    box-shadow: 0 0 0 8px rgba(255, 79, 138, 0);
+  }
+
+  100% {
+    transform: rotate(0deg) scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 79, 138, 0);
   }
 }
 
@@ -180,27 +190,18 @@ select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  animation:
-    gh-shake 3s ease-in-out infinite,
-    gh-glow 1.6s ease-in-out infinite !important;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-  transform-origin: 50% 0%;
-  transform-box: fill-box;
-  will-change: transform, box-shadow;
-}
+  animation: gh-shake-pulse 2.5s ease-in-out infinite;
 
-.gh-bestseller-badge::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: inherit;
-  pointer-events: none;
-  animation: gh-glow 1.6s ease-in-out infinite !important;
+  /* Pink shadow */
+  box-shadow: 0 2px 8px rgba(255, 79, 138, 0.25);
+
+  transform-origin: center;
+  will-change: transform, box-shadow;
+  z-index: 10;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gh-bestseller-badge,
-  .gh-bestseller-badge::after {
+  .gh-bestseller-badge {
     animation: none;
   }
 }
